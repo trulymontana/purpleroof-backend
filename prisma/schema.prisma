@@ -377,8 +377,8 @@ model Users {
   lastName           String               @db.VarChar(255)
   email              String               @unique(map: "email") @db.VarChar(255)
   password           String               @db.VarChar(255)
-  createdAt          DateTime             @db.DateTime(0)
-  updatedAt          DateTime             @db.DateTime(0)
+  createdAt          DateTime             @db.DateTime(0) @default(now())
+  updatedAt          DateTime             @db.DateTime(0) @updatedAt
   role               Users_role?          @default(advertiser)
   isEmailConfirmed   Boolean?
   AdvertiseDocuments AdvertiseDocuments[]
