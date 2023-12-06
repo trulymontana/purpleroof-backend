@@ -23,7 +23,7 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe());
   app.enableCors();
 
-  await app.listen(4000);
+  await app.listen(process.env.PORT || 3000);
 
   process.on('unhandledRejection', (error: any) => {
     console.log('Something went wrong', error.message);
