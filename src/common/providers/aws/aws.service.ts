@@ -63,12 +63,4 @@ export class AwsService {
     const response = await this.client.send(command);
     return response;
   };
-
-  deleteFolderFromAwsS3BucketWithImage = (resourceType: string, id: string) => {
-    const command = new DeleteObjectCommand({
-      Bucket: process.env.S3_BUCKET_FOR_SHORT_AUDIO,
-      Key: `${resourceType}/${id}/featured.jpg`,
-    });
-    return this.client.send(command);
-  };
 }
