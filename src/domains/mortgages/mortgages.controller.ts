@@ -2,7 +2,6 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { MortgagesService } from './mortgages.service';
 import { CreateMortgageDto } from './dto/create-mortgage.dto';
 import { UpdateMortgageDto } from './dto/update-mortgage.dto';
-import { SuccessResponse } from 'src/utils/SuccessResponse';
 
 @Controller('mortgages')
 export class MortgagesController {
@@ -14,9 +13,8 @@ export class MortgagesController {
   }
 
   @Get()
-  async findAll() {
-    const response = await this.mortgagesService.findAll();
-    return new SuccessResponse(response);
+  findAll() {
+    return this.mortgagesService.findAll();
   }
 
   @Get(':id')

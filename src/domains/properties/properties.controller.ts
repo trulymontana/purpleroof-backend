@@ -2,7 +2,6 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { PropertiesService } from './properties.service';
 import { CreatePropertyDto } from './dto/create-property.dto';
 import { UpdatePropertyDto } from './dto/update-property.dto';
-import { SuccessResponse } from 'src/utils/SuccessResponse';
 
 @Controller('properties')
 export class PropertiesController {
@@ -14,9 +13,8 @@ export class PropertiesController {
   }
 
   @Get()
-  async findAll() {
-    const response = await this.propertiesService.findAll();
-    return new SuccessResponse(response);
+  findAll() {
+    return this.propertiesService.findAll();
   }
 
   @Get(':id')
