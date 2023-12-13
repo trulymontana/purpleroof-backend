@@ -1,0 +1,204 @@
+//// ------------------------------------------------------
+//// THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+//// ------------------------------------------------------
+
+Table RequiredDocument {
+  id Int [pk, increment]
+  name String
+  documentType DocumentTypeEnum [not null]
+  isMandatory Boolean [not null, default: false]
+  createdAt DateTime [not null]
+  updatedAt DateTime [not null]
+  requirement Requirement [not null]
+  requirementId Int [not null]
+}
+
+Table Requirement {
+  id Int [pk, increment]
+  name String
+  incomeProfile IncomeProfileEnum [not null]
+  residenceType ResidenceTypeEnum [not null]
+  requiredDocuments RequiredDocument [not null]
+  createdAt DateTime [not null]
+  updatedAt DateTime [not null]
+}
+
+Table Document {
+  id Int [pk, increment]
+  name String [unique, not null]
+  documentTypeId Int [not null]
+  documentType DocumentTypeEnum [not null]
+  isMandatory Boolean [not null, default: false]
+  createdAt DateTime [not null]
+  updatedAt DateTime [not null]
+  mortgage Mortgage
+  mortgageId Int
+  commentId Int
+}
+
+Table Mortgage {
+  id Int [pk, increment]
+  firstName String [not null]
+  lastName String [not null]
+  email String [not null]
+  phoneNumber String
+  dateOfBirth DateTime [not null]
+  intendedProperty String [not null]
+  monthlyIncome Float [not null]
+  createdAt DateTime [not null]
+  updatedAt DateTime [not null]
+  dialCode String
+  country String [default: '']
+  status MortgageStatusEnum [not null]
+  residenceType ResidenceTypeEnum [not null]
+  incomeProfile IncomeProfileEnum [not null]
+  loanType LoanTypeEnum [not null]
+  documents Document [not null]
+  userId Int
+  user User
+  comments Comment [not null]
+  mortgageTransactions MortgageTransaction [not null]
+}
+
+Table MortgageTransaction {
+  id Int [pk, increment]
+  additionalDetail String
+  customerInformation String
+  createdAt DateTime [not null]
+  updatedAt DateTime [not null]
+  financeType FinanceTypeEnum
+  emirate EmirateEnum
+  propertyType PropertyTypeEnum
+  completionStatus CompletionStatusEnum
+  loanType LoanTypeEnum
+  mortgageId Int [not null]
+  mortgage Mortgage [not null]
+}
+
+Table Comment {
+  id Int [pk, increment]
+  userId Int [not null]
+  mortgageId Int [not null]
+  message String [not null]
+  createdAt DateTime [not null]
+  updatedAt DateTime [not null]
+  user User [not null]
+  mortgage Mortgage [not null]
+}
+
+Table User {
+  id Int [pk, increment]
+  firstName String [not null]
+  lastName String [not null]
+  email String [unique, not null]
+  password String [not null]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  role UserRoleEnum [default: 'advertiser']
+  isEmailConfirmed Boolean
+  mortgage Mortgage [not null]
+  Comment Comment [not null]
+}
+
+Enum IncomeProfileEnum {
+  SALARIED
+  SELF_EMPLOYED
+  RENTAL_INCOME
+}
+
+Enum ResidenceTypeEnum {
+  UAE_NATIONAL
+  UAE_RESIDENT
+  NON_UAE_RESIDENT
+}
+
+Enum DocumentTypeEnum {
+  PASSPORT_COPY
+  VISA_COPY
+  EMIRATES_ID
+  BANK_STATEMENT_6_MONTHS
+  BANK_STATEMENT_1_YEAR
+  SALARY_CERTIFICATE
+  TRADE_LICENSE
+  MEMORANDUM_WITH_AMENDMENTS
+  VAT_CERTIFICATE_RETURN_RECEIPTS
+  OFFICE_TENANCY_CONTRACT_UTILITY_BILL
+  COMPANY_PROFILE_WEBSITE
+  TITLE_DEED_COPY
+  TENANCY_CONTRACT_COPY
+  RENTAL_CHEQUE_COPY
+  BANK_STATEMENT_3_MONTHS_EQUIVALENT_AED_25000
+  PROOF_OF_RESIDENCE
+  PROOF_OF_INCOME
+  COMPANY_BANK_STATEMENT_6_MONTHS
+  OWNERSHIP_PROOF_MOBILE_NUMBER
+}
+
+Enum MortgageStatusEnum {
+  SUBMITTED
+  UNDER_DOCUMENTATION_STAGE
+  SUBMITTED_TO_BANK
+  APPROVED
+  VALUATION_STAGE
+  FINAL_OFFER_LETTER
+  CASE_DISBURSED
+  PROPERTY_TRANSFER
+  TRANSACTION_COMPLETED
+  CASE_CLOSED
+  CASE_DECLINED
+}
+
+Enum LoanTypeEnum {
+  BUY_PROPERTY_FROM_SELLER
+  BUY_PROPERTY_FROM_DEVELOPER
+  SHIFT_PROPERTY_LOAN
+  GET_CASH_AGAINST_EXISTING_PROPERTY
+}
+
+Enum PropertyTypeEnum {
+  RESIDENTIAL
+  COMMERCIAL
+}
+
+Enum CompletionStatusEnum {
+  COMPLETED
+  UNDER_CONSTRUCTION
+}
+
+Enum FinanceTypeEnum {
+  ISLAMIC
+  CONVENTIONAL
+}
+
+Enum EmirateEnum {
+  DUBAI
+  ABU_DHABI
+  RAS_AL_KHAIMAH
+  SHARJAH
+  FUJAIRAH
+  AJMAN
+  UMM_AL_QUWAIN
+}
+
+Enum UserRoleEnum {
+  admin
+  advertiser
+  agent
+}
+
+Enum PropertiesStatusEnum {
+  SALE
+  RENT
+}
+
+Ref: RequiredDocument.requirementId > Requirement.id
+
+Ref: Document.mortgageId > Mortgage.id
+
+Ref: Mortgage.userId > User.id [delete: Cascade]
+
+Ref: MortgageTransaction.mortgageId > Mortgage.id [delete: Cascade]
+
+Ref: Comment.userId > User.id
+
+Ref: Comment.mortgageId > Mortgage.id [delete: Cascade]
