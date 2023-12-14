@@ -12,7 +12,7 @@ export class PropertiesService {
   }
 
   async findAll() {
-    return await this.prisma.properties.findMany();
+    return await this.prisma.property.findMany();
   }
 
   findOne(id: number) {

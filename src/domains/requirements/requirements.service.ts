@@ -1,26 +1,102 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateRequirementDto } from './dto/create-requirement.dto';
 import { UpdateRequirementDto } from './dto/update-requirement.dto';
+import { PrismaService } from 'src/common/providers/prisma/prisma.service';
 
 @Injectable()
 export class RequirementsService {
-  create(createRequirementDto: CreateRequirementDto) {
-    return 'This action adds a new requirement';
+  constructor(private prisma: PrismaService) {}
+
+  async create(createRequirementDto: CreateRequirementDto) {
+    const { requiredDocuments, ...rest } = createRequirementDto;
+
+    const createdRequirement = await this.prisma.requirement.create({
+      data: {
+        ...rest,
+      },
+    });
+
+    console.log('createdRequirement', createdRequirement);
+
+    // Use the createdRequirement.id to associate with RequiredDocuments
+    const createdDocuments = await this.prisma.requiredDocument.createMany({
+      data: requiredDocuments.map((doc) => ({
+        ...doc,
+        requirementId: createdRequirement.id,
+      })),
+    });
+
+    return { ...createdRequirement, requiredDocuments: createdDocuments };
   }
 
-  findAll() {
-    return `This action returns all requirements`;
+  async update(id: number, updateRequirementDto: UpdateRequirementDto) {
+    const existingRequirement = await this.prisma.requirement.findUnique({
+      where: { id },
+      include: { requiredDocuments: true },
+    });
+
+    console.log('existingRequirement', existingRequirement);
+
+    if (!existingRequirement) {
+      throw new NotFoundException(`Requirement with ID ${id} not found`);
+    }
+
+    const existingDocumentIds = existingRequirement.requiredDocuments.map((doc) => doc.id);
+    await this.prisma.requiredDocument.deleteMany({
+      where: {
+        id: {
+          in: existingDocumentIds,
+        },
+      },
+    });
+
+    const updatedRequirement = await this.prisma.requirement.update({
+      where: { id },
+      data: {
+        ...updateRequirementDto,
+        requiredDocuments: {
+          create: updateRequirementDto.requiredDocuments,
+        },
+      },
+    });
+
+    return updatedRequirement;
+  }
+  async delete(id: number) {
+    const existingRequirement = await this.prisma.requirement.findUnique({ where: { id } });
+
+    if (!existingRequirement) {
+      throw new NotFoundException(`Requirement with ID ${id} not found`);
+    }
+
+    // Delete the requirement
+    await this.prisma.requirement.delete({ where: { id } });
+
+    return { message: `Requirement with ID ${id} deleted successfully` };
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} requirement`;
-  }
+  async findAll() {
+    // Retrieve all requirements
+    const requirements = await this.prisma.requirement.findMany({
+      include: {
+        requiredDocuments: true,
+      },
+    });
 
-  update(id: number, updateRequirementDto: UpdateRequirementDto) {
-    return `This action updates a #${id} requirement`;
+    return requirements;
   }
+  async findOne(id: number) {
+    const requirement = await this.prisma.requirement.findUnique({
+      where: { id },
+      include: {
+        requiredDocuments: true,
+      },
+    });
 
-  remove(id: number) {
-    return `This action removes a #${id} requirement`;
+    if (!requirement) {
+      throw new NotFoundException(`Requirement with ID ${id} not found`);
+    }
+
+    return requirement;
   }
 }

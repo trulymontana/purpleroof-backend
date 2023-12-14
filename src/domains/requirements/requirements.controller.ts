@@ -28,7 +28,7 @@ export class RequirementsController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.requirementsService.remove(+id);
+  delete(@Param('id') id: string) {
+    return this.requirementsService.delete(+id);
   }
 }

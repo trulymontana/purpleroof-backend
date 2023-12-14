@@ -2,25 +2,25 @@
 //// THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 //// ------------------------------------------------------
 
-Table RequiredDocument {
-  id Int [pk, increment]
-  name String
-  documentType DocumentTypeEnum [not null]
-  isMandatory Boolean [not null, default: false]
-  createdAt DateTime [not null]
-  updatedAt DateTime [not null]
-  requirement Requirement [not null]
-  requirementId Int [not null]
-}
-
 Table Requirement {
   id Int [pk, increment]
   name String
   incomeProfile IncomeProfileEnum [not null]
   residenceType ResidenceTypeEnum [not null]
   requiredDocuments RequiredDocument [not null]
-  createdAt DateTime [not null]
+  createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [not null]
+}
+
+Table RequiredDocument {
+  id Int [pk, increment]
+  name String
+  documentType DocumentTypeEnum [not null]
+  isMandatory Boolean [not null, default: false]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  requirement Requirement [not null]
+  requirementId Int [not null]
 }
 
 Table Document {
@@ -29,7 +29,7 @@ Table Document {
   documentTypeId Int [not null]
   documentType DocumentTypeEnum [not null]
   isMandatory Boolean [not null, default: false]
-  createdAt DateTime [not null]
+  createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [not null]
   mortgage Mortgage
   mortgageId Int
@@ -45,7 +45,7 @@ Table Mortgage {
   dateOfBirth DateTime [not null]
   intendedProperty String [not null]
   monthlyIncome Float [not null]
-  createdAt DateTime [not null]
+  createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [not null]
   dialCode String
   country String [default: '']
@@ -64,7 +64,7 @@ Table MortgageTransaction {
   id Int [pk, increment]
   additionalDetail String
   customerInformation String
-  createdAt DateTime [not null]
+  createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [not null]
   financeType FinanceTypeEnum
   emirate EmirateEnum
@@ -80,7 +80,7 @@ Table Comment {
   userId Int [not null]
   mortgageId Int [not null]
   message String [not null]
-  createdAt DateTime [not null]
+  createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [not null]
   user User [not null]
   mortgage Mortgage [not null]
@@ -98,6 +98,45 @@ Table User {
   isEmailConfirmed Boolean
   mortgage Mortgage [not null]
   Comment Comment [not null]
+}
+
+Table Property {
+  id Int [pk, increment]
+  propertyTypeId Int [not null]
+  propertyTypeCategoryId Int [not null]
+  name String [not null]
+  description String
+  phone String [not null]
+  amount Float [not null]
+  size Float
+  numberOfBedRooms Int
+  numberOfBathRooms Int
+  maintenanceFee Float
+  address String
+  landmark String
+  createdAt DateTime [not null]
+  updatedAt DateTime [not null]
+  locationId Int
+  minimumContract Float
+  noticePeriod Float
+  deedNumber String
+  unitNumber Int
+  buildingName String
+  floor Int
+  isApproved Boolean
+  userId Int
+  draft String
+  agentInfoId Int
+  paymentInterval String
+  emirateId Int [not null]
+  numberOfCheques Int
+  completionDate DateTime
+  noticePeriodOfRemainingRentalAgreement Int
+  numberOfLavatory Int
+  rentalAmount Float
+  trakheesiPermitNo String [default: '']
+  lat Float
+  lng Float
 }
 
 Enum IncomeProfileEnum {
@@ -191,7 +230,7 @@ Enum PropertiesStatusEnum {
   RENT
 }
 
-Ref: RequiredDocument.requirementId > Requirement.id
+Ref: RequiredDocument.requirementId > Requirement.id [delete: Cascade]
 
 Ref: Document.mortgageId > Mortgage.id
 

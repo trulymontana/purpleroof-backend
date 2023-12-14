@@ -45,26 +45,26 @@ enum DocumentTypeEnum {
   OWNERSHIP_PROOF_MOBILE_NUMBER
 }
 
-model RequiredDocument {
-  id            Int              @id @default(autoincrement())
-  name          String?          @db.VarChar(255)
-  documentType  DocumentTypeEnum
-  isMandatory   Boolean          @default(false)
-  createdAt     DateTime         @db.DateTime(0)
-  updatedAt     DateTime         @db.DateTime(0)
-  requirement   Requirement      @relation(fields: [requirementId], references: [id])
-  requirementId Int
-}
-
 model Requirement {
   id                Int                @id @default(autoincrement())
   name              String?            @db.VarChar(255)
   incomeProfile     IncomeProfileEnum
   residenceType     ResidenceTypeEnum
-  requiredDocuments RequiredDocument[]
+  requiredDocuments RequiredDocument[] @relation("RequirementToRequiredDocuments")
 
-  createdAt DateTime @db.DateTime(0)
-  updatedAt DateTime @db.DateTime(0)
+  createdAt DateTime @default(now()) @db.DateTime(0)
+  updatedAt DateTime @updatedAt
+}
+
+model RequiredDocument {
+  id            Int              @id @default(autoincrement())
+  name          String?          @db.VarChar(255)
+  documentType  DocumentTypeEnum
+  isMandatory   Boolean          @default(false)
+  createdAt     DateTime         @default(now()) @db.DateTime(0)
+  updatedAt     DateTime         @updatedAt
+  requirement   Requirement      @relation("RequirementToRequiredDocuments", onDelete: Cascade, fields: [requirementId], references: [id])
+  requirementId Int
 }
 
 model Document {
@@ -73,8 +73,8 @@ model Document {
   documentTypeId Int
   documentType   DocumentTypeEnum
   isMandatory    Boolean          @default(false)
-  createdAt      DateTime         @db.DateTime(0)
-  updatedAt      DateTime         @db.DateTime(0)
+  createdAt      DateTime         @default(now()) @db.DateTime(0)
+  updatedAt      DateTime         @updatedAt
   mortgage       Mortgage?        @relation(fields: [mortgageId], references: [id])
   mortgageId     Int?
   // Comment        Comment?         @relation(fields: [commentId], references: [id])
@@ -111,8 +111,8 @@ model Mortgage {
   dateOfBirth      DateTime @db.DateTime(0)
   intendedProperty String   @db.VarChar(255)
   monthlyIncome    Float
-  createdAt        DateTime @db.DateTime(0)
-  updatedAt        DateTime @db.DateTime(0)
+  createdAt        DateTime @default(now()) @db.DateTime(0)
+  updatedAt        DateTime @updatedAt
   dialCode         String?  @db.VarChar(255)
   country          String?  @default("") @db.VarChar(255)
 
@@ -160,8 +160,8 @@ model MortgageTransaction {
   id                  Int      @id @default(autoincrement())
   additionalDetail    String?  @db.Text
   customerInformation String?  @db.Text
-  createdAt           DateTime @db.DateTime(0)
-  updatedAt           DateTime @db.DateTime(0)
+  createdAt           DateTime @default(now()) @db.DateTime(0)
+  updatedAt           DateTime @updatedAt
 
   financeType      FinanceTypeEnum?
   emirate          EmirateEnum?
@@ -180,8 +180,8 @@ model Comment {
   userId     Int
   mortgageId Int
   message    String   @db.Text
-  createdAt  DateTime @db.DateTime(0)
-  updatedAt  DateTime @db.DateTime(0)
+  createdAt  DateTime @default(now()) @db.DateTime(0)
+  updatedAt  DateTime @updatedAt
   // attachments  Document[]
   // MortgageCommentAttachments MortgageCommentAttachments[]
   user       User     @relation(fields: [userId], references: [id])
@@ -204,7 +204,7 @@ model User {
   email            String        @unique(map: "email") @db.VarChar(255)
   password         String        @db.VarChar(255)
   createdAt        DateTime      @default(now()) @db.DateTime(0)
-  updatedAt        DateTime      @updatedAt @db.DateTime(0)
+  updatedAt        DateTime      @updatedAt
   role             UserRoleEnum? @default(advertiser)
   isEmailConfirmed Boolean?
   mortgage         Mortgage[]
@@ -218,6 +218,64 @@ model User {
 enum PropertiesStatusEnum {
   SALE
   RENT
+}
+
+model Property {
+  id                                     Int       @id @default(autoincrement())
+  propertyTypeId                         Int
+  propertyTypeCategoryId                 Int
+  name                                   String    @db.VarChar(255)
+  description                            String?   @db.Text
+  phone                                  String    @db.VarChar(255)
+  amount                                 Float
+  size                                   Float?
+  numberOfBedRooms                       Int?
+  numberOfBathRooms                      Int?
+  maintenanceFee                         Float?
+  address                                String?   @db.VarChar(255)
+  landmark                               String?   @db.Text
+  createdAt                              DateTime  @db.DateTime(0)
+  updatedAt                              DateTime  @db.DateTime(0)
+  locationId                             Int?
+  minimumContract                        Float?
+  noticePeriod                           Float?
+  deedNumber                             String?   @db.VarChar(255)
+  unitNumber                             Int?
+  buildingName                           String?   @db.VarChar(255)
+  floor                                  Int?
+  isApproved                             Boolean?
+  // status                                 Properties_status?        @default(sale)
+  userId                                 Int?
+  draft                                  String?   @db.Text
+  agentInfoId                            Int?
+  paymentInterval                        String?   @db.VarChar(255)
+  emirateId                              Int
+  // projectStatus                          Properties_projectStatus?
+  numberOfCheques                        Int?
+  completionDate                         DateTime? @db.DateTime(0)
+  noticePeriodOfRemainingRentalAgreement Int?
+  numberOfLavatory                       Int?
+  rentalAmount                           Float?
+  trakheesiPermitNo                      String?   @default("") @db.VarChar(255)
+  lat                                    Float?    @db.Float
+  lng                                    Float?    @db.Float
+  //   AdvertiseDocuments                     AdvertiseDocuments[]
+  //   AgentInformations                      AgentInformations?        @relation(fields: [agentInfoId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "Properties_agentInfoId_foreign_idx")
+  //   Emirates                               Emirates                  @relation(fields: [emirateId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "Properties_emirateId_foreign_idx")
+  //   PropertyTypes                          PropertyTypes             @relation(fields: [propertyTypeId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "Properties_ibfk_1")
+  //   PropertyTypeCategories                 PropertyTypeCategories    @relation(fields: [propertyTypeCategoryId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "Properties_ibfk_2")
+  //   PropertyLocations                      PropertyLocations?        @relation(fields: [locationId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "Properties_locationId_foreign_idx")
+  //   Users                                  Users?                    @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "Properties_userId_foreign_idx")
+  //   PropertyAmenities                      PropertyAmenities[]
+  //   PropertyDocuments                      PropertyDocuments[]
+  //   PropertyPhotos                         PropertyPhotos[]
+
+  //   @@index([agentInfoId], map: "Properties_agentInfoId_foreign_idx")
+  //   @@index([emirateId], map: "Properties_emirateId_foreign_idx")
+  //   @@index([locationId], map: "Properties_locationId_foreign_idx")
+  //   @@index([userId], map: "Properties_userId_foreign_idx")
+  //   @@index([propertyTypeCategoryId], map: "propertyTypeCategoryId")
+  //   @@index([propertyTypeId], map: "propertyTypeId")
 }
 
 // model AdvertiseDocuments {

@@ -12,7 +12,7 @@ export class MortgagesService {
   }
 
   async findAll() {
-    return await this.prisma.mortgages.findMany();
+    return await this.prisma.mortgage.findMany();
   }
 
   findOne(id: number) {

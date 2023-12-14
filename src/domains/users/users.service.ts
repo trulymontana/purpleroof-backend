@@ -20,7 +20,7 @@ export class UsersService {
     try {
       authUser = await this.authService.createAuthUser(createUserDto.email, createUserDto.password, createUserDto.name);
 
-      const user = await this.prisma.users.create({
+      const user = await this.prisma.user.create({
         data: {
           // id: authUser.uid,
           email: createUserDto.email,
@@ -50,7 +50,7 @@ export class UsersService {
   };
 
   async findAll() {
-    return await this.prisma.users.findMany();
+    return await this.prisma.user.findMany();
   }
 
   createPasswordHash = async (password: string) => {
