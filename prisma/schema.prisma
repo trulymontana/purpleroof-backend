@@ -77,7 +77,7 @@ model RequiredDocument {
 
 model Document {
   id             Int              @id @default(autoincrement())
-  name           String           @unique(map: "name") @db.VarChar(155)
+  name           String           @db.VarChar(155)
   documentTypeId Int
   documentType   DocumentTypeEnum
   isMandatory    Boolean          @default(false)

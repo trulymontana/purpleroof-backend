@@ -1,30 +1,47 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateMortgageDto } from './dto/create-mortgage.dto';
-import { UpdateMortgageDto } from './dto/update-mortgage.dto';
 import { PrismaService } from 'src/common/providers/prisma/prisma.service';
+import { UpdateMortgageDto } from './dto/update-mortgage.dto';
 
 @Injectable()
 export class MortgagesService {
   constructor(private readonly prisma: PrismaService) {}
-  create(createMortgageDto: CreateMortgageDto) {
-    console.log(createMortgageDto);
-    return 'This action adds a new mortgage';
+
+  async create(createMortgageDto: CreateMortgageDto) {
+    return this.prisma.mortgage.create({ data: createMortgageDto });
   }
 
   async findAll() {
-    return await this.prisma.mortgage.findMany();
+    return this.prisma.mortgage.findMany();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} mortgage`;
+  async findOne(id: number) {
+    const mortgage = await this.prisma.mortgage.findUnique({ where: { id } });
+
+    if (!mortgage) {
+      throw new NotFoundException(`Mortgage with ID ${id} not found`);
+    }
+
+    return mortgage;
   }
 
-  update(id: number, updateMortgageDto: UpdateMortgageDto) {
-    console.log(updateMortgageDto);
-    return `This action updates a #${id} mortgage`;
+  async update(id: number, updateMortgageDto: UpdateMortgageDto) {
+    const existingMortgage = await this.prisma.mortgage.findUnique({ where: { id } });
+
+    if (!existingMortgage) {
+      throw new NotFoundException(`Mortgage with ID ${id} not found`);
+    }
+
+    return this.prisma.mortgage.update({ where: { id }, data: updateMortgageDto });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} mortgage`;
+  async remove(id: number) {
+    const existingMortgage = await this.prisma.mortgage.findUnique({ where: { id } });
+
+    if (!existingMortgage) {
+      throw new NotFoundException(`Mortgage with ID ${id} not found`);
+    }
+
+    return this.prisma.mortgage.delete({ where: { id } });
   }
 }

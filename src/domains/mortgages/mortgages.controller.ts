@@ -1,34 +1,34 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { MortgagesService } from './mortgages.service';
+import { Controller, Get, Post, Put, Delete, Param, Body } from '@nestjs/common';
 import { CreateMortgageDto } from './dto/create-mortgage.dto';
+import { MortgagesService } from './mortgages.service';
 import { UpdateMortgageDto } from './dto/update-mortgage.dto';
 
 @Controller('mortgages')
 export class MortgagesController {
-  constructor(private readonly mortgagesService: MortgagesService) {}
+  constructor(private readonly mortgageService: MortgagesService) {}
 
   @Post()
   create(@Body() createMortgageDto: CreateMortgageDto) {
-    return this.mortgagesService.create(createMortgageDto);
+    return this.mortgageService.create(createMortgageDto);
   }
 
   @Get()
   findAll() {
-    return this.mortgagesService.findAll();
+    return this.mortgageService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.mortgagesService.findOne(+id);
+  findOne(@Param('id') id: number) {
+    return this.mortgageService.findOne(+id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateMortgageDto: UpdateMortgageDto) {
-    return this.mortgagesService.update(+id, updateMortgageDto);
+  @Put(':id')
+  update(@Param('id') id: number, @Body() updateMortgageDto: UpdateMortgageDto) {
+    return this.mortgageService.update(+id, updateMortgageDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.mortgagesService.remove(+id);
+  remove(@Param('id') id: number) {
+    return this.mortgageService.remove(+id);
   }
 }

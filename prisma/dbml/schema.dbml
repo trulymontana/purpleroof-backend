@@ -31,7 +31,7 @@ Table RequiredDocument {
 
 Table Document {
   id Int [pk, increment]
-  name String [unique, not null]
+  name String [not null]
   documentTypeId Int [not null]
   documentType DocumentTypeEnum [not null]
   isMandatory Boolean [not null, default: false]
