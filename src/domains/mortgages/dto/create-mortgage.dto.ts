@@ -25,8 +25,8 @@ export class CreateMortgageDto {
   monthlyIncome: number;
 
   @IsOptional()
-  @IsString()
-  dialCode?: string;
+  @IsNumber()
+  valueOfProperty?: number;
 
   @IsOptional()
   @IsString()

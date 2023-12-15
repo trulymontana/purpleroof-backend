@@ -119,9 +119,9 @@ model Mortgage {
   dateOfBirth      DateTime @db.DateTime(0)
   intendedProperty String   @db.VarChar(255)
   monthlyIncome    Float
+  valueOfProperty  Float    @default(0)
   createdAt        DateTime @default(now()) @db.DateTime(0)
   updatedAt        DateTime @updatedAt
-  dialCode         String?  @db.VarChar(255)
   country          String?  @default("") @db.VarChar(255)
 
   status        MortgageStatusEnum
