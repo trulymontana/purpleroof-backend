@@ -50,6 +50,14 @@ model Requirement {
   name              String?            @db.VarChar(255)
   incomeProfile     IncomeProfileEnum
   residenceType     ResidenceTypeEnum
+
+  preApprovalFee      Int?               @db.Int
+  processingFee       Int?               @db.Int
+  rate                Int?               @db.Int
+  lifeInsurance       Int?               @db.Int
+  propertyInsurance   Int?               @db.Int
+  valuationFee        Int?               @db.Int
+
   requiredDocuments RequiredDocument[] @relation("RequirementToRequiredDocuments")
 
   createdAt DateTime @default(now()) @db.DateTime(0)
