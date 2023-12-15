@@ -252,7 +252,7 @@ model Property {
   buildingName                           String?   @db.VarChar(255)
   floor                                  Int?
   isApproved                             Boolean?
-  // status                                 Properties_status?        @default(sale)
+  status                                 PropertiesStatusEnum?        @default(SALE)
   userId                                 Int?
   draft                                  String?   @db.Text
   agentInfoId                            Int?

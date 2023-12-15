@@ -1,4 +1,4 @@
-import { IsOptional, IsEnum, IsString, IsDate } from 'class-validator';
+import { IsOptional, IsEnum, IsString } from 'class-validator';
 import { FinanceTypeEnum, EmirateEnum, PropertyTypeEnum, CompletionStatusEnum, LoanTypeEnum } from '@prisma/client'; // Replace with the correct path
 
 export class CreateMortgageTransactionDto {
@@ -9,12 +9,6 @@ export class CreateMortgageTransactionDto {
   @IsOptional()
   @IsString()
   customerInformation?: string;
-
-  @IsDate()
-  createdAt: Date;
-
-  @IsDate()
-  updatedAt: Date;
 
   @IsOptional()
   @IsEnum(FinanceTypeEnum)

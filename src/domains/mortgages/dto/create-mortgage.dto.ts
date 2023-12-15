@@ -24,12 +24,6 @@ export class CreateMortgageDto {
   @IsNumber()
   monthlyIncome: number;
 
-  @IsDateString()
-  createdAt: string;
-
-  @IsDateString()
-  updatedAt: string;
-
   @IsOptional()
   @IsString()
   dialCode?: string;
