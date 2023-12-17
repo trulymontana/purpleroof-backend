@@ -40,6 +40,9 @@ Table Document {
   mortgage Mortgage
   mortgageId Int
   commentId Int
+  Property Property
+  propertyId Int
+  Comment Comment
 }
 
 Table Mortgage {
@@ -88,6 +91,7 @@ Table Comment {
   message String [not null]
   createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [not null]
+  attachments Document [not null]
   user User [not null]
   mortgage Mortgage [not null]
 }
@@ -101,15 +105,55 @@ Table User {
   createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [not null]
   role UserRoleEnum [default: 'advertiser']
+  agentId Int
   isEmailConfirmed Boolean
   mortgage Mortgage [not null]
-  Comment Comment [not null]
+  comments Comment [not null]
+  properties Property [not null]
+  agent Agent [not null]
+}
+
+Table Location {
+  id Int [pk, increment]
+  name String [unique]
+  createdAt DateTime [not null]
+  updatedAt DateTime [not null]
+  emirate EmirateEnum
+  properties Property [not null]
+  agents Agent [not null]
+}
+
+Table Amenity {
+  id Int [pk, increment]
+  name String [unique]
+  createdAt DateTime [not null]
+  updatedAt DateTime [not null]
+  type AmenityTypeEnum
+  property Property
+  propertyId Int
+}
+
+Table PropertyTypeCategory {
+  id Int [pk, increment]
+  name String [unique, not null]
+  type PropertyTypeEnum [not null]
+  createdAt DateTime [not null]
+  updatedAt DateTime [not null]
+  properties Property [not null]
+}
+
+Table PropertyPhotos {
+  id Int [pk, increment]
+  propertyId Int [not null]
+  name String [not null]
+  path String [unique, not null]
+  createdAt DateTime [not null]
+  updatedAt DateTime [not null]
+  property Property [not null]
 }
 
 Table Property {
   id Int [pk, increment]
-  propertyTypeId Int [not null]
-  propertyTypeCategoryId Int [not null]
   name String [not null]
   description String
   phone String [not null]
@@ -122,7 +166,7 @@ Table Property {
   landmark String
   createdAt DateTime [not null]
   updatedAt DateTime [not null]
-  locationId Int
+  completionDate DateTime
   minimumContract Float
   noticePeriod Float
   deedNumber String
@@ -130,20 +174,59 @@ Table Property {
   buildingName String
   floor Int
   isApproved Boolean
-  status PropertiesStatusEnum [default: 'SALE']
-  userId Int
   draft String
   agentInfoId Int
   paymentInterval String
   emirateId Int [not null]
   numberOfCheques Int
-  completionDate DateTime
   noticePeriodOfRemainingRentalAgreement Int
   numberOfLavatory Int
   rentalAmount Float
   trakheesiPermitNo String [default: '']
   lat Float
   lng Float
+  projectStatus ProjectStatusEnum
+  status PropertiesStatusEnum [default: 'SALE']
+  propertyType PropertyTypeEnum
+  emirate EmirateEnum
+  propertyTypeCategoryId Int [not null]
+  propertyTypeCategory PropertyTypeCategory [not null]
+  locationId Int
+  location Location
+  userId Int
+  user User
+  agentId Int
+  agent Agent
+  documents Document [not null]
+  amenities Amenity [not null]
+  propertyPhotos PropertyPhotos [not null]
+}
+
+Table Agent {
+  id Int [pk, increment]
+  userId Int [not null]
+  agency String
+  contactNumber String
+  locationId Int [not null]
+  realEstateLicenseFilePath String [unique, not null]
+  isActive Boolean
+  isApproved Boolean
+  createdAt DateTime [not null]
+  updatedAt DateTime [not null]
+  user User [not null]
+  properties Property [not null]
+  location Location [not null]
+}
+
+Table Inqueries {
+  id Int [pk, increment]
+  firstName String [not null]
+  lastName String [not null]
+  budget Int [not null]
+  website String [not null]
+  message String [not null]
+  createdAt DateTime [not null]
+  updatedAt DateTime [not null]
 }
 
 Enum IncomeProfileEnum {
@@ -237,9 +320,26 @@ Enum PropertiesStatusEnum {
   RENT
 }
 
+Enum ProjectStatusEnum {
+  OFF_PLAN_UNDER_CONSTRUCTION
+  SHELL_AND_CORE
+  VACANT
+  RENTED
+}
+
+Enum AmenityTypeEnum {
+  PROPERTY
+  BUILDING
+  COMMUNITY
+}
+
 Ref: RequiredDocument.requirementId > Requirement.id [delete: Cascade]
 
 Ref: Document.mortgageId > Mortgage.id
+
+Ref: Document.propertyId > Property.id
+
+Ref: Document.commentId > Comment.id
 
 Ref: Mortgage.userId > User.id [delete: Cascade]
 
@@ -248,3 +348,19 @@ Ref: MortgageTransaction.mortgageId > Mortgage.id [delete: Cascade]
 Ref: Comment.userId > User.id
 
 Ref: Comment.mortgageId > Mortgage.id [delete: Cascade]
+
+Ref: Amenity.propertyId > Property.id
+
+Ref: PropertyPhotos.propertyId > Property.id
+
+Ref: Property.propertyTypeCategoryId > PropertyTypeCategory.id
+
+Ref: Property.locationId > Location.id
+
+Ref: Property.userId > User.id [delete: Cascade]
+
+Ref: Property.agentId > Agent.id
+
+Ref: Agent.userId > User.id
+
+Ref: Agent.locationId > Location.id

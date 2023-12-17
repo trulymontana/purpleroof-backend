@@ -46,17 +46,17 @@ enum DocumentTypeEnum {
 }
 
 model Requirement {
-  id                Int                @id @default(autoincrement())
-  name              String?            @db.VarChar(255)
-  incomeProfile     IncomeProfileEnum
-  residenceType     ResidenceTypeEnum
+  id            Int               @id @default(autoincrement())
+  name          String?           @db.VarChar(255)
+  incomeProfile IncomeProfileEnum
+  residenceType ResidenceTypeEnum
 
-  preApprovalFee      Int?               @db.Int
-  processingFee       Int?               @db.Int
-  rate                Int?               @db.Int
-  lifeInsurance       Int?               @db.Int
-  propertyInsurance   Int?               @db.Int
-  valuationFee        Int?               @db.Int
+  preApprovalFee    Int? @db.Int
+  processingFee     Int? @db.Int
+  rate              Int? @db.Int
+  lifeInsurance     Int? @db.Int
+  propertyInsurance Int? @db.Int
+  valuationFee      Int? @db.Int
 
   requiredDocuments RequiredDocument[] @relation("RequirementToRequiredDocuments")
 
@@ -87,6 +87,9 @@ model Document {
   mortgageId     Int?
   // Comment        Comment?         @relation(fields: [commentId], references: [id])
   commentId      Int?
+  Property       Property?        @relation(fields: [propertyId], references: [id])
+  propertyId     Int?
+  Comment        Comment?         @relation(fields: [commentId], references: [id])
 }
 
 enum MortgageStatusEnum {
@@ -184,16 +187,15 @@ model MortgageTransaction {
 }
 
 model Comment {
-  id         Int      @id @default(autoincrement())
-  userId     Int
-  mortgageId Int
-  message    String   @db.Text
-  createdAt  DateTime @default(now()) @db.DateTime(0)
-  updatedAt  DateTime @updatedAt
-  // attachments  Document[]
-  // MortgageCommentAttachments MortgageCommentAttachments[]
-  user       User     @relation(fields: [userId], references: [id])
-  mortgage   Mortgage @relation(fields: [mortgageId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "MortgageComments_ibfk_2")
+  id          Int        @id @default(autoincrement())
+  userId      Int
+  mortgageId  Int
+  message     String     @db.Text
+  createdAt   DateTime   @default(now()) @db.DateTime(0)
+  updatedAt   DateTime   @updatedAt
+  attachments Document[]
+  user        User       @relation(fields: [userId], references: [id])
+  mortgage    Mortgage   @relation(fields: [mortgageId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "MortgageComments_ibfk_2")
 
   @@index([mortgageId], map: "mortgageId")
   @@index([userId], map: "userId")
@@ -214,13 +216,12 @@ model User {
   createdAt        DateTime      @default(now()) @db.DateTime(0)
   updatedAt        DateTime      @updatedAt
   role             UserRoleEnum? @default(advertiser)
+  agentId          Int?
   isEmailConfirmed Boolean?
   mortgage         Mortgage[]
-  // AdvertiseDocuments AdvertiseDocuments[]
-  // AgentInformations  AgentInformations[]
-  // MortgageComments   MortgageComments[]
-  // Properties         Properties[]
-  Comment          Comment[]
+  comments         Comment[]
+  properties       Property[]
+  agent            Agent[]
 }
 
 enum PropertiesStatusEnum {
@@ -228,10 +229,63 @@ enum PropertiesStatusEnum {
   RENT
 }
 
+enum ProjectStatusEnum {
+  OFF_PLAN_UNDER_CONSTRUCTION
+  SHELL_AND_CORE
+  VACANT
+  RENTED
+}
+
+model Location {
+  id         Int          @id @default(autoincrement())
+  name       String?      @unique(map: "name") @db.VarChar(255)
+  createdAt  DateTime     @db.DateTime(0)
+  updatedAt  DateTime     @db.DateTime(0)
+  emirate    EmirateEnum?
+  properties Property[]
+  agents     Agent[]
+}
+
+enum AmenityTypeEnum {
+  PROPERTY
+  BUILDING
+  COMMUNITY
+}
+
+model Amenity {
+  id         Int              @id @default(autoincrement())
+  name       String?          @unique(map: "name") @db.VarChar(255)
+  createdAt  DateTime         @db.DateTime(0)
+  updatedAt  DateTime         @db.DateTime(0)
+  type       AmenityTypeEnum?
+  property   Property?        @relation(fields: [propertyId], references: [id])
+  propertyId Int?
+}
+
+model PropertyTypeCategory {
+  id        Int              @id @default(autoincrement())
+  name      String           @unique(map: "name") @db.VarChar(255)
+  type      PropertyTypeEnum
+  createdAt DateTime         @db.DateTime(0)
+  updatedAt DateTime         @db.DateTime(0)
+
+  properties Property[]
+}
+
+model PropertyPhotos {
+  id         Int      @id @default(autoincrement())
+  propertyId Int
+  name       String   @db.VarChar(255)
+  path       String   @unique(map: "path") @db.VarChar(255)
+  createdAt  DateTime @db.DateTime(0)
+  updatedAt  DateTime @db.DateTime(0)
+  property   Property @relation(fields: [propertyId], references: [id])
+
+  @@index([propertyId], map: "propertyId")
+}
+
 model Property {
   id                                     Int       @id @default(autoincrement())
-  propertyTypeId                         Int
-  propertyTypeCategoryId                 Int
   name                                   String    @db.VarChar(255)
   description                            String?   @db.Text
   phone                                  String    @db.VarChar(255)
@@ -243,8 +297,8 @@ model Property {
   address                                String?   @db.VarChar(255)
   landmark                               String?   @db.Text
   createdAt                              DateTime  @db.DateTime(0)
-  updatedAt                              DateTime  @db.DateTime(0)
-  locationId                             Int?
+  updatedAt                              DateTime  @updatedAt
+  completionDate                         DateTime? @db.DateTime(0)
   minimumContract                        Float?
   noticePeriod                           Float?
   deedNumber                             String?   @db.VarChar(255)
@@ -252,437 +306,67 @@ model Property {
   buildingName                           String?   @db.VarChar(255)
   floor                                  Int?
   isApproved                             Boolean?
-  status                                 PropertiesStatusEnum?        @default(SALE)
-  userId                                 Int?
   draft                                  String?   @db.Text
   agentInfoId                            Int?
   paymentInterval                        String?   @db.VarChar(255)
   emirateId                              Int
-  // projectStatus                          Properties_projectStatus?
   numberOfCheques                        Int?
-  completionDate                         DateTime? @db.DateTime(0)
   noticePeriodOfRemainingRentalAgreement Int?
   numberOfLavatory                       Int?
   rentalAmount                           Float?
   trakheesiPermitNo                      String?   @default("") @db.VarChar(255)
   lat                                    Float?    @db.Float
   lng                                    Float?    @db.Float
-  //   AdvertiseDocuments                     AdvertiseDocuments[]
-  //   AgentInformations                      AgentInformations?        @relation(fields: [agentInfoId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "Properties_agentInfoId_foreign_idx")
-  //   Emirates                               Emirates                  @relation(fields: [emirateId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "Properties_emirateId_foreign_idx")
-  //   PropertyTypes                          PropertyTypes             @relation(fields: [propertyTypeId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "Properties_ibfk_1")
-  //   PropertyTypeCategories                 PropertyTypeCategories    @relation(fields: [propertyTypeCategoryId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "Properties_ibfk_2")
-  //   PropertyLocations                      PropertyLocations?        @relation(fields: [locationId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "Properties_locationId_foreign_idx")
-  //   Users                                  Users?                    @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "Properties_userId_foreign_idx")
-  //   PropertyAmenities                      PropertyAmenities[]
-  //   PropertyDocuments                      PropertyDocuments[]
-  //   PropertyPhotos                         PropertyPhotos[]
 
-  //   @@index([agentInfoId], map: "Properties_agentInfoId_foreign_idx")
-  //   @@index([emirateId], map: "Properties_emirateId_foreign_idx")
-  //   @@index([locationId], map: "Properties_locationId_foreign_idx")
-  //   @@index([userId], map: "Properties_userId_foreign_idx")
-  //   @@index([propertyTypeCategoryId], map: "propertyTypeCategoryId")
-  //   @@index([propertyTypeId], map: "propertyTypeId")
+  projectStatus ProjectStatusEnum?
+  status        PropertiesStatusEnum? @default(SALE)
+  propertyType  PropertyTypeEnum?
+  emirate       EmirateEnum?
+
+  propertyTypeCategoryId Int
+  propertyTypeCategory   PropertyTypeCategory @relation(fields: [propertyTypeCategoryId], references: [id])
+
+
+  locationId Int?
+  location   Location? @relation(fields: [locationId], references: [id])
+
+  userId Int?
+  user   User? @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "Properties_userId_foreign_idx")
+
+  agentId Int?
+  agent   Agent? @relation(fields: [agentId], references: [id])
+
+  documents Document[]
+  amenities Amenity[]
+  propertyPhotos PropertyPhotos[]
 }
 
-// model AdvertiseDocuments {
-//   id             Int           @id @default(autoincrement())
-//   propertyId     Int
-//   name           String        @db.VarChar(255)
-//   path           String?       @db.VarChar(255)
-//   createdAt      DateTime      @db.DateTime(0)
-//   updatedAt      DateTime      @db.DateTime(0)
-//   documentTypeId Int
-//   advertiserId   Int
-//   Users          Users         @relation(fields: [advertiserId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "AdvertiseDocuments_advertiserId_foreign_idx")
-//   DocumentTypes  DocumentTypes @relation(fields: [documentTypeId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "AdvertiseDocuments_documentTypeId_foreign_idx")
-//   Properties     Properties    @relation(fields: [propertyId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "AdvertiseDocuments_ibfk_1")
+model Agent {
+  id                        Int        @id @default(autoincrement())
+  userId                    Int
+  agency                    String?    @db.VarChar(255)
+  contactNumber             String?    @db.VarChar(255)
+  locationId                Int
+  realEstateLicenseFilePath String     @unique(map: "realEstateLicenseFilePath") @db.VarChar(255)
+  isActive                  Boolean?
+  isApproved                Boolean?
+  createdAt                 DateTime   @db.DateTime(0)
+  updatedAt                 DateTime   @db.DateTime(0)
+  user                      User       @relation(fields: [userId], references: [id])
+  properties                Property[]
+  location                  Location   @relation(fields: [locationId], references: [id])
 
-//   @@index([advertiserId], map: "AdvertiseDocuments_advertiserId_foreign_idx")
-//   @@index([documentTypeId], map: "AdvertiseDocuments_documentTypeId_foreign_idx")
-//   @@index([propertyId], map: "propertyId")
-// }
+  @@index([locationId], map: "locationId")
+  @@index([userId], map: "userId")
+}
 
-// model AgentInformations {
-//   id                        Int               @id @default(autoincrement())
-//   userId                    Int
-//   agency                    String?           @db.VarChar(255)
-//   contactNumber             String?           @db.VarChar(255)
-//   locationId                Int
-//   realEstateLicenseFilePath String            @unique(map: "realEstateLicenseFilePath") @db.VarChar(255)
-//   isActive                  Boolean?
-//   isApproved                Boolean?
-//   createdAt                 DateTime          @db.DateTime(0)
-//   updatedAt                 DateTime          @db.DateTime(0)
-//   Users                     Users             @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "AgentInformations_ibfk_1")
-//   PropertyLocations         PropertyLocations @relation(fields: [locationId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "AgentInformations_ibfk_2")
-//   Properties                Properties[]
-
-//   @@index([locationId], map: "locationId")
-//   @@index([userId], map: "userId")
-// }
-
-// model Amenities {
-//   id                Int                 @id @default(autoincrement())
-//   name              String?             @unique(map: "name") @db.VarChar(255)
-//   createdAt         DateTime            @db.DateTime(0)
-//   updatedAt         DateTime            @db.DateTime(0)
-//   type              Amenities_type?
-//   PropertyAmenities PropertyAmenities[]
-// }
-
-// model DocumentTypes {
-//   id                      Int                  @id @default(autoincrement())
-//   name                    String?              @unique(map: "name") @db.VarChar(155)
-//   createdAt               DateTime             @db.DateTime(0)
-//   updatedAt               DateTime             @db.DateTime(0)
-//   isAdvertiserRequirement Boolean?
-//   AdvertiseDocuments      AdvertiseDocuments[]
-//   MortgageDocuments       MortgageDocuments[]
-// }
-
-// model Emirates {
-//   id                   Int                    @id @default(autoincrement())
-//   name                 String?                @unique(map: "name") @db.VarChar(255)
-//   createdAt            DateTime               @db.DateTime(0)
-//   updatedAt            DateTime               @db.DateTime(0)
-//   MortgageTransactions MortgageTransactions[]
-//   Properties           Properties[]
-//   PropertyLocations    PropertyLocations[]
-// }
-
-// model IncomeProfiles {
-//   id           Int            @id @default(autoincrement())
-//   name         String         @unique(map: "name") @db.VarChar(255)
-//   createdAt    DateTime       @db.DateTime(0)
-//   updatedAt    DateTime       @db.DateTime(0)
-//   Mortgages    Mortgages[]
-//   Requirements Requirements[]
-// }
-
-// model Inqueries {
-//   id        Int      @id @default(autoincrement())
-//   firstName String   @db.VarChar(255)
-//   lastName  String   @db.VarChar(255)
-//   budget    Int
-//   website   String   @db.VarChar(255)
-//   message   String   @db.Text
-//   createdAt DateTime @db.DateTime(0)
-//   updatedAt DateTime @db.DateTime(0)
-// }
-
-// model LoanTypes {
-//   id                   Int                    @id @default(autoincrement())
-//   name                 String                 @unique(map: "name") @db.VarChar(255)
-//   createdAt            DateTime               @db.DateTime(0)
-//   updatedAt            DateTime               @db.DateTime(0)
-//   MortgageTransactions MortgageTransactions[]
-//   Mortgages            Mortgages[]
-// }
-
-// model MortgageCommentAttachments {
-//   id               Int              @id @default(autoincrement())
-//   name             String?          @db.VarChar(255)
-//   path             String?          @db.VarChar(255)
-//   commentId        Int
-//   createdAt        DateTime         @db.DateTime(0)
-//   updatedAt        DateTime         @db.DateTime(0)
-//   MortgageComments MortgageComments @relation(fields: [commentId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "MortgageCommentAttachments_ibfk_1")
-
-//   @@index([commentId], map: "commentId")
-// }
-
-// model MortgageComments {
-//   id                         Int                          @id @default(autoincrement())
-//   userId                     Int
-//   mortgageId                 Int
-//   message                    String                       @db.Text
-//   createdAt                  DateTime                     @db.DateTime(0)
-//   updatedAt                  DateTime                     @db.DateTime(0)
-//   MortgageCommentAttachments MortgageCommentAttachments[]
-//   Users                      Users                        @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "MortgageComments_ibfk_1")
-//   Mortgages                  Mortgages                    @relation(fields: [mortgageId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "MortgageComments_ibfk_2")
-
-//   @@index([mortgageId], map: "mortgageId")
-//   @@index([userId], map: "userId")
-// }
-
-// model MortgageDocuments {
-//   id             Int           @id @default(autoincrement())
-//   mortgageId     Int
-//   name           String?       @db.VarChar(255)
-//   path           String?       @db.VarChar(255)
-//   documentTypeId Int
-//   requirementId  Int
-//   createdAt      DateTime      @db.DateTime(0)
-//   updatedAt      DateTime      @db.DateTime(0)
-//   Mortgages      Mortgages     @relation(fields: [mortgageId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "MortgageDocuments_ibfk_1")
-//   DocumentTypes  DocumentTypes @relation(fields: [documentTypeId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "MortgageDocuments_ibfk_2")
-//   Requirements   Requirements  @relation(fields: [requirementId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "MortgageDocuments_ibfk_3")
-
-//   @@index([documentTypeId], map: "documentTypeId")
-//   @@index([mortgageId], map: "mortgageId")
-//   @@index([requirementId], map: "requirementId")
-// }
-
-// model MortgageStatus {
-//   id         Int                    @id @default(autoincrement())
-//   mortgageId Int
-//   createdAt  DateTime               @db.DateTime(0)
-//   updatedAt  DateTime               @db.DateTime(0)
-//   status     MortgageStatus_status? @default(submitted)
-//   Mortgages  Mortgages              @relation(fields: [mortgageId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "MortgageStatus_ibfk_1")
-
-//   @@index([mortgageId], map: "mortgageId")
-// }
-
-// model MortgageTransactions {
-//   id                  Int                                    @id @default(autoincrement())
-//   propertyType        MortgageTransactions_propertyType?
-//   completionStatus    MortgageTransactions_completionStatus?
-//   additionalDetail    String?                                @db.Text
-//   transactionType     Int?
-//   createdAt           DateTime                               @db.DateTime(0)
-//   updatedAt           DateTime                               @db.DateTime(0)
-//   customerInformation String?                                @db.Text
-//   mortgageId          Int
-//   financeType         MortgageTransactions_financeType?
-//   emirateId           Int?
-//   Emirates            Emirates?                              @relation(fields: [emirateId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "MortgageTransactions_emirateId_foreign_idx")
-//   LoanTypes           LoanTypes?                             @relation(fields: [transactionType], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "MortgageTransactions_ibfk_2")
-//   Mortgages           Mortgages                              @relation(fields: [mortgageId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "MortgageTransactions_mortgageId_foreign_idx")
-
-//   @@index([emirateId], map: "MortgageTransactions_emirateId_foreign_idx")
-//   @@index([mortgageId], map: "MortgageTransactions_mortgageId_foreign_idx")
-//   @@index([transactionType], map: "transactionType")
-// }
-
-// model Mortgages {
-//   id                   Int                    @id @default(autoincrement())
-//   residentialTypeId    Int
-//   incomeProfileId      Int
-//   loanTypeId           Int
-//   firstName            String                 @db.VarChar(255)
-//   lastName             String                 @db.VarChar(255)
-//   email                String                 @db.VarChar(255)
-//   phoneNumber          String?                @db.VarChar(255)
-//   dateOfBirth          DateTime               @db.DateTime(0)
-//   intendedProperty     String                 @db.VarChar(255)
-//   monthlyIncome        Float
-//   createdAt            DateTime               @db.DateTime(0)
-//   updatedAt            DateTime               @db.DateTime(0)
-//   userId               Int?
-//   dialCode             String?                @db.VarChar(255)
-//   country              String?                @default("") @db.VarChar(255)
-//   MortgageComments     MortgageComments[]
-//   MortgageDocuments    MortgageDocuments[]
-//   MortgageStatus       MortgageStatus[]
-//   MortgageTransactions MortgageTransactions[]
-//   ResidentialTypes     ResidentialTypes       @relation(fields: [residentialTypeId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "Mortgages_ibfk_1")
-//   IncomeProfiles       IncomeProfiles         @relation(fields: [incomeProfileId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "Mortgages_ibfk_2")
-//   LoanTypes            LoanTypes              @relation(fields: [loanTypeId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "Mortgages_ibfk_3")
-//   Users                Users?                 @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "Mortgages_userId_foreign_idx")
-
-//   @@index([userId], map: "Mortgages_userId_foreign_idx")
-//   @@index([incomeProfileId], map: "incomeProfileId")
-//   @@index([loanTypeId], map: "loanTypeId")
-//   @@index([residentialTypeId], map: "residentialTypeId")
-// }
-
-// model Properties {
-//   id                                     Int                       @id @default(autoincrement())
-//   propertyTypeId                         Int
-//   propertyTypeCategoryId                 Int
-//   name                                   String                    @db.VarChar(255)
-//   description                            String?                   @db.Text
-//   phone                                  String                    @db.VarChar(255)
-//   amount                                 Float
-//   size                                   Float?
-//   numberOfBedRooms                       Int?
-//   numberOfBathRooms                      Int?
-//   maintenanceFee                         Float?
-//   address                                String?                   @db.VarChar(255)
-//   landmark                               String?                   @db.Text
-//   createdAt                              DateTime                  @db.DateTime(0)
-//   updatedAt                              DateTime                  @db.DateTime(0)
-//   locationId                             Int?
-//   minimumContract                        Float?
-//   noticePeriod                           Float?
-//   deedNumber                             String?                   @db.VarChar(255)
-//   unitNumber                             Int?
-//   buildingName                           String?                   @db.VarChar(255)
-//   floor                                  Int?
-//   isApproved                             Boolean?
-//   status                                 Properties_status?        @default(sale)
-//   userId                                 Int?
-//   draft                                  String?                   @db.Text
-//   agentInfoId                            Int?
-//   paymentInterval                        String?                   @db.VarChar(255)
-//   emirateId                              Int
-//   projectStatus                          Properties_projectStatus?
-//   numberOfCheques                        Int?
-//   completionDate                         DateTime?                 @db.DateTime(0)
-//   noticePeriodOfRemainingRentalAgreement Int?
-//   numberOfLavatory                       Int?
-//   rentalAmount                           Float?
-//   trakheesiPermitNo                      String?                   @default("") @db.VarChar(255)
-//   lat                                    Float?                    @db.Float
-//   lng                                    Float?                    @db.Float
-//   AdvertiseDocuments                     AdvertiseDocuments[]
-//   AgentInformations                      AgentInformations?        @relation(fields: [agentInfoId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "Properties_agentInfoId_foreign_idx")
-//   Emirates                               Emirates                  @relation(fields: [emirateId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "Properties_emirateId_foreign_idx")
-//   PropertyTypes                          PropertyTypes             @relation(fields: [propertyTypeId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "Properties_ibfk_1")
-//   PropertyTypeCategories                 PropertyTypeCategories    @relation(fields: [propertyTypeCategoryId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "Properties_ibfk_2")
-//   PropertyLocations                      PropertyLocations?        @relation(fields: [locationId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "Properties_locationId_foreign_idx")
-//   Users                                  Users?                    @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "Properties_userId_foreign_idx")
-//   PropertyAmenities                      PropertyAmenities[]
-//   PropertyDocuments                      PropertyDocuments[]
-//   PropertyPhotos                         PropertyPhotos[]
-
-//   @@index([agentInfoId], map: "Properties_agentInfoId_foreign_idx")
-//   @@index([emirateId], map: "Properties_emirateId_foreign_idx")
-//   @@index([locationId], map: "Properties_locationId_foreign_idx")
-//   @@index([userId], map: "Properties_userId_foreign_idx")
-//   @@index([propertyTypeCategoryId], map: "propertyTypeCategoryId")
-//   @@index([propertyTypeId], map: "propertyTypeId")
-// }
-
-// model PropertyAmenities {
-//   id         Int        @id @default(autoincrement())
-//   propertyId Int
-//   amenityId  Int
-//   createdAt  DateTime   @db.DateTime(0)
-//   updatedAt  DateTime   @db.DateTime(0)
-//   value      String?    @default("") @db.VarChar(255)
-//   Properties Properties @relation(fields: [propertyId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "PropertyAmenities_ibfk_1")
-//   Amenities  Amenities  @relation(fields: [amenityId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "PropertyAmenities_ibfk_2")
-
-//   @@index([amenityId], map: "amenityId")
-//   @@index([propertyId], map: "propertyId")
-// }
-
-// model PropertyDocuments {
-//   id         Int        @id @default(autoincrement())
-//   propertyId Int
-//   name       String?    @db.VarChar(255)
-//   path       String     @unique(map: "path") @db.VarChar(255)
-//   createdAt  DateTime   @db.DateTime(0)
-//   updatedAt  DateTime   @db.DateTime(0)
-//   Properties Properties @relation(fields: [propertyId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "PropertyDocuments_ibfk_1")
-
-//   @@index([propertyId], map: "propertyId")
-// }
-
-// model PropertyLocations {
-//   id                Int                 @id @default(autoincrement())
-//   name              String?             @unique(map: "name") @db.VarChar(255)
-//   createdAt         DateTime            @db.DateTime(0)
-//   updatedAt         DateTime            @db.DateTime(0)
-//   emirateId         Int?
-//   AgentInformations AgentInformations[]
-//   Properties        Properties[]
-//   Emirates          Emirates?           @relation(fields: [emirateId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "PropertyLocations_emirateId_foreign_idx")
-
-//   @@index([emirateId], map: "PropertyLocations_emirateId_foreign_idx")
-// }
-
-// model PropertyPhotos {
-//   id         Int        @id @default(autoincrement())
-//   propertyId Int
-//   name       String     @db.VarChar(255)
-//   path       String     @unique(map: "path") @db.VarChar(255)
-//   createdAt  DateTime   @db.DateTime(0)
-//   updatedAt  DateTime   @db.DateTime(0)
-//   Properties Properties @relation(fields: [propertyId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "PropertyPhotos_ibfk_1")
-
-//   @@index([propertyId], map: "propertyId")
-// }
-
-// model PropertyTypeCategories {
-//   id             Int           @id @default(autoincrement())
-//   propertyTypeId Int
-//   name           String        @unique(map: "name") @db.VarChar(255)
-//   createdAt      DateTime      @db.DateTime(0)
-//   updatedAt      DateTime      @db.DateTime(0)
-//   Properties     Properties[]
-//   PropertyTypes  PropertyTypes @relation(fields: [propertyTypeId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "PropertyTypeCategories_ibfk_1")
-
-//   @@index([propertyTypeId], map: "propertyTypeId")
-// }
-
-// model PropertyTypes {
-//   id                     Int                      @id @default(autoincrement())
-//   name                   String                   @unique(map: "name") @db.VarChar(255)
-//   createdAt              DateTime                 @db.DateTime(0)
-//   updatedAt              DateTime                 @db.DateTime(0)
-//   Properties             Properties[]
-//   PropertyTypeCategories PropertyTypeCategories[]
-// }
-
-// model ResidentialTypes {
-//   id           Int            @id @default(autoincrement())
-//   name         String         @unique(map: "name") @db.VarChar(255)
-//   createdAt    DateTime       @db.DateTime(0)
-//   updatedAt    DateTime       @db.DateTime(0)
-//   Mortgages    Mortgages[]
-//   Requirements Requirements[]
-// }
-
-// model SequelizeMeta {
-//   name String @id @unique(map: "name") @db.VarChar(255)
-// }
-
-// model Users {
-//   id                 Int                  @id @default(autoincrement())
-//   firstName          String               @db.VarChar(255)
-//   lastName           String               @db.VarChar(255)
-//   email              String               @unique(map: "email") @db.VarChar(255)
-//   password           String               @db.VarChar(255)
-//   createdAt          DateTime             @db.DateTime(0) @default(now())
-//   updatedAt          DateTime             @db.DateTime(0) @updatedAt
-//   role               Users_role?          @default(advertiser)
-//   isEmailConfirmed   Boolean?
-//   AdvertiseDocuments AdvertiseDocuments[]
-//   AgentInformations  AgentInformations[]
-//   MortgageComments   MortgageComments[]
-//   Mortgages          Mortgages[]
-//   Properties         Properties[]
-// }
-
-// enum MortgageTransactions_propertyType {
-//   apartment_townhouse_villa @map("apartment/townhouse/villa")
-//   residential_land          @map("residential land")
-// }
-
-// enum MortgageTransactions_completionStatus {
-//   completed
-//   off_plan_under_construction @map("off plan/under construction")
-// }
-
-// enum Amenities_type {
-//   property
-//   building
-//   community
-// }
-
-// enum MortgageStatus_status {
-//   submitted
-//   under_documentation_stage @map("under documentation stage")
-//   submitted_to_bank         @map("submitted to bank")
-//   approved
-//   valuation_stage           @map("valuation stage")
-//   final_offer_letter        @map("final offer letter")
-//   case_disbursed            @map("case disbursed")
-//   property_transfer         @map("property transfer")
-//   transaction_completed     @map("transaction completed")
-//   case_closed               @map("case closed")
-//   case_declined             @map("case declined")
-// }
-
-// enum Properties_projectStatus {
-//   off_plan_under_construction @map("off plan/under construction")
-//   shell___core                @map("shell & core")
-//   vacant
-//   rented
-// }
+model Inqueries {
+  id        Int      @id @default(autoincrement())
+  firstName String   @db.VarChar(255)
+  lastName  String   @db.VarChar(255)
+  budget    Int
+  website   String   @db.VarChar(255)
+  message   String   @db.Text
+  createdAt DateTime @db.DateTime(0)
+  updatedAt DateTime @db.DateTime(0)
+}
