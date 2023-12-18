@@ -137,9 +137,6 @@ export class CreatePropertyDto {
   locationId?: number;
 
   @IsOptional()
-  location?: Location; // Assuming Location is another DTO or entity, replace with the correct type
-
-  @IsOptional()
   @IsNumber()
   userId?: number;
 
