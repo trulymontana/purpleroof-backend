@@ -1,6 +1,5 @@
 import { IsString, IsOptional, IsNumber, IsEnum, IsBoolean } from 'class-validator';
 import {
-  PropertiesStatusEnum,
   ProjectStatusEnum,
   EmirateEnum,
   PropertyTypeEnum,
@@ -8,6 +7,7 @@ import {
   PropertyCategoryEnum,
   HoldingTypeEnum,
   PropertyForEnum,
+  OccupencyStatusEnum,
 } from '@prisma/client';
 export class CreatePropertyDto {
   @IsString()
@@ -117,6 +117,10 @@ export class CreatePropertyDto {
   @IsOptional()
   @IsEnum(ProjectStatusEnum)
   projectStatus: ProjectStatusEnum;
+
+  @IsOptional()
+  @IsEnum(OccupencyStatusEnum)
+  occupancyStatus: OccupencyStatusEnum;
 
   @IsOptional()
   @IsEnum(PropertyForEnum)
