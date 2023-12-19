@@ -77,19 +77,21 @@ model RequiredDocument {
 
 model Document {
   id             Int              @id @default(autoincrement())
-  name           String           @db.VarChar(155)
-  documentTypeId Int
-  documentType   DocumentTypeEnum
-  isMandatory    Boolean          @default(false)
+
+  type   DocumentTypeEnum
+  url           String           @unique(map: "url") @db.VarChar(255)
+ 
   createdAt      DateTime         @default(now()) @db.DateTime(0)
   updatedAt      DateTime         @updatedAt
+
   mortgage       Mortgage?        @relation(fields: [mortgageId], references: [id])
   mortgageId     Int?
-  // Comment        Comment?         @relation(fields: [commentId], references: [id])
+
   commentId      Int?
-  Property       Property?        @relation(fields: [propertyId], references: [id])
-  propertyId     Int?
   Comment        Comment?         @relation(fields: [commentId], references: [id])
+
+  propertyId     Int?
+  Property       Property?        @relation(fields: [propertyId], references: [id])
 }
 
 enum MortgageStatusEnum {
@@ -145,6 +147,32 @@ model Mortgage {
 enum PropertyTypeEnum {
   RESIDENTIAL
   COMMERCIAL
+}
+
+enum PropertyCategoryEnum {
+  APARTMENT_AND_UNIT
+  VILLA
+  ACREAGE
+  BLOCK_OF_UNITS
+  HOUSE
+  TOWNHOUSE
+  LAND
+  BULK_UNIT
+  COMMERCIAL_BUILDING
+  COMMERCIAL_FLOOR
+  COMMERCIAL_VILLA
+  COMMERCIAL_PLOT
+  FACTORY
+  INDUSTRIAL_UNIT_FOR_SALE
+  INDUSTRIAL_LAND
+  MIXED_USED_SAND
+  OFFICE_FOR_SALE
+  RETAIL_FOR_SALE
+  SHOP
+  STAFF_ACCOMMODATION_FOR_SALE
+  WAREHOUSE
+  SELL_COMMERCIAL_LAND
+  OTHER
 }
 
 enum CompletionStatusEnum {
@@ -213,8 +241,8 @@ model User {
   lastName         String        @db.VarChar(255)
   email            String        @unique(map: "email") @db.VarChar(255)
   password         String        @db.VarChar(255)
-  createdAt        DateTime      @default(now()) @db.DateTime(0)
-  updatedAt        DateTime      @updatedAt
+  createdAt  DateTime @db.DateTime(0) @default(now())
+  updatedAt  DateTime     @updatedAt
   role             UserRoleEnum? @default(advertiser)
   agentId          Int?
   isEmailConfirmed Boolean?
@@ -239,9 +267,12 @@ enum ProjectStatusEnum {
 model Location {
   id         Int          @id @default(autoincrement())
   name       String?      @unique(map: "name") @db.VarChar(255)
-  createdAt  DateTime     @db.DateTime(0)
-  updatedAt  DateTime     @db.DateTime(0)
+
   emirate    EmirateEnum?
+
+  createdAt  DateTime @db.DateTime(0) @default(now())
+  updatedAt  DateTime     @updatedAt
+  
   properties Property[]
   agents     Agent[]
 }
@@ -255,30 +286,21 @@ enum AmenityTypeEnum {
 model Amenity {
   id         Int              @id @default(autoincrement())
   name       String?          @unique(map: "name") @db.VarChar(255)
-  createdAt  DateTime         @db.DateTime(0)
+  createdAt  DateTime @db.DateTime(0) @default(now())
   updatedAt  DateTime         @db.DateTime(0)
   type       AmenityTypeEnum?
   property   Property?        @relation(fields: [propertyId], references: [id])
   propertyId Int?
 }
 
-model PropertyTypeCategory {
-  id        Int              @id @default(autoincrement())
-  name      String           @unique(map: "name") @db.VarChar(255)
-  type      PropertyTypeEnum
-  createdAt DateTime         @db.DateTime(0)
-  updatedAt DateTime         @db.DateTime(0)
-
-  properties Property[]
-}
 
 model PropertyPhotos {
   id         Int      @id @default(autoincrement())
   propertyId Int
   name       String   @db.VarChar(255)
   path       String   @unique(map: "path") @db.VarChar(255)
-  createdAt  DateTime @db.DateTime(0)
-  updatedAt  DateTime @db.DateTime(0)
+  createdAt  DateTime @db.DateTime(0) @default(now())
+  updatedAt  DateTime @updatedAt
   property   Property @relation(fields: [propertyId], references: [id])
 
   @@index([propertyId], map: "propertyId")
@@ -296,8 +318,7 @@ model Property {
   maintenanceFee                         Float?
   address                                String?   @db.VarChar(255)
   landmark                               String?   @db.Text
-  createdAt                              DateTime  @db.DateTime(0)
-  updatedAt                              DateTime  @updatedAt
+  
   completionDate                         DateTime? @db.DateTime(0)
   minimumContract                        Float?
   noticePeriod                           Float?
@@ -309,7 +330,6 @@ model Property {
   draft                                  String?   @db.Text
   agentInfoId                            Int?
   paymentInterval                        String?   @db.VarChar(255)
-  emirateId                              Int
   numberOfCheques                        Int?
   noticePeriodOfRemainingRentalAgreement Int?
   numberOfLavatory                       Int?
@@ -318,14 +338,14 @@ model Property {
   lat                                    Float?    @db.Float
   lng                                    Float?    @db.Float
 
+  createdAt                              DateTime?  @db.DateTime(0) @default(now())
+  updatedAt                              DateTime?  @updatedAt
+
   projectStatus ProjectStatusEnum?
   status        PropertiesStatusEnum? @default(SALE)
   propertyType  PropertyTypeEnum?
+  propertyCategory PropertyCategoryEnum?
   emirate       EmirateEnum?
-
-  propertyTypeCategoryId Int
-  propertyTypeCategory   PropertyTypeCategory @relation(fields: [propertyTypeCategoryId], references: [id])
-
 
   locationId Int?
   location   Location? @relation(fields: [locationId], references: [id])

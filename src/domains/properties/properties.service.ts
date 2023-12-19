@@ -9,11 +9,28 @@ export class PropertiesService {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(createPropertyDto: CreatePropertyDto) {
-    return this.prisma.property.create({ data: createPropertyDto as any });
+    const { documents } = createPropertyDto;
+
+    const property = await this.prisma.property.create({
+      data: {
+        ...createPropertyDto,
+        documents: {
+          create: documents.map((document) => ({
+            ...document,
+          })),
+        },
+      },
+    });
+
+    return { property };
   }
 
   async findAll() {
-    return this.prisma.property.findMany();
+    return this.prisma.property.findMany({
+      include: {
+        documents: true,
+      },
+    });
   }
 
   async findOne(id: number) {

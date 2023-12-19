@@ -31,18 +31,16 @@ Table RequiredDocument {
 
 Table Document {
   id Int [pk, increment]
-  name String [not null]
-  documentTypeId Int [not null]
-  documentType DocumentTypeEnum [not null]
-  isMandatory Boolean [not null, default: false]
+  type DocumentTypeEnum [not null]
+  url String [unique, not null]
   createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [not null]
   mortgage Mortgage
   mortgageId Int
   commentId Int
-  Property Property
-  propertyId Int
   Comment Comment
+  propertyId Int
+  Property Property
 }
 
 Table Mortgage {
@@ -116,9 +114,9 @@ Table User {
 Table Location {
   id Int [pk, increment]
   name String [unique]
-  createdAt DateTime [not null]
-  updatedAt DateTime [not null]
   emirate EmirateEnum
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
   properties Property [not null]
   agents Agent [not null]
 }
@@ -126,20 +124,11 @@ Table Location {
 Table Amenity {
   id Int [pk, increment]
   name String [unique]
-  createdAt DateTime [not null]
+  createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [not null]
   type AmenityTypeEnum
   property Property
   propertyId Int
-}
-
-Table PropertyTypeCategory {
-  id Int [pk, increment]
-  name String [unique, not null]
-  type PropertyTypeEnum [not null]
-  createdAt DateTime [not null]
-  updatedAt DateTime [not null]
-  properties Property [not null]
 }
 
 Table PropertyPhotos {
@@ -147,7 +136,7 @@ Table PropertyPhotos {
   propertyId Int [not null]
   name String [not null]
   path String [unique, not null]
-  createdAt DateTime [not null]
+  createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [not null]
   property Property [not null]
 }
@@ -164,8 +153,6 @@ Table Property {
   maintenanceFee Float
   address String
   landmark String
-  createdAt DateTime [not null]
-  updatedAt DateTime [not null]
   completionDate DateTime
   minimumContract Float
   noticePeriod Float
@@ -177,7 +164,6 @@ Table Property {
   draft String
   agentInfoId Int
   paymentInterval String
-  emirateId Int [not null]
   numberOfCheques Int
   noticePeriodOfRemainingRentalAgreement Int
   numberOfLavatory Int
@@ -185,12 +171,13 @@ Table Property {
   trakheesiPermitNo String [default: '']
   lat Float
   lng Float
+  createdAt DateTime [default: `now()`]
+  updatedAt DateTime
   projectStatus ProjectStatusEnum
   status PropertiesStatusEnum [default: 'SALE']
   propertyType PropertyTypeEnum
+  propertyCategory PropertyCategoryEnum
   emirate EmirateEnum
-  propertyTypeCategoryId Int [not null]
-  propertyTypeCategory PropertyTypeCategory [not null]
   locationId Int
   location Location
   userId Int
@@ -289,6 +276,32 @@ Enum PropertyTypeEnum {
   COMMERCIAL
 }
 
+Enum PropertyCategoryEnum {
+  APARTMENT_AND_UNIT
+  VILLA
+  ACREAGE
+  BLOCK_OF_UNITS
+  HOUSE
+  TOWNHOUSE
+  LAND
+  BULK_UNIT
+  COMMERCIAL_BUILDING
+  COMMERCIAL_FLOOR
+  COMMERCIAL_VILLA
+  COMMERCIAL_PLOT
+  FACTORY
+  INDUSTRIAL_UNIT_FOR_SALE
+  INDUSTRIAL_LAND
+  MIXED_USED_SAND
+  OFFICE_FOR_SALE
+  RETAIL_FOR_SALE
+  SHOP
+  STAFF_ACCOMMODATION_FOR_SALE
+  WAREHOUSE
+  SELL_COMMERCIAL_LAND
+  OTHER
+}
+
 Enum CompletionStatusEnum {
   COMPLETED
   UNDER_CONSTRUCTION
@@ -337,9 +350,9 @@ Ref: RequiredDocument.requirementId > Requirement.id [delete: Cascade]
 
 Ref: Document.mortgageId > Mortgage.id
 
-Ref: Document.propertyId > Property.id
-
 Ref: Document.commentId > Comment.id
+
+Ref: Document.propertyId > Property.id
 
 Ref: Mortgage.userId > User.id [delete: Cascade]
 
@@ -352,8 +365,6 @@ Ref: Comment.mortgageId > Mortgage.id [delete: Cascade]
 Ref: Amenity.propertyId > Property.id
 
 Ref: PropertyPhotos.propertyId > Property.id
-
-Ref: Property.propertyTypeCategoryId > PropertyTypeCategory.id
 
 Ref: Property.locationId > Location.id
 

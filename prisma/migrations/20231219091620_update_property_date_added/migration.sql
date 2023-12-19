@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE `Property` MODIFY `createdAt` DATETIME(0) NULL DEFAULT CURRENT_TIMESTAMP(0),
+    MODIFY `updatedAt` DATETIME(3) NULL;

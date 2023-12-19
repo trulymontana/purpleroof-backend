@@ -1,5 +1,12 @@
-import { IsString, IsOptional, IsNumber, IsEnum, IsDate, IsBoolean } from 'class-validator';
-import { PropertiesStatusEnum, ProjectStatusEnum, EmirateEnum, PropertyTypeEnum } from '@prisma/client';
+import { IsString, IsOptional, IsNumber, IsEnum, IsBoolean } from 'class-validator';
+import {
+  PropertiesStatusEnum,
+  ProjectStatusEnum,
+  EmirateEnum,
+  PropertyTypeEnum,
+  DocumentTypeEnum,
+  PropertyCategoryEnum,
+} from '@prisma/client';
 export class CreatePropertyDto {
   @IsString()
   name: string;
@@ -39,7 +46,6 @@ export class CreatePropertyDto {
   landmark?: string;
 
   @IsOptional()
-  @IsDate()
   completionDate?: Date;
 
   @IsOptional()
@@ -75,15 +81,8 @@ export class CreatePropertyDto {
   draft?: string;
 
   @IsOptional()
-  @IsNumber()
-  agentInfoId?: number;
-
-  @IsOptional()
   @IsString()
   paymentInterval?: string;
-
-  @IsNumber()
-  emirateId: number;
 
   @IsOptional()
   @IsNumber()
@@ -115,22 +114,23 @@ export class CreatePropertyDto {
 
   @IsOptional()
   @IsEnum(ProjectStatusEnum)
-  projectStatus?: ProjectStatusEnum;
+  projectStatus: ProjectStatusEnum;
 
   @IsOptional()
   @IsEnum(PropertiesStatusEnum)
-  status?: PropertiesStatusEnum;
+  status: PropertiesStatusEnum;
 
   @IsOptional()
   @IsEnum(PropertyTypeEnum)
-  propertyType?: PropertyTypeEnum;
+  propertyType: PropertyTypeEnum;
+
+  @IsOptional()
+  @IsEnum(PropertyCategoryEnum)
+  propertyCategory: PropertyCategoryEnum;
 
   @IsOptional()
   @IsEnum(EmirateEnum)
   emirate?: EmirateEnum;
-
-  @IsNumber()
-  propertyTypeCategoryId: number;
 
   @IsOptional()
   @IsNumber()
@@ -145,5 +145,10 @@ export class CreatePropertyDto {
   agentId?: number;
 
   @IsOptional()
-  documents?: Document[]; // Assuming Document is another DTO or entity, replace with the correct type
+  documents?: DocumentCreateDto[]; // Assuming Document is another DTO or entity, replace with the correct type
+}
+
+interface DocumentCreateDto {
+  type: DocumentTypeEnum;
+  url: string;
 }
