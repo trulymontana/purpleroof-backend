@@ -7,6 +7,7 @@ import {
   DocumentTypeEnum,
   PropertyCategoryEnum,
   HoldingTypeEnum,
+  PropertyForEnum,
 } from '@prisma/client';
 export class CreatePropertyDto {
   @IsString()
@@ -118,8 +119,8 @@ export class CreatePropertyDto {
   projectStatus: ProjectStatusEnum;
 
   @IsOptional()
-  @IsEnum(PropertiesStatusEnum)
-  status: PropertiesStatusEnum;
+  @IsEnum(PropertyForEnum)
+  propertyFor: PropertyForEnum;
 
   @IsOptional()
   @IsEnum(PropertyTypeEnum)

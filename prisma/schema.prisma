@@ -252,7 +252,7 @@ model User {
   agent            Agent[]
 }
 
-enum PropertiesStatusEnum {
+enum PropertyForEnum {
   SALE
   RENT
 }
@@ -347,7 +347,7 @@ model Property {
   updatedAt                              DateTime?  @updatedAt
 
   projectStatus ProjectStatusEnum?
-  status        PropertiesStatusEnum? @default(SALE)
+  propertyFor        PropertyForEnum? @default(SALE)
   propertyType  PropertyTypeEnum?
   propertyCategory PropertyCategoryEnum?
   holdingType HoldingTypeEnum?
