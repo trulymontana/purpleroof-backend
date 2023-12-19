@@ -177,6 +177,7 @@ Table Property {
   status PropertiesStatusEnum [default: 'SALE']
   propertyType PropertyTypeEnum
   propertyCategory PropertyCategoryEnum
+  holdingType HoldingTypeEnum
   emirate EmirateEnum
   locationId Int
   location Location
@@ -344,6 +345,11 @@ Enum AmenityTypeEnum {
   PROPERTY
   BUILDING
   COMMUNITY
+}
+
+Enum HoldingTypeEnum {
+  FREE_HOLD
+  LEASE_HOLD
 }
 
 Ref: RequiredDocument.requirementId > Requirement.id [delete: Cascade]

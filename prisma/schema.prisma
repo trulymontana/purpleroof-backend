@@ -306,6 +306,11 @@ model PropertyPhotos {
   @@index([propertyId], map: "propertyId")
 }
 
+enum HoldingTypeEnum {
+  FREE_HOLD
+  LEASE_HOLD
+}
+
 model Property {
   id                                     Int       @id @default(autoincrement())
   name                                   String    @db.VarChar(255)
@@ -345,6 +350,7 @@ model Property {
   status        PropertiesStatusEnum? @default(SALE)
   propertyType  PropertyTypeEnum?
   propertyCategory PropertyCategoryEnum?
+  holdingType HoldingTypeEnum?
   emirate       EmirateEnum?
 
   locationId Int?
