@@ -38,7 +38,7 @@ export class AuthService {
     // const customToken = firebaseAdminAuth.createCustomToken(user.authId, additionalClaims);
 
     const jwtToken = generateToken({
-      userAuthId: user.authId,
+      userAuthId: user.authId ?? '',
       userId: user.id,
       email: user.email,
       username: `${user.firstName} ${user.lastName}`,
@@ -82,7 +82,7 @@ export class AuthService {
           lastName: request.lastName,
           password: await this.createPasswordHash(request.password),
           role: UserRoleEnum.ADVERTISER,
-          authId: authUser.uid,
+          authId: authUser?.uid ?? '',
         },
       });
 
