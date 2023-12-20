@@ -76,6 +76,8 @@ export class AuthService {
 
       // console.log(authUser);
 
+      const random = randomBytes(16).toString('hex');
+
       user = await this.prisma.user.create({
         data: {
           email: request.email,
@@ -84,7 +86,7 @@ export class AuthService {
           password: await this.createPasswordHash(request.password),
           role: UserRoleEnum.ADVERTISER,
           // authId: authUser?.uid ?? '',
-          authId: randomBytes(16).toString('hex'),
+          authId: random,
         },
       });
 
@@ -94,7 +96,7 @@ export class AuthService {
       // const verificationEmailLink = await this.generateEmailVerificationLink(request.email);
 
       const jwtToken = generateToken({
-        userAuthId: authUser.uid,
+        userAuthId: random,
         userId: user.id,
         email: authUser.email,
         username: authUser.displayName,
