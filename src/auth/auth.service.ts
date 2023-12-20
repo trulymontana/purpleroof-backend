@@ -52,7 +52,7 @@ export class AuthService {
   async signUp(request: SignUpRequest) {
     console.log(request);
 
-    let authUser;
+    // let authUser;
     let user;
 
     const existingUser = await this.prisma.user.findUnique({
@@ -98,12 +98,12 @@ export class AuthService {
       const jwtToken = generateToken({
         userAuthId: random,
         userId: user.id,
-        email: authUser.email,
-        username: authUser.displayName,
+        email: user.email,
+        username: user.firstName,
         role: UserRoleEnum.ADVERTISER,
       });
 
-      return { authUser, user, jwtToken };
+      return { user, jwtToken };
     } catch (e: any) {
       // if (authUser) await this.deleteAuthUser(authUser?.uid);
       if (user)
