@@ -1,5 +1,5 @@
 import { IsString, IsEmail, IsOptional, IsDateString, IsNumber, IsEnum } from 'class-validator';
-import { MortgageStatusEnum, ResidenceTypeEnum, IncomeProfileEnum, LoanTypeEnum } from '@prisma/client'; // Replace with the correct path
+import { MortgageStatusEnum, ResidenceTypeEnum, IncomeProfileEnum, LoanTypeEnum } from '@prisma/client';
 
 export class CreateMortgageDto {
   @IsString()

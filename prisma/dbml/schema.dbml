@@ -96,13 +96,14 @@ Table Comment {
 
 Table User {
   id Int [pk, increment]
+  authId String [unique, not null]
   firstName String [not null]
   lastName String [not null]
   email String [unique, not null]
   password String [not null]
+  role UserRoleEnum [default: 'ADVERTISER']
   createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [not null]
-  role UserRoleEnum [default: 'advertiser']
   agentId Int
   isEmailConfirmed Boolean
   mortgage Mortgage [not null]
@@ -138,7 +139,6 @@ Table PropertyPhotos {
   path String [unique, not null]
   createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [not null]
-  property Property [not null]
 }
 
 Table Property {
@@ -188,7 +188,6 @@ Table Property {
   agent Agent
   documents Document [not null]
   amenities Amenity [not null]
-  propertyPhotos PropertyPhotos [not null]
 }
 
 Table Agent {
@@ -252,6 +251,33 @@ Enum DocumentTypeEnum {
   OWNERSHIP_PROOF_MOBILE_NUMBER
 }
 
+Enum AmenityTypeEnum {
+  PROPERTY
+  BUILDING
+  COMMUNITY
+}
+
+Enum HoldingTypeEnum {
+  FREE_HOLD
+  LEASE_HOLD
+}
+
+Enum UserRoleEnum {
+  ADMIN
+  ADVERTISER
+  AGENT
+}
+
+Enum CompletionStatusEnum {
+  COMPLETED
+  UNDER_CONSTRUCTION
+}
+
+Enum FinanceTypeEnum {
+  ISLAMIC
+  CONVENTIONAL
+}
+
 Enum MortgageStatusEnum {
   SUBMITTED
   UNDER_DOCUMENTATION_STAGE
@@ -271,6 +297,22 @@ Enum LoanTypeEnum {
   BUY_PROPERTY_FROM_DEVELOPER
   SHIFT_PROPERTY_LOAN
   GET_CASH_AGAINST_EXISTING_PROPERTY
+}
+
+Enum PropertyForEnum {
+  SALE
+  RENT
+}
+
+Enum ProjectStatusEnum {
+  OFF_PLAN_UNDER_CONSTRUCTION
+  SHELL_AND_CORE
+  COMPLETED
+}
+
+Enum OccupencyStatusEnum {
+  VACANT
+  OCCUPIED
 }
 
 Enum PropertyTypeEnum {
@@ -304,16 +346,6 @@ Enum PropertyCategoryEnum {
   OTHER
 }
 
-Enum CompletionStatusEnum {
-  COMPLETED
-  UNDER_CONSTRUCTION
-}
-
-Enum FinanceTypeEnum {
-  ISLAMIC
-  CONVENTIONAL
-}
-
 Enum EmirateEnum {
   DUBAI
   ABU_DHABI
@@ -322,39 +354,6 @@ Enum EmirateEnum {
   FUJAIRAH
   AJMAN
   UMM_AL_QUWAIN
-}
-
-Enum UserRoleEnum {
-  admin
-  advertiser
-  agent
-}
-
-Enum PropertyForEnum {
-  SALE
-  RENT
-}
-
-Enum ProjectStatusEnum {
-  OFF_PLAN_UNDER_CONSTRUCTION
-  SHELL_AND_CORE
-  COMPLETED
-}
-
-Enum OccupencyStatusEnum {
-  VACANT
-  OCCUPIED
-}
-
-Enum AmenityTypeEnum {
-  PROPERTY
-  BUILDING
-  COMMUNITY
-}
-
-Enum HoldingTypeEnum {
-  FREE_HOLD
-  LEASE_HOLD
 }
 
 Ref: RequiredDocument.requirementId > Requirement.id [delete: Cascade]
@@ -374,8 +373,6 @@ Ref: Comment.userId > User.id
 Ref: Comment.mortgageId > Mortgage.id [delete: Cascade]
 
 Ref: Amenity.propertyId > Property.id
-
-Ref: PropertyPhotos.propertyId > Property.id
 
 Ref: Property.locationId > Location.id
 

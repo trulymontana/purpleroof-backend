@@ -2,17 +2,21 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateMortgageDto } from './dto/create-mortgage.dto';
 import { PrismaService } from 'src/common/providers/prisma/prisma.service';
 import { UpdateMortgageDto } from './dto/update-mortgage.dto';
+import { UserRoleEnum } from '@prisma/client';
 
 @Injectable()
 export class MortgagesService {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(createMortgageDto: CreateMortgageDto) {
-    return this.prisma.mortgage.create({ data: createMortgageDto });
+    return this.prisma.mortgage.create({ data: { ...createMortgageDto } });
   }
 
-  async findAll() {
+  async findAll(userId: number, role: UserRoleEnum) {
     return this.prisma.mortgage.findMany();
+    if (role === UserRoleEnum.ADMIN) return this.prisma.mortgage.findMany();
+
+    return this.prisma.mortgage.findMany({ where: { userId } });
   }
 
   async findOne(id: number) {

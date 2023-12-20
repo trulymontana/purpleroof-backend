@@ -11,39 +11,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum IncomeProfileEnum {
-  SALARIED
-  SELF_EMPLOYED
-  RENTAL_INCOME
-}
 
-enum ResidenceTypeEnum {
-  UAE_NATIONAL
-  UAE_RESIDENT
-  NON_UAE_RESIDENT
-}
-
-enum DocumentTypeEnum {
-  PASSPORT_COPY
-  VISA_COPY
-  EMIRATES_ID
-  BANK_STATEMENT_6_MONTHS
-  BANK_STATEMENT_1_YEAR
-  SALARY_CERTIFICATE
-  TRADE_LICENSE
-  MEMORANDUM_WITH_AMENDMENTS
-  VAT_CERTIFICATE_RETURN_RECEIPTS
-  OFFICE_TENANCY_CONTRACT_UTILITY_BILL
-  COMPANY_PROFILE_WEBSITE
-  TITLE_DEED_COPY
-  TENANCY_CONTRACT_COPY
-  RENTAL_CHEQUE_COPY
-  BANK_STATEMENT_3_MONTHS_EQUIVALENT_AED_25000
-  PROOF_OF_RESIDENCE
-  PROOF_OF_INCOME
-  COMPANY_BANK_STATEMENT_6_MONTHS
-  OWNERSHIP_PROOF_MOBILE_NUMBER
-}
 
 model Requirement {
   id            Int               @id @default(autoincrement())
@@ -94,27 +62,6 @@ model Document {
   Property   Property? @relation(fields: [propertyId], references: [id])
 }
 
-enum MortgageStatusEnum {
-  SUBMITTED
-  UNDER_DOCUMENTATION_STAGE
-  SUBMITTED_TO_BANK
-  APPROVED
-  VALUATION_STAGE
-  FINAL_OFFER_LETTER
-  CASE_DISBURSED
-  PROPERTY_TRANSFER
-  TRANSACTION_COMPLETED
-  CASE_CLOSED
-  CASE_DECLINED
-}
-
-enum LoanTypeEnum {
-  BUY_PROPERTY_FROM_SELLER
-  BUY_PROPERTY_FROM_DEVELOPER
-  SHIFT_PROPERTY_LOAN
-  GET_CASH_AGAINST_EXISTING_PROPERTY
-}
-
 model Mortgage {
   id               Int      @id @default(autoincrement())
   firstName        String   @db.VarChar(255)
@@ -144,56 +91,6 @@ model Mortgage {
   @@index([userId], map: "Mortgages_userId_foreign_idx")
 }
 
-enum PropertyTypeEnum {
-  RESIDENTIAL
-  COMMERCIAL
-}
-
-enum PropertyCategoryEnum {
-  APARTMENT_AND_UNIT
-  VILLA
-  ACREAGE
-  BLOCK_OF_UNITS
-  HOUSE
-  TOWNHOUSE
-  LAND
-  BULK_UNIT
-  COMMERCIAL_BUILDING
-  COMMERCIAL_FLOOR
-  COMMERCIAL_VILLA
-  COMMERCIAL_PLOT
-  FACTORY
-  INDUSTRIAL_UNIT_FOR_SALE
-  INDUSTRIAL_LAND
-  MIXED_USED_SAND
-  OFFICE_FOR_SALE
-  RETAIL_FOR_SALE
-  SHOP
-  STAFF_ACCOMMODATION_FOR_SALE
-  WAREHOUSE
-  SELL_COMMERCIAL_LAND
-  OTHER
-}
-
-enum CompletionStatusEnum {
-  COMPLETED
-  UNDER_CONSTRUCTION
-}
-
-enum FinanceTypeEnum {
-  ISLAMIC
-  CONVENTIONAL
-}
-
-enum EmirateEnum {
-  DUBAI
-  ABU_DHABI
-  RAS_AL_KHAIMAH
-  SHARJAH
-  FUJAIRAH
-  AJMAN
-  UMM_AL_QUWAIN
-}
 
 model MortgageTransaction {
   id                  Int      @id @default(autoincrement())
@@ -229,21 +126,20 @@ model Comment {
   @@index([userId], map: "userId")
 }
 
-enum UserRoleEnum {
-  admin
-  advertiser
-  agent
-}
 
 model User {
   id               Int           @id @default(autoincrement())
+  authId           String        @unique(map: "authId") @db.VarChar(255)
   firstName        String        @db.VarChar(255)
   lastName         String        @db.VarChar(255)
   email            String        @unique(map: "email") @db.VarChar(255)
   password         String        @db.VarChar(255)
+  
+  role            UserRoleEnum @default(ADVERTISER)
+  
   createdAt        DateTime      @default(now()) @db.DateTime(0)
   updatedAt        DateTime      @updatedAt
-  role             UserRoleEnum? @default(advertiser)
+
   agentId          Int?
   isEmailConfirmed Boolean?
   mortgage         Mortgage[]
@@ -252,21 +148,6 @@ model User {
   agent            Agent[]
 }
 
-enum PropertyForEnum {
-  SALE
-  RENT
-}
-
-enum ProjectStatusEnum {
-  OFF_PLAN_UNDER_CONSTRUCTION
-  SHELL_AND_CORE
-  COMPLETED
-}
-
-enum OccupencyStatusEnum {
-  VACANT
-  OCCUPIED
-}
 
 model Location {
   id   Int     @id @default(autoincrement())
@@ -281,11 +162,7 @@ model Location {
   agents     Agent[]
 }
 
-enum AmenityTypeEnum {
-  PROPERTY
-  BUILDING
-  COMMUNITY
-}
+
 
 model Amenity {
   id         Int              @id @default(autoincrement())
@@ -304,14 +181,9 @@ model PropertyPhotos {
   path       String   @unique(map: "path") @db.VarChar(255)
   createdAt  DateTime @default(now()) @db.DateTime(0)
   updatedAt  DateTime @updatedAt
-  property   Property @relation(fields: [propertyId], references: [id])
+  // property   Property @relation(fields: [propertyId], references: [id])
 
   @@index([propertyId], map: "propertyId")
-}
-
-enum HoldingTypeEnum {
-  FREE_HOLD
-  LEASE_HOLD
 }
 
 model Property {
@@ -368,7 +240,7 @@ model Property {
 
   documents      Document[]
   amenities      Amenity[]
-  propertyPhotos PropertyPhotos[]
+  // propertyPhotos PropertyPhotos[]
 }
 
 model Agent {
@@ -399,4 +271,147 @@ model Inqueries {
   message   String   @db.Text
   createdAt DateTime @db.DateTime(0)
   updatedAt DateTime @db.DateTime(0)
+}
+
+enum IncomeProfileEnum {
+  SALARIED
+  SELF_EMPLOYED
+  RENTAL_INCOME
+}
+
+enum ResidenceTypeEnum {
+  UAE_NATIONAL
+  UAE_RESIDENT
+  NON_UAE_RESIDENT
+}
+
+enum DocumentTypeEnum {
+  PASSPORT_COPY
+  VISA_COPY
+  EMIRATES_ID
+  BANK_STATEMENT_6_MONTHS
+  BANK_STATEMENT_1_YEAR
+  SALARY_CERTIFICATE
+  TRADE_LICENSE
+  MEMORANDUM_WITH_AMENDMENTS
+  VAT_CERTIFICATE_RETURN_RECEIPTS
+  OFFICE_TENANCY_CONTRACT_UTILITY_BILL
+  COMPANY_PROFILE_WEBSITE
+  TITLE_DEED_COPY
+  TENANCY_CONTRACT_COPY
+  RENTAL_CHEQUE_COPY
+  BANK_STATEMENT_3_MONTHS_EQUIVALENT_AED_25000
+  PROOF_OF_RESIDENCE
+  PROOF_OF_INCOME
+  COMPANY_BANK_STATEMENT_6_MONTHS
+  OWNERSHIP_PROOF_MOBILE_NUMBER
+}
+
+
+enum AmenityTypeEnum {
+  PROPERTY
+  BUILDING
+  COMMUNITY
+}
+
+enum HoldingTypeEnum {
+  FREE_HOLD
+  LEASE_HOLD
+}
+
+enum UserRoleEnum {
+  ADMIN
+  ADVERTISER
+  AGENT
+}
+
+enum CompletionStatusEnum {
+  COMPLETED
+  UNDER_CONSTRUCTION
+}
+
+enum FinanceTypeEnum {
+  ISLAMIC
+  CONVENTIONAL
+}
+
+
+enum MortgageStatusEnum {
+  SUBMITTED
+  UNDER_DOCUMENTATION_STAGE
+  SUBMITTED_TO_BANK
+  APPROVED
+  VALUATION_STAGE
+  FINAL_OFFER_LETTER
+  CASE_DISBURSED
+  PROPERTY_TRANSFER
+  TRANSACTION_COMPLETED
+  CASE_CLOSED
+  CASE_DECLINED
+}
+
+enum LoanTypeEnum {
+  BUY_PROPERTY_FROM_SELLER
+  BUY_PROPERTY_FROM_DEVELOPER
+  SHIFT_PROPERTY_LOAN
+  GET_CASH_AGAINST_EXISTING_PROPERTY
+}
+
+enum PropertyForEnum {
+  SALE
+  RENT
+}
+
+enum ProjectStatusEnum {
+  OFF_PLAN_UNDER_CONSTRUCTION
+  SHELL_AND_CORE
+  COMPLETED
+}
+
+enum OccupencyStatusEnum {
+  VACANT
+  OCCUPIED
+}
+
+enum PropertyTypeEnum {
+  RESIDENTIAL
+  COMMERCIAL
+}
+
+enum PropertyCategoryEnum {
+  APARTMENT_AND_UNIT
+  VILLA
+  ACREAGE
+  BLOCK_OF_UNITS
+  HOUSE
+  TOWNHOUSE
+  LAND
+  BULK_UNIT
+  COMMERCIAL_BUILDING
+  COMMERCIAL_FLOOR
+  COMMERCIAL_VILLA
+  COMMERCIAL_PLOT
+  FACTORY
+  INDUSTRIAL_UNIT_FOR_SALE
+  INDUSTRIAL_LAND
+  MIXED_USED_SAND
+  OFFICE_FOR_SALE
+  RETAIL_FOR_SALE
+  SHOP
+  STAFF_ACCOMMODATION_FOR_SALE
+  WAREHOUSE
+  SELL_COMMERCIAL_LAND
+  OTHER
+}
+
+
+
+enum EmirateEnum {
+  DUBAI
+  ABU_DHABI
+  RAS_AL_KHAIMAH
+  SHARJAH
+  FUJAIRAH
+  AJMAN
+  UMM_AL_QUWAIN
 }

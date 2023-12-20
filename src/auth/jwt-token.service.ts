@@ -6,8 +6,8 @@ export class JwtTokenService {
   private readonly secretKey = 'purpleroof-secret-key';
 
   // Method to generate a JWT token
-  generateToken({ userId, authUserId, username, email, roles }): string {
-    const payload = { userId, authUserId, username, email, roles };
+  generateToken({ userId, userAuthId, username, email, role }): string {
+    const payload = { userId, userAuthId, username, email, role };
     const options = { expiresIn: '30d' };
 
     // Sign the token with the secret key

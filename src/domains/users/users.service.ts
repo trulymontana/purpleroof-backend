@@ -20,29 +20,7 @@ export class UsersService {
     try {
       authUser = await this.authService.createAuthUser(createUserDto.email, createUserDto.password, createUserDto.name);
 
-      const user = await this.prisma.user.create({
-        data: {
-          // id: authUser.uid,
-          email: createUserDto.email,
-          firstName: createUserDto.name,
-          lastName: createUserDto.name,
-          password: await this.createPasswordHash(createUserDto.password),
-          role: 'advertiser',
-        },
-      });
-
-      // send the user a welcome email
-      const verificationEmailLink = await this.authService.generateEmailVerificationLink(createUserDto.email);
-
-      const jwttoken = this.jwtService.generateToken({
-        authUserId: authUser.uid,
-        userId: user.id,
-        email: authUser.email,
-        username: authUser.displayName,
-        roles: ['advertiser'],
-      });
-
-      return { authUser, user, verificationEmailLink, jwttoken };
+      return { authUser };
     } catch (err) {
       await this.authService.deleteAuthUser(authUser.uid);
       throw new Error(err.message || "Couldn't create user");

@@ -23,10 +23,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();
     // const status = exception.getStatus();
-    let status =
-      exception instanceof HttpException
-        ? exception.getStatus()
-        : HttpStatus.INTERNAL_SERVER_ERROR;
+    let status = exception instanceof HttpException ? exception.getStatus() : HttpStatus.INTERNAL_SERVER_ERROR;
 
     let message: string | string[] = 'Something went wrong';
     let details = '';
@@ -36,8 +33,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
     }
 
     if (exception instanceof PrismaClientUnknownRequestError) {
-      message =
-        "The request couldn't be understood by the server due to malformed syntax";
+      message = "The request couldn't be understood by the server due to malformed syntax";
       message = exception.message;
     }
     // invalid operation: example: want to delete an item that doesn't exist

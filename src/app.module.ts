@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { CommonModule } from './common/common.module';
@@ -11,6 +11,7 @@ import { FilesModule } from './domains/files/files.module';
 import { SuccessInterceptor } from './middlewares/success.interceptor';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { MortgageTransactionsModule } from './domains/mortgage-transactions/mortgage-transactions.module';
+import { AuthMiddleware } from './middlewares/auth.middleware';
 
 @Module({
   imports: [
@@ -32,4 +33,8 @@ import { MortgageTransactionsModule } from './domains/mortgage-transactions/mort
     },
   ],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(AuthMiddleware).forRoutes('*');
+  }
+}

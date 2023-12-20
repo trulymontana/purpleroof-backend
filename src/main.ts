@@ -13,10 +13,13 @@ async function bootstrap() {
     .setTitle('PurpleRoof API')
     .setDescription('The API specifications for the PurpleRoof')
     .setVersion('1.0')
-    .addTag('purpleroof')
+    .addBearerAuth({ type: 'http', scheme: 'bearer', bearerFormat: 'JWT', in: 'header' }, 'access-token')
+
     .build();
 
-  const document = SwaggerModule.createDocument(app, swaggerConfig);
+  const document = SwaggerModule.createDocument(app, swaggerConfig, {
+    operationIdFactory: (controllerKey: string, methodKey: string) => `${controllerKey}-${methodKey}`,
+  });
   SwaggerModule.setup('documentation', app, document);
 
   app.useGlobalFilters(new HttpExceptionFilter());
