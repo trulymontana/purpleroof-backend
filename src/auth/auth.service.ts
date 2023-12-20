@@ -5,6 +5,7 @@ import { PrismaService } from 'src/common/providers/prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
 import { UserRoleEnum } from '@prisma/client';
 import { generateToken } from 'src/utils/jwt-utils';
+import { randomBytes } from 'crypto';
 
 @Injectable()
 export class AuthService {
@@ -82,7 +83,8 @@ export class AuthService {
           lastName: request.lastName,
           password: await this.createPasswordHash(request.password),
           role: UserRoleEnum.ADVERTISER,
-          authId: authUser?.uid ?? '',
+          // authId: authUser?.uid ?? '',
+          authId: randomBytes(16).toString('hex'),
         },
       });
 
