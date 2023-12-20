@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Post } from '@nestjs/common';
 
 import { AuthService } from './auth.service';
 import { SignInRequest } from './dto/sign-in-request.dto';
@@ -8,13 +8,13 @@ import { SignUpRequest } from './dto/sign-up-request.dto';
 export class AuthController {
   constructor(private authService: AuthService) {}
 
-  @Get()
-  @UseGuards()
-  async getUser() {
-    const user = await this.authService.getUser('xxxxxxxxxxxxxxxxxxxx');
+  // @Get()
+  // @UseGuards()
+  // async getUser() {
+  //   const user = await this.authService.getUser('xxxxxxxxxxxxxxxxxxxx');
 
-    return user;
-  }
+  //   return user;
+  // }
 
   @Post('sign-in')
   signIn(@Body() signInRequest: SignInRequest) {
@@ -26,10 +26,10 @@ export class AuthController {
     return this.authService.signUp(signInRequest);
   }
 
-  @Get('reset-password/:email')
-  async forgotPassword(@Param('email') email: string) {
-    const forgotPasswordLink = await this.authService.generatePasswordResetLink(email);
+  // @Get('reset-password/:email')
+  // async forgotPassword(@Param('email') email: string) {
+  //   const forgotPasswordLink = await this.authService.generatePasswordResetLink(email);
 
-    return forgotPasswordLink;
-  }
+  //   return forgotPasswordLink;
+  // }
 }

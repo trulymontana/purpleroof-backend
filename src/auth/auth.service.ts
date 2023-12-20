@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { firebaseAdminAuth } from 'src/utils/firebase-admin-auth';
 import { SignInRequest } from './dto/sign-in-request.dto';
 import { SignUpRequest } from './dto/sign-up-request.dto';
 import { PrismaService } from 'src/common/providers/prisma/prisma.service';
@@ -90,7 +89,7 @@ export class AuthService {
       console.log(user);
 
       // TODO send the link via email
-      const verificationEmailLink = await this.generateEmailVerificationLink(request.email);
+      // const verificationEmailLink = await this.generateEmailVerificationLink(request.email);
 
       const jwtToken = generateToken({
         userAuthId: authUser.uid,
@@ -100,9 +99,9 @@ export class AuthService {
         role: UserRoleEnum.ADVERTISER,
       });
 
-      return { authUser, user, verificationEmailLink, jwtToken };
+      return { authUser, user, jwtToken };
     } catch (e: any) {
-      if (authUser) await this.deleteAuthUser(authUser?.uid);
+      // if (authUser) await this.deleteAuthUser(authUser?.uid);
       if (user)
         await this.prisma.user.delete({
           where: {
@@ -113,29 +112,29 @@ export class AuthService {
     }
   }
 
-  async getUser(uid: string) {
-    const user = await firebaseAdminAuth.getUser(uid);
+  // async getUser(uid: string) {
+  //   const user = await firebaseAdminAuth.getUser(uid);
 
-    return user;
-  }
+  //   return user;
+  // }
 
-  deleteAuthUser = async (uid: string) => {
-    await firebaseAdminAuth.deleteUser(uid);
-  };
+  // deleteAuthUser = async (uid: string) => {
+  //   await firebaseAdminAuth.deleteUser(uid);
+  // };
 
-  generatePasswordResetLink = async (email: string) => {
-    const link = await firebaseAdminAuth.generatePasswordResetLink(email);
+  // generatePasswordResetLink = async (email: string) => {
+  //   const link = await firebaseAdminAuth.generatePasswordResetLink(email);
 
-    return link;
-  };
+  //   return link;
+  // };
 
-  generateEmailVerificationLink = async (email: string) => {
-    const link = await firebaseAdminAuth.generateEmailVerificationLink(email, {
-      url: 'https://www.mohammadfaisal.dev',
-    });
+  // generateEmailVerificationLink = async (email: string) => {
+  //   const link = await firebaseAdminAuth.generateEmailVerificationLink(email, {
+  //     url: 'https://www.mohammadfaisal.dev',
+  //   });
 
-    return link;
-  };
+  //   return link;
+  // };
 
   createPasswordHash = async (password: string) => {
     const saltOrRounds = 10;
