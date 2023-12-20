@@ -1,4 +1,4 @@
-import { IsEmail, IsEnum, IsNotEmpty } from 'class-validator';
+import { IsEmail, IsNotEmpty } from 'class-validator';
 
 export class CreateUserDto {
   @IsNotEmpty()
@@ -8,8 +8,7 @@ export class CreateUserDto {
   @IsNotEmpty()
   password: string;
 
-  name: string;
+  firstName: string;
 
-  @IsEnum(['superadmin', 'admin', 'advertiser', 'agent'])
-  role: string;
+  lastName: string;
 }
