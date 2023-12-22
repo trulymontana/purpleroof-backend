@@ -101,7 +101,7 @@ Table User {
   lastName String [not null]
   email String [unique, not null]
   password String [not null]
-  role UserRoleEnum [default: 'ADVERTISER']
+  role UserRoleEnum [not null, default: 'ADVERTISER']
   createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [not null]
   agentId Int
@@ -126,7 +126,7 @@ Table Amenity {
   id Int [pk, increment]
   name String [unique]
   createdAt DateTime [default: `now()`, not null]
-  updatedAt DateTime [not null]
+  updatedAt DateTime [default: `now()`, not null]
   type AmenityTypeEnum
   property Property
   propertyId Int

@@ -168,7 +168,7 @@ model Amenity {
   id         Int              @id @default(autoincrement())
   name       String?          @unique(map: "name") @db.VarChar(255)
   createdAt  DateTime         @default(now()) @db.DateTime(0)
-  updatedAt  DateTime         @db.DateTime(0)
+  updatedAt  DateTime         @default(now()) @updatedAt
   type       AmenityTypeEnum?
   property   Property?        @relation(fields: [propertyId], references: [id])
   propertyId Int?

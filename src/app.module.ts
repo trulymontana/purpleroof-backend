@@ -12,6 +12,8 @@ import { SuccessInterceptor } from './middlewares/success.interceptor';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { MortgageTransactionsModule } from './domains/mortgage-transactions/mortgage-transactions.module';
 import { AuthMiddleware } from './middlewares/auth.middleware';
+import { AmenitiesModule } from './domains/amenities/amenities.module';
+import { LocationsModule } from './domains/locations/locations.module';
 
 @Module({
   imports: [
@@ -23,6 +25,8 @@ import { AuthMiddleware } from './middlewares/auth.middleware';
     RequirementsModule,
     FilesModule,
     MortgageTransactionsModule,
+    AmenitiesModule,
+    LocationsModule,
   ],
   controllers: [AppController],
   providers: [
