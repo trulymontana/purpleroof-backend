@@ -118,7 +118,6 @@ Table Location {
   emirate EmirateEnum
   createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [not null]
-  properties Property [not null]
   agents Agent [not null]
 }
 
@@ -132,30 +131,40 @@ Table Amenity {
   propertyId Int
 }
 
-Table PropertyPhotos {
+Table Photo {
   id Int [pk, increment]
-  propertyId Int [not null]
   name String [not null]
   path String [unique, not null]
   createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [not null]
+  propertyId Int
+  property Property
 }
 
 Table Property {
   id Int [pk, increment]
   name String [not null]
   description String
+  image String
   phone String [not null]
+  callPreference String
+  noticePeriod Int
+  otherFeatures String
+  nearbyPlaces String
+  metroStation String
+  airportDistance String
+  street String
+  location String
   amount Float [not null]
   size Float
   numberOfBedRooms Int
   numberOfBathRooms Int
+  parkingSpaces Int
   maintenanceFee Float
   address String
   landmark String
   completionDate DateTime
   minimumContract Float
-  noticePeriod Float
   deedNumber String
   unitNumber Int
   buildingName String
@@ -178,16 +187,16 @@ Table Property {
   propertyFor PropertyForEnum [default: 'SALE']
   propertyType PropertyTypeEnum
   propertyCategory PropertyCategoryEnum
-  holdingType HoldingTypeEnum
+  holdingType HoldingTypeEnum [default: 'FREE_HOLD']
   emirate EmirateEnum
-  locationId Int
-  location Location
+  submissionStatus SubmissionStatusEnum [default: 'SUBMITTED']
   userId Int
   user User
   agentId Int
   agent Agent
   documents Document [not null]
   amenities Amenity [not null]
+  photos Photo [not null]
 }
 
 Table Agent {
@@ -215,6 +224,13 @@ Table Inqueries {
   message String [not null]
   createdAt DateTime [not null]
   updatedAt DateTime [not null]
+}
+
+Enum SubmissionStatusEnum {
+  SUBMITTED
+  UNDER_VERIFICATION
+  APPROVED
+  REJECTED
 }
 
 Enum IncomeProfileEnum {
@@ -374,7 +390,7 @@ Ref: Comment.mortgageId > Mortgage.id [delete: Cascade]
 
 Ref: Amenity.propertyId > Property.id
 
-Ref: Property.locationId > Location.id
+Ref: Photo.propertyId > Property.id
 
 Ref: Property.userId > User.id [delete: Cascade]
 

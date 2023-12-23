@@ -19,7 +19,14 @@ export class PropertiesService {
             ...document,
           })),
         },
-      },
+        photos: {
+          create: createPropertyDto.photos.map((photo) => ({
+            path: photo,
+            name: photo,
+          })),
+        },
+        userId: createPropertyDto.userId,
+      } as any,
     });
 
     return { property };

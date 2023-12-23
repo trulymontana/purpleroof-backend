@@ -1,4 +1,4 @@
-import { IsString, IsOptional, IsNumber, IsEnum, IsBoolean } from 'class-validator';
+import { IsString, IsOptional, IsNumber, IsEnum, IsBoolean, IsArray } from 'class-validator';
 import {
   ProjectStatusEnum,
   EmirateEnum,
@@ -8,8 +8,10 @@ import {
   HoldingTypeEnum,
   PropertyForEnum,
   OccupencyStatusEnum,
+  SubmissionStatusEnum,
 } from '@prisma/client';
-export class CreatePropertyDto {
+import { BaseRequest } from 'src/utils/BaseRequest';
+export class CreatePropertyDto extends BaseRequest {
   @IsString()
   name: string;
 
@@ -19,6 +21,13 @@ export class CreatePropertyDto {
 
   @IsString()
   phone: string;
+
+  @IsString()
+  image: string;
+
+  @IsString()
+  @IsOptional()
+  callPreference: string;
 
   @IsNumber()
   amount: number;
@@ -37,11 +46,47 @@ export class CreatePropertyDto {
 
   @IsOptional()
   @IsNumber()
+  parkingSpaces?: number;
+
+  @IsOptional()
+  @IsNumber()
+  airportDistance?: number;
+
+  @IsOptional()
+  @IsNumber()
   maintenanceFee?: number;
+
+  @IsOptional()
+  @IsNumber()
+  noticePeriod?: number;
 
   @IsOptional()
   @IsString()
   address?: string;
+
+  @IsOptional()
+  @IsString()
+  street?: string;
+
+  @IsOptional()
+  @IsString()
+  nearbyPlaces?: string;
+
+  @IsOptional()
+  @IsArray()
+  photos?: string[];
+
+  @IsOptional()
+  @IsArray()
+  amenities?: number[];
+
+  @IsOptional()
+  @IsString()
+  otherFeatures?: string;
+
+  @IsOptional()
+  @IsString()
+  metroStation?: string;
 
   @IsOptional()
   @IsString()
@@ -53,10 +98,6 @@ export class CreatePropertyDto {
   @IsOptional()
   @IsNumber()
   minimumContract?: number;
-
-  @IsOptional()
-  @IsNumber()
-  noticePeriod?: number;
 
   @IsOptional()
   @IsString()
@@ -143,12 +184,12 @@ export class CreatePropertyDto {
   emirate?: EmirateEnum;
 
   @IsOptional()
-  @IsNumber()
-  locationId?: number;
+  @IsEnum(SubmissionStatusEnum)
+  submissionStatus?: SubmissionStatusEnum;
 
   @IsOptional()
   @IsNumber()
-  userId?: number;
+  locationId?: number;
 
   @IsOptional()
   @IsNumber()
@@ -162,30 +203,3 @@ interface DocumentCreateDto {
   type: DocumentTypeEnum;
   url: string;
 }
-
-// // @ts-ignore
-// delete property.locationId
-// // @ts-ignore
-// delete property.street
-// // @ts-ignore
-// delete property.propertyImage
-// // @ts-ignore
-// delete property.propertyPhotos
-// // @ts-ignore
-// delete property.status
-// // @ts-ignore
-// delete property.parkingSpaces
-// // @ts-ignore
-// delete property.airportDistance
-// // @ts-ignore
-// delete property.metroStation
-// // @ts-ignore
-// delete property.nearbyPlaces
-// // @ts-ignore
-// delete property.otherFeatures
-// // @ts-ignore
-// delete property.amenities
-// // @ts-ignore
-// delete property.noticePeriodProperty
-// // @ts-ignore
-// delete property.callPreference
