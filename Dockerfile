@@ -7,6 +7,7 @@ COPY package*.json ./
 COPY prisma ./prisma/
 
 # COPY secrets ./secrets/
+COPY assets ./assets/
 
 RUN npm install
 

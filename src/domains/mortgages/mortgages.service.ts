@@ -2,14 +2,54 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateMortgageDto } from './dto/create-mortgage.dto';
 import { PrismaService } from 'src/common/providers/prisma/prisma.service';
 import { UpdateMortgageDto } from './dto/update-mortgage.dto';
-import { UserRoleEnum } from '@prisma/client';
+import { ResidenceTypeEnum, UserRoleEnum, Requirement } from '@prisma/client';
+import { renderHtmlFromTemplate } from './mortgage-email-utils/render-html-from-template';
+import { sendEmailPdf } from './mortgage-email-utils/email-helper';
 
 @Injectable()
 export class MortgagesService {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(createMortgageDto: CreateMortgageDto) {
-    return this.prisma.mortgage.create({ data: { ...createMortgageDto } });
+    const mortgage = await this.prisma.mortgage.create({ data: { ...createMortgageDto } });
+
+    console.log(mortgage);
+    const requirementCondition =
+      createMortgageDto.residenceType === ResidenceTypeEnum.UAE_RESIDENT
+        ? { residenceType: createMortgageDto.residenceType }
+        : { incomeProfile: createMortgageDto.incomeProfile };
+
+    console.log('found the requirement condition', requirementCondition);
+    const requirement: Requirement = await this.prisma.requirement.findFirst({
+      where: requirementCondition,
+    });
+
+    const requiredDocuments = await this.prisma.requiredDocument.findMany({
+      where: { requirementId: requirement.id },
+    });
+
+    if (!requirement) throw new NotFoundException(`Requirement not found`);
+
+    console.log('found the requirement', requirement);
+
+    const requiredDocumentNames = requiredDocuments.map((requiredDocument) => requiredDocument.name);
+
+    renderHtmlFromTemplate(mortgage, requirement, requiredDocumentNames).then(async (res: { pdfFileName: string }) => {
+      console.log(res);
+      const newEmail = mortgage.email.replace(/[@.]/g, '');
+      await sendEmailPdf(
+        mortgage.email,
+        `${mortgage.firstName}_${mortgage.lastName}`,
+        newEmail,
+        mortgage.id,
+        {
+          currentDate: new Date().getFullYear(),
+        },
+        res?.pdfFileName,
+      );
+    });
+
+    return mortgage;
   }
 
   async findAll(userId: number, role: UserRoleEnum) {

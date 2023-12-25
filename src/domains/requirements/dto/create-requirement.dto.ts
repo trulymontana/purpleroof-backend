@@ -1,4 +1,13 @@
-import { IsEnum, IsString, IsArray, ValidateNested, IsBoolean, IsOptional, IsNumber } from 'class-validator';
+import {
+  IsEnum,
+  IsString,
+  IsArray,
+  ValidateNested,
+  IsBoolean,
+  IsOptional,
+  IsNumber,
+  IsNotEmpty,
+} from 'class-validator';
 import { Type } from 'class-transformer';
 import { DocumentTypeEnum, IncomeProfileEnum, ResidenceTypeEnum } from '@prisma/client';
 
@@ -18,30 +27,39 @@ class CreateRequiredDocumentDto {
 
 export class CreateRequirementDto {
   @IsString()
+  @IsNotEmpty()
   name: string;
 
   @IsEnum(IncomeProfileEnum)
+  @IsNotEmpty()
   incomeProfile: IncomeProfileEnum;
 
   @IsEnum(ResidenceTypeEnum)
+  @IsNotEmpty()
   residenceType: ResidenceTypeEnum;
 
   @IsNumber()
+  @IsNotEmpty()
   preApprovalFee: number;
 
   @IsNumber()
+  @IsNotEmpty()
   processingFee: number;
 
   @IsNumber()
+  @IsNotEmpty()
   rate: number;
 
   @IsNumber()
+  @IsNotEmpty()
   lifeInsurance: number;
 
   @IsNumber()
+  @IsNotEmpty()
   propertyInsurance: number;
 
   @IsNumber()
+  @IsNotEmpty()
   valuationFee: number;
 
   @IsArray()
