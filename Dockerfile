@@ -11,6 +11,8 @@ COPY assets ./assets/
 
 RUN npm install
 
+RUN sudo apt-get install chromium-browser
+
 RUN npx prisma generate
 
 COPY . .
@@ -24,6 +26,8 @@ ARG S3_SECRET_ACCESS_KEY
 
 
 EXPOSE 4000
+
+RUN sudo apt-get install chromium-browser
 
 RUN npm run build
 
