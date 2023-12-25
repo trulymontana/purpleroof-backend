@@ -17,12 +17,12 @@ model Requirement {
   incomeProfile IncomeProfileEnum
   residenceType ResidenceTypeEnum
 
-  preApprovalFee    Int @db.Int
-  processingFee     Int @db.Int
-  rate              Int @db.Int
-  lifeInsurance     Int @db.Int
-  propertyInsurance Int @db.Int
-  valuationFee      Int @db.Int
+  preApprovalFee    Int @db.Int @default(0)
+  processingFee     Int @db.Int @default(0)
+  rate              Int @db.Int @default(0)
+  lifeInsurance     Int @db.Int @default(0)
+  propertyInsurance Int @db.Int @default(0)
+  valuationFee      Int @db.Int @default(0)
 
   requiredDocuments RequiredDocument[] @relation("RequirementToRequiredDocuments")
 
@@ -36,7 +36,7 @@ model RequiredDocument {
   documentType  DocumentTypeEnum
   isMandatory   Boolean          @default(false)
   createdAt     DateTime         @default(now()) @db.DateTime(0)
-  updatedAt     DateTime         @updatedAt
+  updatedAt     DateTime         @default(now()) @updatedAt
   requirement   Requirement      @relation("RequirementToRequiredDocuments", onDelete: Cascade, fields: [requirementId], references: [id])
   requirementId Int
 }
