@@ -68,6 +68,7 @@ export class MortgagesService {
 
     const requirement: Requirement = await this.prisma.requirement.findFirst({
       where: requirementCondition,
+      include: { requiredDocuments: true },
     });
 
     if (!mortgage) {
