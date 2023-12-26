@@ -31,7 +31,7 @@ ARG S3_SECRET_ACCESS_KEY
 
 EXPOSE 4000
 
-RUN sudo apt-get install chromium-browser
+# RUN sudo apt-get install chromium-browser
 
 RUN npm run build
 
