@@ -15,7 +15,7 @@ COPY assets ./assets/
 
 RUN npm install
 
-RUN sudo apt-get install chromium-browser
+# RUN sudo apt-get install chromium-browser
 
 RUN npx prisma generate
 
