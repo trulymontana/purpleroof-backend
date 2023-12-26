@@ -13,7 +13,6 @@ export class MortgagesService {
   async create(createMortgageDto: CreateMortgageDto) {
     const mortgage = await this.prisma.mortgage.create({ data: { ...createMortgageDto } });
 
-    console.log(mortgage);
     const requirementCondition =
       createMortgageDto.residenceType === ResidenceTypeEnum.UAE_RESIDENT
         ? { residenceType: createMortgageDto.residenceType }
@@ -62,11 +61,20 @@ export class MortgagesService {
   async findOne(id: number) {
     const mortgage = await this.prisma.mortgage.findUnique({ where: { id } });
 
+    const requirementCondition =
+      mortgage.residenceType === ResidenceTypeEnum.UAE_RESIDENT
+        ? { residenceType: mortgage.residenceType }
+        : { incomeProfile: mortgage.incomeProfile };
+
+    const requirement: Requirement = await this.prisma.requirement.findFirst({
+      where: requirementCondition,
+    });
+
     if (!mortgage) {
       throw new NotFoundException(`Mortgage with ID ${id} not found`);
     }
 
-    return mortgage;
+    return { mortgage, requirement };
   }
 
   async update(id: number, updateMortgageDto: UpdateMortgageDto) {
