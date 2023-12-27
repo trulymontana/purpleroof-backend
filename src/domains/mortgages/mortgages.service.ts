@@ -77,7 +77,7 @@ export class MortgagesService {
 
     mortgage.requirement = requirement;
 
-    return { mortgage, requirement };
+    return mortgage;
   }
 
   async update(id: number, updateMortgageDto: UpdateMortgageDto) {
