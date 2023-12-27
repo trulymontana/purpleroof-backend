@@ -59,7 +59,7 @@ export class MortgagesService {
   }
 
   async findOne(id: number) {
-    const mortgage = await this.prisma.mortgage.findUnique({ where: { id } });
+    const mortgage: any = await this.prisma.mortgage.findUnique({ where: { id } });
 
     const requirementCondition =
       mortgage.residenceType === ResidenceTypeEnum.UAE_RESIDENT
@@ -74,6 +74,8 @@ export class MortgagesService {
     if (!mortgage) {
       throw new NotFoundException(`Mortgage with ID ${id} not found`);
     }
+
+    mortgage.requirement = requirement;
 
     return { mortgage, requirement };
   }
