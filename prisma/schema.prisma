@@ -17,12 +17,12 @@ model Requirement {
   incomeProfile IncomeProfileEnum
   residenceType ResidenceTypeEnum
 
-  preApprovalFee    Int @db.Int @default(0)
-  processingFee     Int @db.Int @default(0)
-  rate              Int @db.Int @default(0)
-  lifeInsurance     Int @db.Int @default(0)
-  propertyInsurance Int @db.Int @default(0)
-  valuationFee      Int @db.Int @default(0)
+  preApprovalFee    Int @default(0) @db.Int
+  processingFee     Int @default(0) @db.Int
+  rate              Int @default(0) @db.Int
+  lifeInsurance     Int @default(0) @db.Int
+  propertyInsurance Int @default(0) @db.Int
+  valuationFee      Int @default(0) @db.Int
 
   requiredDocuments RequiredDocument[] @relation("RequirementToRequiredDocuments")
 
@@ -54,10 +54,31 @@ model Document {
   mortgageId Int?
 
   commentId Int?
-  Comment   Comment? @relation(fields: [commentId], references: [id])
+  comment   Comment? @relation(fields: [commentId], references: [id])
 
   propertyId Int?
-  Property   Property? @relation(fields: [propertyId], references: [id])
+  property   Property? @relation(fields: [propertyId], references: [id])
+}
+
+enum ReferenceTypeEnum {
+  PERSONAL
+  PROFESSIONAL
+}
+
+model Reference {
+  id           Int       @id @default(autoincrement())
+  title        String?   @db.VarChar(255)
+  name         String    @db.VarChar(255)
+  email        String?   @db.VarChar(255)
+  phone        String    @db.VarChar(255)
+  relationship String    @db.VarChar(255)
+
+  createdAt    DateTime  @default(now()) @db.DateTime(0)
+  updatedAt    DateTime  @default(now()) @updatedAt
+
+  mortgageId   Int?
+  mortgage     Mortgage? @relation(fields: [mortgageId], references: [id])
+  
 }
 
 model Mortgage {
@@ -70,54 +91,79 @@ model Mortgage {
   intendedProperty String   @db.VarChar(255)
   monthlyIncome    Float
   valueOfProperty  Float    @default(0)
-  createdAt        DateTime @default(now()) @db.DateTime(0)
-  updatedAt        DateTime @updatedAt
   country          String?  @default("") @db.VarChar(255)
+
+  createdAt DateTime @default(now()) @db.DateTime(0)
+  updatedAt DateTime @updatedAt
 
   status        MortgageStatusEnum
   residenceType ResidenceTypeEnum
   incomeProfile IncomeProfileEnum
   loanType      LoanTypeEnum
 
-  documents Document[]
-  userId    Int?
-  user      User?      @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "mortgage_userId_foreign_idx")
+  additionalDetail    String? @db.VarChar(255)
+  customerInformation String? @db.VarChar(255)
+  favoriteCity        String? @db.VarChar(255)
+  yearsInUae          Int?    @default(0)
+  familyMembersInUae  Int?    @default(0)
+  uaeResidenceAddress String? @db.VarChar(255)
+  homeCountryAddress  String? @db.VarChar(255)
 
-  comments             Comment[]
-  mortgageTransactions MortgageTransaction[]
-
-  @@index([userId], map: "Mortgages_userId_foreign_idx")
-}
-
-model MortgageTransaction {
-  id                  Int      @id @default(autoincrement())
-  additionalDetail    String?  @db.Text
-  customerInformation String?  @db.Text
-  createdAt           DateTime @default(now()) @db.DateTime(0)
-  updatedAt           DateTime @updatedAt
-
+  maritalStatus    MaritalStatusEnum?
+  educationType    EducationTypeEnum?
   financeType      FinanceTypeEnum?
   emirate          EmirateEnum?
   propertyType     PropertyTypeEnum?
   completionStatus CompletionStatusEnum?
-  loanType         LoanTypeEnum?
 
-  mortgageId Int
-  mortgage   Mortgage @relation(fields: [mortgageId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "MortgageTransactions_mortgageId_foreign_idx")
+  userId Int?
+  user   User? @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "mortgage_userId_foreign_idx")
 
-  @@index([mortgageId], map: "MortgageTransactions_mortgageId_foreign_idx")
+  documents  Document[] 
+  comments   Comment[]
+  references Reference[]
+  history    History[]
+
+  @@index([userId], map: "Mortgages_userId_foreign_idx")
+}
+
+enum HistoryTypeEnum {
+  MORTGAGE
+  PROPERTY
+  COMMENT
+}
+
+model History {
+  id          Int             @id @default(autoincrement())
+  title       String          @db.VarChar(255)
+  description String          @db.Text
+  type        HistoryTypeEnum
+
+  mortgageId Int?
+  mortgage   Mortgage? @relation(fields: [mortgageId], references: [id])
+
+  userId Int?
+  user   User? @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now()) @db.DateTime(0)
+  updatedAt DateTime @default(now()) @updatedAt
 }
 
 model Comment {
-  id          Int        @id @default(autoincrement())
-  userId      Int
-  mortgageId  Int
+  id Int @id @default(autoincrement())
+
+  title       String     @db.VarChar(255)
   message     String     @db.Text
-  createdAt   DateTime   @default(now()) @db.DateTime(0)
-  updatedAt   DateTime   @updatedAt
   attachments Document[]
-  user        User       @relation(fields: [userId], references: [id])
-  mortgage    Mortgage   @relation(fields: [mortgageId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "MortgageComments_ibfk_2")
+
+  userId Int
+  user   User @relation(fields: [userId], references: [id])
+
+  mortgageId Int
+  mortgage   Mortgage @relation(fields: [mortgageId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "MortgageComments_ibfk_2")
+
+  createdAt DateTime @default(now()) @db.DateTime(0)
+  updatedAt DateTime @default(now()) @updatedAt
 
   @@index([mortgageId], map: "mortgageId")
   @@index([userId], map: "userId")
@@ -142,6 +188,7 @@ model User {
   comments         Comment[]
   properties       Property[]
   agent            Agent[]
+  history          History[]
 }
 
 model Location {
@@ -188,27 +235,27 @@ enum SubmissionStatusEnum {
 }
 
 model Property {
-  id                   Int     @id @default(autoincrement())
-  name                 String  @db.VarChar(255)
-  description          String? @db.Text
-  image                String? @db.VarChar(255)
-  phone                String  @db.VarChar(255)
-  callPreference       String? @db.VarChar(255)
-  noticePeriod Int?
-  otherFeatures        String? @db.Text
-  nearbyPlaces         String? @db.VarChar(255)
-  metroStation         String? @db.VarChar(255)
-  airportDistance      String? @db.VarChar(255)
-  street               String? @db.VarChar(255)
-  location             String? @db.VarChar(255)
-  amount               Float
-  size                 Float?
-  numberOfBedRooms     Int?
-  numberOfBathRooms    Int?
-  parkingSpaces        Int?
-  maintenanceFee       Float?
-  address              String? @db.VarChar(255)
-  landmark             String? @db.Text
+  id                Int     @id @default(autoincrement())
+  name              String  @db.VarChar(255)
+  description       String? @db.Text
+  image             String? @db.VarChar(255)
+  phone             String  @db.VarChar(255)
+  callPreference    String? @db.VarChar(255)
+  noticePeriod      Int?
+  otherFeatures     String? @db.Text
+  nearbyPlaces      String? @db.VarChar(255)
+  metroStation      String? @db.VarChar(255)
+  airportDistance   String? @db.VarChar(255)
+  street            String? @db.VarChar(255)
+  location          String? @db.VarChar(255)
+  amount            Float
+  size              Float?
+  numberOfBedRooms  Int?
+  numberOfBathRooms Int?
+  parkingSpaces     Int?
+  maintenanceFee    Float?
+  address           String? @db.VarChar(255)
+  landmark          String? @db.Text
 
   completionDate                         DateTime? @db.DateTime(0)
   minimumContract                        Float?
@@ -233,10 +280,10 @@ model Property {
 
   projectStatus    ProjectStatusEnum?
   occupencyStatus  OccupencyStatusEnum?
-  propertyFor      PropertyForEnum?              @default(SALE)
+  propertyFor      PropertyForEnum?      @default(SALE)
   propertyType     PropertyTypeEnum?
   propertyCategory PropertyCategoryEnum?
-  holdingType      HoldingTypeEnum?              @default(FREE_HOLD)
+  holdingType      HoldingTypeEnum?      @default(FREE_HOLD)
   emirate          EmirateEnum?
   submissionStatus SubmissionStatusEnum? @default(SUBMITTED)
 
@@ -282,6 +329,30 @@ model Inqueries {
   message   String   @db.Text
   createdAt DateTime @db.DateTime(0)
   updatedAt DateTime @db.DateTime(0)
+}
+
+enum MaritalStatusEnum {
+  SINGLE
+  MARRIED
+  DIVORCED
+  WIDOWED
+}
+
+enum EducationTypeEnum {
+  ELEMENTARY_SCHOOL
+  MIDDLE_SCHOOL
+  HIGH_SCHOOL
+  COLLEGE
+  VOCATIONAL_SCHOOL
+  GRADUATE_SCHOOL
+  ONLINE_COURSES
+  PROFESSIONAL_DEVELOPMENT
+  HOMESCHOOLING
+  LIFELONG_LEARNING
+  SPECIALIZED_TRAINING_PROGRAMS
+  LANGUAGE_COURSES
+  CERTIFICATE_PROGRAMS
+  TRADE_SCHOOLS
 }
 
 enum IncomeProfileEnum {

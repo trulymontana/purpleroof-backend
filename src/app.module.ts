@@ -10,7 +10,6 @@ import { RequirementsModule } from './domains/requirements/requirements.module';
 import { FilesModule } from './domains/files/files.module';
 import { SuccessInterceptor } from './middlewares/success.interceptor';
 import { APP_INTERCEPTOR } from '@nestjs/core';
-import { MortgageTransactionsModule } from './domains/mortgage-transactions/mortgage-transactions.module';
 import { AuthMiddleware } from './middlewares/auth.middleware';
 import { AmenitiesModule } from './domains/amenities/amenities.module';
 import { LocationsModule } from './domains/locations/locations.module';
@@ -24,7 +23,6 @@ import { LocationsModule } from './domains/locations/locations.module';
     PropertiesModule,
     RequirementsModule,
     FilesModule,
-    MortgageTransactionsModule,
     AmenitiesModule,
     LocationsModule,
   ],

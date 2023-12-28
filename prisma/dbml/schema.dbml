@@ -24,7 +24,7 @@ Table RequiredDocument {
   documentType DocumentTypeEnum [not null]
   isMandatory Boolean [not null, default: false]
   createdAt DateTime [default: `now()`, not null]
-  updatedAt DateTime [not null]
+  updatedAt DateTime [default: `now()`, not null]
   requirement Requirement [not null]
   requirementId Int [not null]
 }
@@ -38,9 +38,22 @@ Table Document {
   mortgage Mortgage
   mortgageId Int
   commentId Int
-  Comment Comment
+  comment Comment
   propertyId Int
-  Property Property
+  property Property
+}
+
+Table Reference {
+  id Int [pk, increment]
+  title String
+  name String [not null]
+  email String
+  phone String [not null]
+  relationship String [not null]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [default: `now()`, not null]
+  mortgageId Int
+  mortgage Mortgage
 }
 
 Table Mortgage {
@@ -53,45 +66,58 @@ Table Mortgage {
   intendedProperty String [not null]
   monthlyIncome Float [not null]
   valueOfProperty Float [not null, default: 0]
+  country String [default: '']
   createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [not null]
-  country String [default: '']
   status MortgageStatusEnum [not null]
   residenceType ResidenceTypeEnum [not null]
   incomeProfile IncomeProfileEnum [not null]
   loanType LoanTypeEnum [not null]
-  documents Document [not null]
-  userId Int
-  user User
-  comments Comment [not null]
-  mortgageTransactions MortgageTransaction [not null]
-}
-
-Table MortgageTransaction {
-  id Int [pk, increment]
   additionalDetail String
   customerInformation String
-  createdAt DateTime [default: `now()`, not null]
-  updatedAt DateTime [not null]
+  favoriteCity String
+  yearsInUae Int [default: 0]
+  familyMembersInUae Int [default: 0]
+  uaeResidenceAddress String
+  homeCountryAddress String
+  maritalStatus MaritalStatusEnum
+  educationType EducationTypeEnum
   financeType FinanceTypeEnum
   emirate EmirateEnum
   propertyType PropertyTypeEnum
   completionStatus CompletionStatusEnum
-  loanType LoanTypeEnum
-  mortgageId Int [not null]
-  mortgage Mortgage [not null]
+  userId Int
+  user User
+  documents Document [not null]
+  comments Comment [not null]
+  references Reference [not null]
+  history History [not null]
+}
+
+Table History {
+  id Int [pk, increment]
+  title String [not null]
+  description String [not null]
+  type HistoryTypeEnum [not null]
+  mortgageId Int
+  mortgage Mortgage
+  userId Int
+  user User
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [default: `now()`, not null]
 }
 
 Table Comment {
   id Int [pk, increment]
-  userId Int [not null]
-  mortgageId Int [not null]
+  title String [not null]
   message String [not null]
-  createdAt DateTime [default: `now()`, not null]
-  updatedAt DateTime [not null]
   attachments Document [not null]
+  userId Int [not null]
   user User [not null]
+  mortgageId Int [not null]
   mortgage Mortgage [not null]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [default: `now()`, not null]
 }
 
 Table User {
@@ -110,6 +136,7 @@ Table User {
   comments Comment [not null]
   properties Property [not null]
   agent Agent [not null]
+  history History [not null]
 }
 
 Table Location {
@@ -226,11 +253,46 @@ Table Inqueries {
   updatedAt DateTime [not null]
 }
 
+Enum ReferenceTypeEnum {
+  PERSONAL
+  PROFESSIONAL
+}
+
+Enum HistoryTypeEnum {
+  MORTGAGE
+  PROPERTY
+  COMMENT
+}
+
 Enum SubmissionStatusEnum {
   SUBMITTED
   UNDER_VERIFICATION
   APPROVED
   REJECTED
+}
+
+Enum MaritalStatusEnum {
+  SINGLE
+  MARRIED
+  DIVORCED
+  WIDOWED
+}
+
+Enum EducationTypeEnum {
+  ELEMENTARY_SCHOOL
+  MIDDLE_SCHOOL
+  HIGH_SCHOOL
+  COLLEGE
+  VOCATIONAL_SCHOOL
+  GRADUATE_SCHOOL
+  ONLINE_COURSES
+  PROFESSIONAL_DEVELOPMENT
+  HOMESCHOOLING
+  LIFELONG_LEARNING
+  SPECIALIZED_TRAINING_PROGRAMS
+  LANGUAGE_COURSES
+  CERTIFICATE_PROGRAMS
+  TRADE_SCHOOLS
 }
 
 Enum IncomeProfileEnum {
@@ -380,9 +442,13 @@ Ref: Document.commentId > Comment.id
 
 Ref: Document.propertyId > Property.id
 
+Ref: Reference.mortgageId > Mortgage.id
+
 Ref: Mortgage.userId > User.id [delete: Cascade]
 
-Ref: MortgageTransaction.mortgageId > Mortgage.id [delete: Cascade]
+Ref: History.mortgageId > Mortgage.id
+
+Ref: History.userId > User.id
 
 Ref: Comment.userId > User.id
 
