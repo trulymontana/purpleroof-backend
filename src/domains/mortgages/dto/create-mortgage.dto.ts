@@ -74,6 +74,10 @@ export class CreateMortgageDto extends BaseRequest {
   familyMembersInUae: number;
 
   @IsOptional()
+  @IsNumber()
+  annualRentalIncome: number;
+
+  @IsOptional()
   uaeResidenceAddress: string;
 
   @IsOptional()

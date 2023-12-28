@@ -106,6 +106,7 @@ model Mortgage {
   favoriteCity        String? @db.VarChar(255)
   yearsInUae          Int?    @default(0)
   familyMembersInUae  Int?    @default(0)
+  annualRentalIncome  Int?    @default(0)
   uaeResidenceAddress String? @db.VarChar(255)
   homeCountryAddress  String? @db.VarChar(255)
 
