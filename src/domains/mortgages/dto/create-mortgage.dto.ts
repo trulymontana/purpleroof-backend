@@ -97,7 +97,7 @@ export class CreateMortgageDto extends BaseRequest {
 
   @IsOptional()
   @IsEnum(EducationTypeEnum)
-  educationalQualification: EducationTypeEnum;
+  educationType: EducationTypeEnum;
 
   @IsOptional()
   @IsEnum(FinanceTypeEnum)
