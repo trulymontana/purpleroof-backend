@@ -92,7 +92,7 @@ export class CreateMortgageDto extends BaseRequest {
   loanType: LoanTypeEnum;
 
   @IsOptional()
-  @IsEnum(LoanTypeEnum)
+  @IsEnum(MaritalStatusEnum)
   maritalStatus: MaritalStatusEnum;
 
   @IsOptional()

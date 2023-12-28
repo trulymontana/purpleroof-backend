@@ -11,10 +11,6 @@ export class MortgagesService {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(createMortgageDto: CreateMortgageDto) {
-    // create a mortgage,
-    // create the documents and attach it to the mortgage
-    // create the history and attach it to the mortgage
-
     const { references, documents, ...mortgageData } = createMortgageDto;
 
     const requirementCondition =

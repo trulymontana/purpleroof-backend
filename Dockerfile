@@ -1,10 +1,25 @@
 FROM node:20-alpine
 
+# Installs latest Chromium (100) package.
+# RUN apk add --no-cache \
+#       chromium \
+#       nss \
+#       freetype \
+#       harfbuzz \
+#       ca-certificates \
+#       ttf-freefont \
+#       nodejs \
+#       yarn
+ 
+# # Tell Puppeteer to skip installing Chrome. We'll be using the installed package.
+# ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
+ 
+# Puppeteer v13.5.0 works with Chromium 100.
+
+
 WORKDIR /usr/src/app
 
 USER root
-
-# RUN apt-get update && apt-get install -y chromium-browser
 
 COPY package*.json ./
 
@@ -15,7 +30,6 @@ COPY assets ./assets/
 
 RUN npm install
 
-# RUN sudo apt-get install chromium-browser
 
 RUN npx prisma generate
 
@@ -31,7 +45,6 @@ ARG S3_SECRET_ACCESS_KEY
 
 EXPOSE 4000
 
-# RUN sudo apt-get install chromium-browser
 
 RUN npm run build
 
