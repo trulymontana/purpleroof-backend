@@ -76,10 +76,17 @@ export class MortgagesService {
   };
 
   async findAll(userId: number, role: UserRoleEnum) {
-    return this.prisma.mortgage.findMany();
-    if (role === UserRoleEnum.ADMIN) return this.prisma.mortgage.findMany();
+    console.log('userId', userId, role);
+    if (role === UserRoleEnum.ADMIN) return this.prisma.mortgage.findMany({ orderBy: { createdAt: 'desc' } });
 
-    return this.prisma.mortgage.findMany({ where: { userId } });
+    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+    if (!user) throw new NotFoundException(`User with ID ${userId} not found`);
+
+    console.log('user', user.email);
+
+    const mortgages = await this.prisma.mortgage.findMany({ where: { email: user.email } });
+
+    return mortgages;
   }
 
   async findOne(id: number) {

@@ -2,6 +2,8 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { PropertiesService } from './properties.service';
 import { CreatePropertyDto } from './dto/create-property.dto';
 import { UpdatePropertyDto } from './dto/update-property.dto';
+import { SearchPropertyDto } from './dto/search-property.dto';
+import { Property } from '@prisma/client';
 
 @Controller('properties')
 export class PropertiesController {
@@ -20,6 +22,11 @@ export class PropertiesController {
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.propertiesService.findOne(+id);
+  }
+
+  @Post('search')
+  async searchProperties(@Body() filters: SearchPropertyDto): Promise<Property[]> {
+    return await this.propertiesService.searchProperties(filters);
   }
 
   @Patch(':id')

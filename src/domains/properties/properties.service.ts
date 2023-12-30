@@ -3,6 +3,8 @@ import { UpdatePropertyDto } from './dto/update-property.dto';
 import { PrismaService } from 'src/common/providers/prisma/prisma.service';
 
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { SearchPropertyDto } from './dto/search-property.dto';
+import { Property } from '@prisma/client';
 
 @Injectable()
 export class PropertiesService {
@@ -77,5 +79,62 @@ export class PropertiesService {
     }
 
     return this.prisma.property.delete({ where: { id } });
+  }
+
+  async searchProperties(filters: SearchPropertyDto): Promise<Property[]> {
+    const query: any = {};
+
+    if (filters.minPrice) {
+      query.amount = { gte: filters.minPrice };
+    }
+
+    if (filters.maxPrice) {
+      query.amount = { ...query.amount, lte: filters.maxPrice };
+    }
+
+    if (filters.numberOfBedRooms) {
+      query.numberOfBedRooms = { gte: filters.numberOfBedRooms };
+    }
+
+    if (filters.numberOfBathRooms) {
+      query.numberOfBathRooms = { gte: filters.numberOfBathRooms };
+    }
+
+    if (filters.parkingSpaces) {
+      query.parkingSpaces = { gte: filters.parkingSpaces };
+    }
+
+    // if (filters.amenities) {
+    //   query.amenities = { some: { amenityId: { in: filters.amenities } } };
+    // }
+
+    if (filters.locations?.length) {
+      query.location = { in: filters.locations };
+    }
+
+    if (filters.propertyFor) {
+      query.propertyFor = filters.propertyFor;
+    }
+
+    if (filters.propertyTypes?.length) {
+      query.propertyType = { in: filters.propertyTypes };
+    }
+
+    if (filters.propertyCategories?.length) {
+      query.propertyCategory = { in: filters.propertyCategories };
+    }
+
+    if (filters.emirates?.length) {
+      query.emirate = { in: filters.emirates };
+    }
+
+    console.log('query', query);
+
+    const properties = await this.prisma.property.findMany({
+      where: query,
+      include: {},
+    });
+
+    return properties;
   }
 }

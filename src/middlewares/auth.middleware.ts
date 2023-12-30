@@ -10,6 +10,8 @@ export class AuthMiddleware implements NestMiddleware {
   use(req: BaseRequest, res: Response, next: NextFunction) {
     // Extract and verify the token logic goes here
     try {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       const token = req.headers['authorization'];
       if (token) {
         const payload: IJwtPayload | string = verifyToken(token);

@@ -1,7 +1,7 @@
 import { UserRoleEnum } from '@prisma/client';
-import { Request } from 'express';
+// import { Request } from 'express';
 
-export class BaseRequest extends Request {
+export class BaseRequest {
   userId: number;
   role: UserRoleEnum;
 }
