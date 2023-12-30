@@ -9,23 +9,29 @@ export class PropertiesService {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(createPropertyDto: CreatePropertyDto) {
-    const { documents } = createPropertyDto;
+    const { documents, photos, amenities, ...createPropertyData } = createPropertyDto;
 
+    console.log('createPropertyDto', createPropertyData);
     const property = await this.prisma.property.create({
       data: {
-        ...createPropertyDto,
+        ...createPropertyData,
         documents: {
           create: documents.map((document) => ({
             ...document,
           })),
         },
         photos: {
-          create: createPropertyDto.photos.map((photo) => ({
-            path: photo,
-            name: photo,
-          })),
+          create:
+            photos?.map((photo) => ({
+              path: photo,
+              name: photo,
+            })) ?? [],
         },
-        userId: createPropertyDto.userId,
+        amenities: {
+          connect: amenities.map((amenityId) => ({ id: parseInt(amenityId.toString()) })),
+        },
+        // userId: createPropertyDto.userId,
+        agentId: createPropertyDto.agentId,
       } as any,
     });
 

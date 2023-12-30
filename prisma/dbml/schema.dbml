@@ -176,11 +176,12 @@ Table Property {
   image String
   phone String [not null]
   callPreference String
-  noticePeriod Int
+  noticePeriodProperty Int
+  noticePeriodRent Int
+  metroStationDistance Int
   otherFeatures String
   nearbyPlaces String
-  metroStation String
-  airportDistance String
+  airportDistance Int
   street String
   location String
   amount Float [not null]
@@ -199,10 +200,8 @@ Table Property {
   floor Int
   isApproved Boolean
   draft String
-  agentInfoId Int
   paymentInterval String
   numberOfCheques Int
-  noticePeriodOfRemainingRentalAgreement Int
   numberOfLavatory Int
   rentalAmount Float
   trakheesiPermitNo String [default: '']
@@ -218,6 +217,7 @@ Table Property {
   holdingType HoldingTypeEnum [default: 'FREE_HOLD']
   emirate EmirateEnum
   submissionStatus SubmissionStatusEnum [default: 'SUBMITTED']
+  furnishingStatus FurnishingStatusEnum [default: 'UNFURNISHED']
   userId Int
   user User
   agentId Int
@@ -270,6 +270,12 @@ Enum SubmissionStatusEnum {
   UNDER_VERIFICATION
   APPROVED
   REJECTED
+}
+
+Enum FurnishingStatusEnum {
+  FULLY_FURNISHED
+  SEMI_FURNISHED
+  UNFURNISHED
 }
 
 Enum MaritalStatusEnum {

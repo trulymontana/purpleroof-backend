@@ -9,9 +9,10 @@ import {
   PropertyForEnum,
   OccupencyStatusEnum,
   SubmissionStatusEnum,
+  FurnishingStatusEnum,
 } from '@prisma/client';
-import { BaseRequest } from 'src/utils/BaseRequest';
-export class CreatePropertyDto extends BaseRequest {
+// import { BaseRequest } from 'src/utils/BaseRequest';
+export class CreatePropertyDto {
   @IsString()
   name: string;
 
@@ -58,7 +59,11 @@ export class CreatePropertyDto extends BaseRequest {
 
   @IsOptional()
   @IsNumber()
-  noticePeriod?: number;
+  noticePeriodProperty?: number;
+
+  @IsOptional()
+  @IsNumber()
+  noticePeriodRent?: number;
 
   @IsOptional()
   @IsString()
@@ -74,7 +79,7 @@ export class CreatePropertyDto extends BaseRequest {
 
   @IsOptional()
   @IsArray()
-  photos?: string[];
+  photos: string[];
 
   @IsOptional()
   @IsArray()
@@ -85,12 +90,16 @@ export class CreatePropertyDto extends BaseRequest {
   otherFeatures?: string;
 
   @IsOptional()
-  @IsString()
-  metroStation?: string;
+  @IsNumber()
+  metroStationDistance?: number;
 
   @IsOptional()
   @IsString()
   landmark?: string;
+
+  @IsOptional()
+  @IsString()
+  location?: string;
 
   @IsOptional()
   completionDate?: Date;
@@ -133,10 +142,6 @@ export class CreatePropertyDto extends BaseRequest {
 
   @IsOptional()
   @IsNumber()
-  noticePeriodOfRemainingRentalAgreement?: number;
-
-  @IsOptional()
-  @IsNumber()
   numberOfLavatory?: number;
 
   @IsOptional()
@@ -158,6 +163,10 @@ export class CreatePropertyDto extends BaseRequest {
   @IsOptional()
   @IsEnum(ProjectStatusEnum)
   projectStatus: ProjectStatusEnum;
+
+  @IsOptional()
+  @IsEnum(FurnishingStatusEnum)
+  furnishingStatus: FurnishingStatusEnum;
 
   @IsOptional()
   @IsEnum(OccupencyStatusEnum)
@@ -187,9 +196,9 @@ export class CreatePropertyDto extends BaseRequest {
   @IsEnum(SubmissionStatusEnum)
   submissionStatus?: SubmissionStatusEnum;
 
-  @IsOptional()
-  @IsNumber()
-  locationId?: number;
+  // @IsOptional()
+  // @IsNumber()
+  // locationId?: number;
 
   @IsOptional()
   @IsNumber()

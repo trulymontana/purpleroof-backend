@@ -66,19 +66,18 @@ enum ReferenceTypeEnum {
 }
 
 model Reference {
-  id           Int       @id @default(autoincrement())
-  title        String?   @db.VarChar(255)
-  name         String    @db.VarChar(255)
-  email        String?   @db.VarChar(255)
-  phone        String    @db.VarChar(255)
-  relationship String    @db.VarChar(255)
+  id           Int     @id @default(autoincrement())
+  title        String? @db.VarChar(255)
+  name         String  @db.VarChar(255)
+  email        String? @db.VarChar(255)
+  phone        String  @db.VarChar(255)
+  relationship String  @db.VarChar(255)
 
-  createdAt    DateTime  @default(now()) @db.DateTime(0)
-  updatedAt    DateTime  @default(now()) @updatedAt
+  createdAt DateTime @default(now()) @db.DateTime(0)
+  updatedAt DateTime @default(now()) @updatedAt
 
-  mortgageId   Int?
-  mortgage     Mortgage? @relation(fields: [mortgageId], references: [id])
-  
+  mortgageId Int?
+  mortgage   Mortgage? @relation(fields: [mortgageId], references: [id])
 }
 
 model Mortgage {
@@ -120,7 +119,7 @@ model Mortgage {
   userId Int?
   user   User? @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "mortgage_userId_foreign_idx")
 
-  documents  Document[] 
+  documents  Document[]
   comments   Comment[]
   references Reference[]
   history    History[]
@@ -235,46 +234,51 @@ enum SubmissionStatusEnum {
   REJECTED
 }
 
-model Property {
-  id                Int     @id @default(autoincrement())
-  name              String  @db.VarChar(255)
-  description       String? @db.Text
-  image             String? @db.VarChar(255)
-  phone             String  @db.VarChar(255)
-  callPreference    String? @db.VarChar(255)
-  noticePeriod      Int?
-  otherFeatures     String? @db.Text
-  nearbyPlaces      String? @db.VarChar(255)
-  metroStation      String? @db.VarChar(255)
-  airportDistance   String? @db.VarChar(255)
-  street            String? @db.VarChar(255)
-  location          String? @db.VarChar(255)
-  amount            Float
-  size              Float?
-  numberOfBedRooms  Int?
-  numberOfBathRooms Int?
-  parkingSpaces     Int?
-  maintenanceFee    Float?
-  address           String? @db.VarChar(255)
-  landmark          String? @db.Text
+enum FurnishingStatusEnum {
+  FULLY_FURNISHED
+  SEMI_FURNISHED
+  UNFURNISHED
+}
 
-  completionDate                         DateTime? @db.DateTime(0)
-  minimumContract                        Float?
-  deedNumber                             String?   @db.VarChar(255)
-  unitNumber                             Int?
-  buildingName                           String?   @db.VarChar(255)
-  floor                                  Int?
-  isApproved                             Boolean?
-  draft                                  String?   @db.Text
-  agentInfoId                            Int?
-  paymentInterval                        String?   @db.VarChar(255)
-  numberOfCheques                        Int?
-  noticePeriodOfRemainingRentalAgreement Int?
-  numberOfLavatory                       Int?
-  rentalAmount                           Float?
-  trakheesiPermitNo                      String?   @default("") @db.VarChar(255)
-  lat                                    Float?    @db.Float
-  lng                                    Float?    @db.Float
+model Property {
+  id                   Int     @id @default(autoincrement())
+  name                 String  @db.VarChar(255)
+  description          String? @db.Text
+  image                String? @db.VarChar(255)
+  phone                String  @db.VarChar(255)
+  callPreference       String? @db.VarChar(255)
+  noticePeriodProperty Int?
+  noticePeriodRent     Int?
+  metroStationDistance Int?
+  otherFeatures        String? @db.Text
+  nearbyPlaces         String? @db.VarChar(255)
+  airportDistance      Int?
+  street               String? @db.VarChar(255)
+  location             String? @db.VarChar(255)
+  amount               Float
+  size                 Float?
+  numberOfBedRooms     Int?
+  numberOfBathRooms    Int?
+  parkingSpaces        Int?
+  maintenanceFee       Float?
+  address              String? @db.VarChar(255)
+  landmark             String? @db.Text
+
+  completionDate    DateTime? @db.DateTime(0)
+  minimumContract   Float?
+  deedNumber        String?   @db.VarChar(255)
+  unitNumber        Int?
+  buildingName      String?   @db.VarChar(255)
+  floor             Int?
+  isApproved        Boolean?
+  draft             String?   @db.Text
+  paymentInterval   String?   @db.VarChar(255)
+  numberOfCheques   Int?
+  numberOfLavatory  Int?
+  rentalAmount      Float?
+  trakheesiPermitNo String?   @default("") @db.VarChar(255)
+  lat               Float?    @db.Float
+  lng               Float?    @db.Float
 
   createdAt DateTime? @default(now()) @db.DateTime(0)
   updatedAt DateTime? @updatedAt
@@ -287,6 +291,7 @@ model Property {
   holdingType      HoldingTypeEnum?      @default(FREE_HOLD)
   emirate          EmirateEnum?
   submissionStatus SubmissionStatusEnum? @default(SUBMITTED)
+  furnishingStatus FurnishingStatusEnum? @default(UNFURNISHED)
 
   // locationId Int?
   // location   Location? @relation(fields: [locationId], references: [id])
