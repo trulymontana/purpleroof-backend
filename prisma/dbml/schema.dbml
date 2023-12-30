@@ -78,6 +78,7 @@ Table Mortgage {
   favoriteCity String
   yearsInUae Int [default: 0]
   familyMembersInUae Int [default: 0]
+  annualRentalIncome Int [default: 0]
   uaeResidenceAddress String
   homeCountryAddress String
   maritalStatus MaritalStatusEnum

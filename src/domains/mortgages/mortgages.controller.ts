@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Put, Delete, Param, Body, UseGuards, Req } from '@nestjs/common';
+import { Controller, Get, Post, Delete, Param, Body, UseGuards, Req, Patch } from '@nestjs/common';
 import { CreateMortgageDto } from './dto/create-mortgage.dto';
 import { MortgagesService } from './mortgages.service';
 import { UpdateMortgageDto } from './dto/update-mortgage.dto';
@@ -29,7 +29,7 @@ export class MortgagesController {
     return this.mortgageService.findOne(+id);
   }
 
-  @Put(':id')
+  @Patch(':id')
   update(@Param('id') id: number, @Body() updateMortgageDto: UpdateMortgageDto) {
     return this.mortgageService.update(+id, updateMortgageDto);
   }
