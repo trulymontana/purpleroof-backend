@@ -39,15 +39,18 @@ export class PropertiesService {
   }
 
   async findAll() {
-    return this.prisma.property.findMany({
-      include: {
-        documents: true,
-      },
-    });
+    return this.prisma.property.findMany({});
   }
 
   async findOne(id: number) {
-    const property = await this.prisma.property.findUnique({ where: { id } });
+    const property = await this.prisma.property.findUnique({
+      where: { id },
+      include: {
+        documents: true,
+        amenities: true,
+        photos: true,
+      },
+    });
 
     if (!property) {
       throw new NotFoundException(`Property with ID ${id} not found`);
