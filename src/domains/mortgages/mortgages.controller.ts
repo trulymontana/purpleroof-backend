@@ -19,8 +19,6 @@ export class MortgagesController {
   @Get()
   @UseGuards(BasicAuthGuard)
   findAll(@Req() req: BaseRequest) {
-    console.log('request object-----------------------------------');
-    console.log(req.userId);
     return this.mortgageService.findAll(req.userId, req.role);
   }
 

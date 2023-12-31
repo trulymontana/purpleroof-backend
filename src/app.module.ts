@@ -13,6 +13,7 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
 import { AuthMiddleware } from './middlewares/auth.middleware';
 import { AmenitiesModule } from './domains/amenities/amenities.module';
 import { LocationsModule } from './domains/locations/locations.module';
+import { AgentsModule } from './domains/agents/agents.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { LocationsModule } from './domains/locations/locations.module';
     FilesModule,
     AmenitiesModule,
     LocationsModule,
+    AgentsModule,
   ],
   controllers: [AppController],
   providers: [

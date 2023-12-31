@@ -31,6 +31,7 @@ export class CreatePropertyDto {
   callPreference: string;
 
   @IsNumber()
+  @IsOptional()
   amount: number;
 
   @IsOptional()

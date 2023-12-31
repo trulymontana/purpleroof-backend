@@ -37,10 +37,10 @@ Table Document {
   updatedAt DateTime [not null]
   mortgage Mortgage
   mortgageId Int
-  commentId Int
-  comment Comment
   propertyId Int
   property Property
+  Agent Agent
+  agentId Int
 }
 
 Table Reference {
@@ -112,7 +112,7 @@ Table Comment {
   id Int [pk, increment]
   title String [not null]
   message String [not null]
-  attachments Document [not null]
+  attachments File [not null]
   userId Int [not null]
   user User [not null]
   mortgageId Int [not null]
@@ -128,15 +128,15 @@ Table User {
   lastName String [not null]
   email String [unique, not null]
   password String [not null]
+  isEmailConfirmed Boolean
   role UserRoleEnum [not null, default: 'ADVERTISER']
   createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [not null]
   agentId Int
-  isEmailConfirmed Boolean
+  agent Agent
   mortgage Mortgage [not null]
   comments Comment [not null]
   properties Property [not null]
-  agent Agent [not null]
   history History [not null]
 }
 
@@ -159,7 +159,7 @@ Table Amenity {
   propertyId Int
 }
 
-Table Photo {
+Table File {
   id Int [pk, increment]
   name String [not null]
   path String [unique, not null]
@@ -167,6 +167,8 @@ Table Photo {
   updatedAt DateTime [not null]
   propertyId Int
   property Property
+  Comment Comment
+  commentId Int
 }
 
 Table Property {
@@ -184,7 +186,7 @@ Table Property {
   airportDistance Int
   street String
   location String
-  amount Float [not null]
+  amount Float
   size Float
   numberOfBedRooms Int
   numberOfBathRooms Int
@@ -224,23 +226,22 @@ Table Property {
   agent Agent
   documents Document [not null]
   amenities Amenity [not null]
-  photos Photo [not null]
+  photos File [not null]
 }
 
 Table Agent {
   id Int [pk, increment]
-  userId Int [not null]
   agency String
   contactNumber String
-  locationId Int [not null]
-  realEstateLicenseFilePath String [unique, not null]
   isActive Boolean
   isApproved Boolean
-  createdAt DateTime [not null]
-  updatedAt DateTime [not null]
-  user User [not null]
+  documents Document [not null]
   properties Property [not null]
-  location Location [not null]
+  locations Location [not null]
+  userId Int [unique, not null]
+  user User [not null]
+  createdAt DateTime [default: `now()`]
+  updatedAt DateTime
 }
 
 Table Inqueries {
@@ -334,6 +335,7 @@ Enum DocumentTypeEnum {
   PROOF_OF_INCOME
   COMPANY_BANK_STATEMENT_6_MONTHS
   OWNERSHIP_PROOF_MOBILE_NUMBER
+  REAL_ESTATE_LICENSE
 }
 
 Enum AmenityTypeEnum {
@@ -445,9 +447,9 @@ Ref: RequiredDocument.requirementId > Requirement.id [delete: Cascade]
 
 Ref: Document.mortgageId > Mortgage.id
 
-Ref: Document.commentId > Comment.id
-
 Ref: Document.propertyId > Property.id
+
+Ref: Document.agentId > Agent.id
 
 Ref: Reference.mortgageId > Mortgage.id
 
@@ -463,12 +465,12 @@ Ref: Comment.mortgageId > Mortgage.id [delete: Cascade]
 
 Ref: Amenity.propertyId > Property.id
 
-Ref: Photo.propertyId > Property.id
+Ref: File.propertyId > Property.id
+
+Ref: File.commentId > Comment.id
 
 Ref: Property.userId > User.id [delete: Cascade]
 
 Ref: Property.agentId > Agent.id
 
-Ref: Agent.userId > User.id
-
-Ref: Agent.locationId > Location.id
+Ref: Agent.userId - User.id

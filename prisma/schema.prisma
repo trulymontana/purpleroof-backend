@@ -53,11 +53,11 @@ model Document {
   mortgage   Mortgage? @relation(fields: [mortgageId], references: [id])
   mortgageId Int?
 
-  commentId Int?
-  comment   Comment? @relation(fields: [commentId], references: [id])
-
   propertyId Int?
   property   Property? @relation(fields: [propertyId], references: [id])
+
+  Agent   Agent? @relation(fields: [agentId], references: [id])
+  agentId Int?
 }
 
 enum ReferenceTypeEnum {
@@ -152,9 +152,9 @@ model History {
 model Comment {
   id Int @id @default(autoincrement())
 
-  title       String     @db.VarChar(255)
-  message     String     @db.Text
-  attachments Document[]
+  title       String @db.VarChar(255)
+  message     String @db.Text
+  attachments File[]
 
   userId Int
   user   User @relation(fields: [userId], references: [id])
@@ -170,25 +170,25 @@ model Comment {
 }
 
 model User {
-  id        Int    @id @default(autoincrement())
-  authId    String @unique(map: "authId") @db.VarChar(255)
-  firstName String @db.VarChar(255)
-  lastName  String @db.VarChar(255)
-  email     String @unique(map: "email") @db.VarChar(255)
-  password  String @db.VarChar(255)
-
-  role UserRoleEnum @default(ADVERTISER)
+  id               Int          @id @default(autoincrement())
+  authId           String       @unique(map: "authId") @db.VarChar(255)
+  firstName        String       @db.VarChar(255)
+  lastName         String       @db.VarChar(255)
+  email            String       @unique(map: "email") @db.VarChar(255)
+  password         String       @db.VarChar(255)
+  isEmailConfirmed Boolean?
+  role             UserRoleEnum @default(ADVERTISER)
 
   createdAt DateTime @default(now()) @db.DateTime(0)
   updatedAt DateTime @updatedAt
 
-  agentId          Int?
-  isEmailConfirmed Boolean?
-  mortgage         Mortgage[]
-  comments         Comment[]
-  properties       Property[]
-  agent            Agent[]
-  history          History[]
+  agentId Int?
+  agent   Agent?
+
+  mortgage   Mortgage[]
+  comments   Comment[]
+  properties Property[]
+  history History[]
 }
 
 model Location {
@@ -214,7 +214,7 @@ model Amenity {
   propertyId Int?
 }
 
-model Photo {
+model File {
   id        Int      @id @default(autoincrement())
   name      String   @db.VarChar(255)
   path      String   @unique(map: "path") @db.VarChar(255)
@@ -223,6 +223,8 @@ model Photo {
 
   propertyId Int?
   property   Property? @relation(fields: [propertyId], references: [id])
+  Comment    Comment?  @relation(fields: [commentId], references: [id])
+  commentId  Int?
 
   @@index([propertyId], map: "propertyId")
 }
@@ -255,7 +257,7 @@ model Property {
   airportDistance      Int?
   street               String? @db.VarChar(255)
   location             String? @db.VarChar(255)
-  amount               Float
+  amount               Float?
   size                 Float?
   numberOfBedRooms     Int?
   numberOfBathRooms    Int?
@@ -304,25 +306,28 @@ model Property {
 
   documents Document[]
   amenities Amenity[]
-  photos    Photo[]
+  photos    File[]
 }
 
 model Agent {
-  id                        Int        @id @default(autoincrement())
-  userId                    Int
-  agency                    String?    @db.VarChar(255)
-  contactNumber             String?    @db.VarChar(255)
-  locationId                Int
-  realEstateLicenseFilePath String     @unique(map: "realEstateLicenseFilePath") @db.VarChar(255)
-  isActive                  Boolean?
-  isApproved                Boolean?
-  createdAt                 DateTime   @db.DateTime(0)
-  updatedAt                 DateTime   @db.DateTime(0)
-  user                      User       @relation(fields: [userId], references: [id])
-  properties                Property[]
-  location                  Location   @relation(fields: [locationId], references: [id])
+  id Int @id @default(autoincrement())
 
-  @@index([locationId], map: "locationId")
+  agency        String? @db.VarChar(255)
+  contactNumber String? @db.VarChar(255)
+
+  isActive   Boolean?
+  isApproved Boolean?
+
+  documents  Document[]
+  properties Property[]
+  locations Location[]
+
+  userId Int  @unique
+  user   User @relation(fields: [userId], references: [id])
+
+  createdAt DateTime? @default(now()) @db.DateTime(0)
+  updatedAt DateTime? @updatedAt
+
   @@index([userId], map: "userId")
 }
 
@@ -393,6 +398,8 @@ enum DocumentTypeEnum {
   PROOF_OF_INCOME
   COMPANY_BANK_STATEMENT_6_MONTHS
   OWNERSHIP_PROOF_MOBILE_NUMBER
+
+  REAL_ESTATE_LICENSE
 }
 
 enum AmenityTypeEnum {
