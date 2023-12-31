@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { CreateLocationDto } from './dto/create-location.dto';
 import { UpdateLocationDto } from './dto/update-location.dto';
 import { PrismaService } from 'src/common/providers/prisma/prisma.service';
+import { EmirateEnum } from '@prisma/client';
 
 @Injectable()
 export class LocationsService {
@@ -18,6 +19,11 @@ export class LocationsService {
 
   findAll() {
     return this.prismaService.location.findMany();
+  }
+  findAllByEmirate(emirate: EmirateEnum) {
+    return this.prismaService.location.findMany({
+      where: { emirate },
+    });
   }
 
   findOne(id: number) {

@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateAgentDto } from './dto/create-agent.dto';
 import { UpdateAgentDto } from './dto/update-agent.dto';
 import { PrismaService } from 'src/common/providers/prisma/prisma.service';
-import { DocumentTypeEnum } from '@prisma/client';
+import { DocumentTypeEnum, UserRoleEnum } from '@prisma/client';
 import { ActivationStatusEnum, ApprovalStatusEnum } from './agents.controller';
 
 @Injectable()
@@ -86,8 +86,6 @@ export class AgentsService {
       throw new NotFoundException(`Agent with ID ${id} not found`);
     }
 
-    // delete existingAgent.documents;
-
     await this.prisma.agent.update({
       where: { id },
       data: {
@@ -113,16 +111,38 @@ export class AgentsService {
       include: { documents: true, locations: true },
     });
 
-    if (!existingAgent) {
+    const existingUser = await this.prisma.user.findUnique({
+      where: { id: existingAgent.userId },
+    });
+
+    if (!existingAgent || !existingUser) {
       throw new NotFoundException(`Agent with ID ${id} not found`);
     }
 
-    await this.prisma.agent.update({
+    if (existingUser.role === 'AGENT') {
+      throw new Error('User is already an agent');
+    }
+
+    const isApproved = ApprovalStatusEnum.APPROVED ? true : false;
+
+    if (isApproved) {
+      await this.prisma.user.update({
+        where: { id: existingAgent.userId },
+        data: {
+          role: UserRoleEnum.AGENT,
+          agentId: id,
+        },
+      });
+    }
+
+    const updatedAgent = await this.prisma.agent.update({
       where: { id },
       data: {
         isApproved: approvalStatus === ApprovalStatusEnum.APPROVED ? true : false,
       },
     });
+
+    return updatedAgent;
   }
 
   async activateOrDeactivate(id: number, activationStatus: ActivationStatusEnum) {
@@ -143,7 +163,9 @@ export class AgentsService {
     });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} agent`;
+  async remove(id: number) {
+    return await this.prisma.agent.delete({
+      where: { id },
+    });
   }
 }

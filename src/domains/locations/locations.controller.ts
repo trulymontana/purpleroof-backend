@@ -1,7 +1,8 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { LocationsService } from './LocationsService';
 import { CreateLocationDto } from './dto/create-location.dto';
 import { UpdateLocationDto } from './dto/update-location.dto';
+import { LocationsService } from './locations.service';
+import { EmirateEnum } from '@prisma/client';
 
 @Controller('locations')
 export class LocationsController {
@@ -15,6 +16,11 @@ export class LocationsController {
   @Get()
   findAll() {
     return this.locationsService.findAll();
+  }
+
+  @Get(':emirate')
+  findAllByEmirate(@Param('emirate') emirate: EmirateEnum) {
+    return this.locationsService.findAllByEmirate(emirate);
   }
 
   @Get(':id')

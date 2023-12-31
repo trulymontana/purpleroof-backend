@@ -233,8 +233,8 @@ Table Agent {
   id Int [pk, increment]
   agency String
   contactNumber String
-  isActive Boolean
-  isApproved Boolean
+  isActive Boolean [not null, default: true]
+  isApproved Boolean [not null, default: false]
   documents Document [not null]
   properties Property [not null]
   locations Location [not null]

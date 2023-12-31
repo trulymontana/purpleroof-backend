@@ -38,7 +38,7 @@ export class AgentsController {
   update(@Param('id') id: string, @Body() updateAgentDto: UpdateAgentDto) {
     return this.agentsService.update(+id, updateAgentDto);
   }
-  @Patch(':id/:approvalStatus')
+  @Patch(':id/update-approval-status/:approvalStatus')
   @UseGuards(AdminAuthGuard)
   updateApprovalStatus(
     @Param('id') id: string,
@@ -47,7 +47,7 @@ export class AgentsController {
   ) {
     return this.agentsService.approveOrReject(+id, approvalStatus);
   }
-  @Patch(':id/:activationStatus')
+  @Patch(':id/update-active-status/:activationStatus')
   @UseGuards(AdminAuthGuard)
   updateActivationStatus(@Param('id') id: string, @Param('activationStatus') activationStatus: ActivationStatusEnum) {
     return this.agentsService.activateOrDeactivate(+id, activationStatus);

@@ -315,8 +315,8 @@ model Agent {
   agency        String? @db.VarChar(255)
   contactNumber String? @db.VarChar(255)
 
-  isActive   Boolean?
-  isApproved Boolean?
+  isActive   Boolean @default(true)
+  isApproved Boolean @default(false)
 
   documents  Document[]
   properties Property[]
