@@ -10,6 +10,8 @@ export class AgentsService {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(createAgentDto: CreateAgentDto) {
+    console.log('createAgentDto', createAgentDto.userId);
+
     const user = await this.prisma.user.findUnique({ where: { id: createAgentDto.userId } });
 
     if (!user) {

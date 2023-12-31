@@ -20,11 +20,13 @@ export enum ActivationStatusEnum {
 @ApiHeader({ name: 'Authorization' })
 export class AgentsController {
   constructor(private agentsService: AgentsService) {}
+
   @Post()
   @UseGuards(BasicAuthGuard)
   create(@Body() createAgentDto: CreateAgentDto) {
     return this.agentsService.create(createAgentDto);
   }
+
   @Get()
   @UseGuards(AdminAuthGuard)
   findAll() {
