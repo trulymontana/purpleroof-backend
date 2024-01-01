@@ -8,7 +8,8 @@ export class RequirementsService {
   constructor(private prisma: PrismaService) {}
 
   async create(createRequirementDto: CreateRequirementDto) {
-    const { requiredDocuments, ...rest } = createRequirementDto;
+    const { requiredDocuments, userId, role, ...rest } = createRequirementDto;
+    console.log(`Request made by ${userId} with role ${role} to create a requirement`, createRequirementDto);
 
     const createdRequirement = await this.prisma.requirement.create({
       data: {

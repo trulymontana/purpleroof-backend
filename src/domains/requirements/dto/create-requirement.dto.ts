@@ -10,6 +10,7 @@ import {
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { DocumentTypeEnum, IncomeProfileEnum, ResidenceTypeEnum } from '@prisma/client';
+import { BaseRequest } from 'src/utils/BaseRequest';
 
 class CreateRequiredDocumentDto {
   @IsOptional()
@@ -25,7 +26,7 @@ class CreateRequiredDocumentDto {
   isMandatory: boolean;
 }
 
-export class CreateRequirementDto {
+export class CreateRequirementDto extends BaseRequest {
   @IsString()
   @IsNotEmpty()
   name: string;
