@@ -112,8 +112,6 @@ export const sendEmailNotif = async (recipients: string[], subject: string, temp
 export const sendEmailPdf = async (
   email: string,
   fullName: string,
-  mortgageEmail: string,
-  mortgageId: number,
   htmlData: { currentDate: number },
   pdfFileName: string,
 ) => {
@@ -129,7 +127,6 @@ export const sendEmailPdf = async (
     // });
 
     const pdfPath = `assets/generated${pdfFileName}`;
-    console.log('pdf file to send is', pdfPath);
 
     const templatePath = `assets/templates/mortgage.html`;
 
@@ -167,25 +164,13 @@ export const sendEmailPdf = async (
           ],
         });
 
-        console.log('Email sent!');
+        fs.unlinkSync(`assets/generated${pdfFileName}`);
 
-        return new Response(
-          JSON.stringify({
-            success: true,
-            status: 200,
-          }),
-        );
+        console.log('Email sent!');
       });
     } catch (error) {
       console.error('Error: ', error);
     }
-
-    return new Response(
-      JSON.stringify({
-        success: true,
-        status: 200,
-      }),
-    );
   } catch (error) {}
 };
 

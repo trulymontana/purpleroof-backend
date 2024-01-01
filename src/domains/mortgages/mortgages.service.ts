@@ -5,7 +5,6 @@ import { UpdateMortgageDto } from './dto/update-mortgage.dto';
 import { ResidenceTypeEnum, UserRoleEnum, Requirement, Mortgage, HistoryTypeEnum } from '@prisma/client';
 import { renderHtmlFromTemplate } from './mortgage-email-utils/render-html-from-template';
 import { sendEmailPdf } from './mortgage-email-utils/email-helper';
-
 @Injectable()
 export class MortgagesService {
   constructor(private readonly prisma: PrismaService) {}
@@ -63,16 +62,14 @@ export class MortgagesService {
     console.log(requiredDocumentNames);
 
     renderHtmlFromTemplate(mortgage, requirement, requiredDocumentNames).then(async (res: { pdfFileName: string }) => {
-      const newEmail = mortgage.email.replace(/[@.]/g, '');
+      const pdfFileName = res?.pdfFileName ?? '';
       await sendEmailPdf(
         mortgage.email,
         `${mortgage.firstName}_${mortgage.lastName}`,
-        newEmail,
-        mortgage.id,
         {
           currentDate: new Date().getFullYear(),
         },
-        res?.pdfFileName,
+        pdfFileName,
       );
     });
   };
@@ -83,8 +80,6 @@ export class MortgagesService {
     console.log(`Request made by ${userId} with role ${role} to get all mortgages`);
     const user = await this.prisma.user.findUnique({ where: { id: userId } });
     if (!user) throw new NotFoundException(`User with ID ${userId} not found`);
-
-    console.log('user', user.email);
 
     const mortgages = await this.prisma.mortgage.findMany({ where: { email: user.email } });
 
