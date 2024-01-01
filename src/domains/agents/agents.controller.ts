@@ -6,15 +6,7 @@ import { AdminAuthGuard } from 'src/auth/guards/admin-auth.guard';
 import { BasicAuthGuard } from 'src/auth/guards/basic-auth.guard';
 import { BaseRequest } from 'src/utils/BaseRequest';
 import { ApiHeader } from '@nestjs/swagger';
-
-export enum ApprovalStatusEnum {
-  APPROVED = 'APPROVED',
-  REJECTED = 'REJECTED',
-}
-export enum ActivationStatusEnum {
-  ACTIVE = 'ACTIVE',
-  INACTIVE = 'INACTIVE',
-}
+import { ActiveStatusEnum, ApprovalStatusEnum } from '@prisma/client';
 
 @Controller('agents')
 @ApiHeader({ name: 'Authorization' })
@@ -51,7 +43,7 @@ export class AgentsController {
   }
   @Patch(':id/update-active-status/:activationStatus')
   @UseGuards(AdminAuthGuard)
-  updateActivationStatus(@Param('id') id: string, @Param('activationStatus') activationStatus: ActivationStatusEnum) {
+  updateActivationStatus(@Param('id') id: string, @Param('activationStatus') activationStatus: ActiveStatusEnum) {
     return this.agentsService.activateOrDeactivate(+id, activationStatus);
   }
   @Delete(':id')

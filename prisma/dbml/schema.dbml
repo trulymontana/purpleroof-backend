@@ -233,8 +233,8 @@ Table Agent {
   id Int [pk, increment]
   agency String
   contactNumber String
-  isActive Boolean [not null, default: true]
-  isApproved Boolean [not null, default: false]
+  activeStatus ActiveStatusEnum [not null, default: 'ACTIVE']
+  approvalStatus ApprovalStatusEnum [not null, default: 'NOT_APPROVED']
   documents Document [not null]
   properties Property [not null]
   locations Location [not null]
@@ -277,6 +277,16 @@ Enum FurnishingStatusEnum {
   FULLY_FURNISHED
   SEMI_FURNISHED
   UNFURNISHED
+}
+
+Enum ApprovalStatusEnum {
+  APPROVED
+  NOT_APPROVED
+}
+
+Enum ActiveStatusEnum {
+  ACTIVE
+  INACTIVE
 }
 
 Enum MaritalStatusEnum {

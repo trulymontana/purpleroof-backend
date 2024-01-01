@@ -2,8 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateAgentDto } from './dto/create-agent.dto';
 import { UpdateAgentDto } from './dto/update-agent.dto';
 import { PrismaService } from 'src/common/providers/prisma/prisma.service';
-import { DocumentTypeEnum, UserRoleEnum } from '@prisma/client';
-import { ActivationStatusEnum, ApprovalStatusEnum } from './agents.controller';
+import { ActiveStatusEnum, ApprovalStatusEnum, DocumentTypeEnum, UserRoleEnum } from '@prisma/client';
 
 @Injectable()
 export class AgentsService {
@@ -125,7 +124,7 @@ export class AgentsService {
       throw new Error('User is already an agent');
     }
 
-    const isApproved = ApprovalStatusEnum.APPROVED ? true : false;
+    const isApproved = approvalStatus === ApprovalStatusEnum.APPROVED ? true : false;
 
     if (isApproved) {
       await this.prisma.user.update({
@@ -140,14 +139,14 @@ export class AgentsService {
     const updatedAgent = await this.prisma.agent.update({
       where: { id },
       data: {
-        isApproved: approvalStatus === ApprovalStatusEnum.APPROVED ? true : false,
+        approvalStatus: approvalStatus,
       },
     });
 
     return updatedAgent;
   }
 
-  async activateOrDeactivate(id: number, activationStatus: ActivationStatusEnum) {
+  async activateOrDeactivate(id: number, activationStatus: ActiveStatusEnum) {
     const existingAgent = await this.prisma.agent.findUnique({
       where: { id },
       include: { documents: true, locations: true },
@@ -160,7 +159,7 @@ export class AgentsService {
     await this.prisma.agent.update({
       where: { id },
       data: {
-        isApproved: activationStatus === ActivationStatusEnum.ACTIVE ? true : false,
+        activeStatus: activationStatus,
       },
     });
   }

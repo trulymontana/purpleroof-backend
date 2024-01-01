@@ -309,14 +309,24 @@ model Property {
   photos    File[]
 }
 
+enum ApprovalStatusEnum {
+  APPROVED
+  NOT_APPROVED
+}
+
+enum ActiveStatusEnum {
+  ACTIVE
+  INACTIVE
+}
+
 model Agent {
   id Int @id @default(autoincrement())
 
   agency        String? @db.VarChar(255)
   contactNumber String? @db.VarChar(255)
 
-  isActive   Boolean @default(true)
-  isApproved Boolean @default(false)
+  activeStatus   ActiveStatusEnum @default(ACTIVE)
+  approvalStatus ApprovalStatusEnum @default(NOT_APPROVED)
 
   documents  Document[]
   properties Property[]
