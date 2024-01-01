@@ -46,7 +46,6 @@ export const getMortgageCalculations = (mortgage: Mortgage, requirement: Require
     imageUrl,
   };
 
-  console.log('email data', data);
   return data;
 };
 

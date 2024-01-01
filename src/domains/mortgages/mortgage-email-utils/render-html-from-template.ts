@@ -29,8 +29,10 @@ export const renderHtmlFromTemplate = async (
       const data = {
         ...mortgageCalculation,
         ...bestOptions,
-        documents: documents,
+        documents,
       };
+
+      console.log('data', data);
       // Render the template with the data
       const renderedTemplate = mustache.render(template, data);
       // Save the rendered template to a file

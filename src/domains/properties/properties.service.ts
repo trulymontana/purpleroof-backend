@@ -11,9 +11,10 @@ export class PropertiesService {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(createPropertyDto: CreatePropertyDto) {
-    const { documents, photos, amenities, ...createPropertyData } = createPropertyDto;
+    const { documents, photos, amenities, userId, role, ...createPropertyData } = createPropertyDto;
 
-    console.log('createPropertyDto', createPropertyData);
+    console.log(`Request made by ${userId} with role ${role} to create a property`, createPropertyDto);
+
     const property = await this.prisma.property.create({
       data: {
         ...createPropertyData,

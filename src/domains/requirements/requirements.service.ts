@@ -17,8 +17,6 @@ export class RequirementsService {
       },
     });
 
-    console.log('createdRequirement', createdRequirement);
-
     // Use the createdRequirement.id to associate with RequiredDocuments
     const createdDocuments = await this.prisma.requiredDocument.createMany({
       data: requiredDocuments.map((doc) => ({
@@ -36,13 +34,15 @@ export class RequirementsService {
       include: { requiredDocuments: true },
     });
 
-    console.log('existingRequirement', existingRequirement);
-
     if (!existingRequirement) {
       throw new NotFoundException(`Requirement with ID ${id} not found`);
     }
 
-    const existingDocumentIds = existingRequirement.requiredDocuments.map((doc) => doc.id);
+    const { requiredDocuments, userId, role, ...updateData } = updateRequirementDto;
+
+    console.log(`Request made by ${userId} with role ${role} to update a requirement`, updateRequirementDto);
+
+    const existingDocumentIds = requiredDocuments.map((doc) => doc.id);
     await this.prisma.requiredDocument.deleteMany({
       where: {
         id: {
@@ -54,9 +54,9 @@ export class RequirementsService {
     const updatedRequirement = await this.prisma.requirement.update({
       where: { id },
       data: {
-        ...updateRequirementDto,
+        ...updateData,
         requiredDocuments: {
-          create: updateRequirementDto.requiredDocuments,
+          create: requiredDocuments,
         },
       },
     });

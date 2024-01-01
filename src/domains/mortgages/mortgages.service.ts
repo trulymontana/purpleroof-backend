@@ -11,7 +11,9 @@ export class MortgagesService {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(createMortgageDto: CreateMortgageDto) {
-    const { references, documents, ...mortgageData } = createMortgageDto;
+    const { references, documents, userId, role, ...mortgageData } = createMortgageDto;
+
+    console.log(`Request made by ${userId} with role ${role} to create a mortgage`, createMortgageDto);
 
     const requirementCondition =
       createMortgageDto.residenceType === ResidenceTypeEnum.UAE_RESIDENT
@@ -20,6 +22,7 @@ export class MortgagesService {
 
     const requirement: Requirement = await this.prisma.requirement.findFirst({
       where: requirementCondition,
+      include: { requiredDocuments: true },
     });
 
     if (!requirement)
@@ -54,11 +57,10 @@ export class MortgagesService {
   }
 
   sendEmailWithMortgageQuote = async (mortgage: Mortgage, requirement: Requirement) => {
-    const requiredDocuments = await this.prisma.requiredDocument.findMany({
-      where: { requirementId: requirement.id },
-    });
+    const requiredDocuments = (requirement as any).requiredDocuments;
 
-    const requiredDocumentNames = requiredDocuments.map((requiredDocument) => requiredDocument.name);
+    const requiredDocumentNames = requiredDocuments.map((requiredDocument) => ({ name: requiredDocument.name }));
+    console.log(requiredDocumentNames);
 
     renderHtmlFromTemplate(mortgage, requirement, requiredDocumentNames).then(async (res: { pdfFileName: string }) => {
       const newEmail = mortgage.email.replace(/[@.]/g, '');
@@ -119,7 +121,9 @@ export class MortgagesService {
   }
 
   async update(id: number, updateMortgageDto: UpdateMortgageDto) {
-    const { documents, references, ...updateData } = updateMortgageDto;
+    const { documents, references, userId, role, ...updateData } = updateMortgageDto;
+
+    console.log(`Request made by ${userId} with role ${role} to update a mortgage`, updateMortgageDto);
 
     const existingMortgage = await this.prisma.mortgage.findUnique({
       where: { id },
@@ -169,7 +173,7 @@ export class MortgagesService {
         userId: updatedMortgage.userId,
         title: isStatusChanged ? 'Application status updated' : 'Application details updated',
         description: isStatusChanged
-          ? `Application status changed from ${existingMortgage.status} to ${updateData.status} by ${updateData.userId}`
+          ? `Application status changed from ${existingMortgage.status} to ${updateData.status} by ${userId}`
           : `Application details updated by ${updatedMortgage.firstName} ${updatedMortgage.lastName}`,
         type: HistoryTypeEnum.MORTGAGE,
       },

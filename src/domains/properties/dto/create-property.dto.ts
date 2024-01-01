@@ -11,8 +11,8 @@ import {
   SubmissionStatusEnum,
   FurnishingStatusEnum,
 } from '@prisma/client';
-// import { BaseRequest } from 'src/utils/BaseRequest';
-export class CreatePropertyDto {
+import { BaseRequest } from 'src/utils/BaseRequest';
+export class CreatePropertyDto extends BaseRequest {
   @IsString()
   name: string;
 
