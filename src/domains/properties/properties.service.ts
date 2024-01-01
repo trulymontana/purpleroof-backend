@@ -41,8 +41,24 @@ export class PropertiesService {
     return { property };
   }
 
-  async findAll() {
-    return this.prisma.property.findMany({});
+  async findAll(userId: number, role: string) {
+    if (role === 'ADMIN') {
+      return this.prisma.property.findMany({});
+    }
+
+    if (role === 'AGENT') {
+      return this.prisma.property.findMany({
+        where: {
+          agentId: userId,
+        },
+      });
+    }
+
+    return this.prisma.property.findMany({
+      where: {
+        userId,
+      },
+    });
   }
 
   async findOne(id: number) {
@@ -52,6 +68,7 @@ export class PropertiesService {
         documents: true,
         amenities: true,
         photos: true,
+        agent: true,
       },
     });
 
@@ -63,13 +80,22 @@ export class PropertiesService {
   }
 
   async update(id: number, updatePropertyDto: UpdatePropertyDto) {
-    const existingProperty = await this.prisma.property.findUnique({ where: { id } });
+    const existingProperty = await this.prisma.property.findUnique({
+      where: { id },
+    });
 
     if (!existingProperty) {
       throw new NotFoundException(`Property with ID ${id} not found`);
     }
 
-    return this.prisma.property.update({ where: { id }, data: updatePropertyDto as any });
+    const { userId, role, ...updateData } = updatePropertyDto;
+
+    console.log(`Request made by ${userId} with role ${role} to update a property`, updatePropertyDto);
+
+    return this.prisma.property.update({
+      where: { id },
+      data: updateData as any,
+    });
   }
 
   async remove(id: number) {
@@ -129,13 +155,27 @@ export class PropertiesService {
       query.emirate = { in: filters.emirates };
     }
 
-    console.log('query', query);
-
     const properties = await this.prisma.property.findMany({
       where: query,
       include: {},
     });
 
     return properties;
+  }
+
+  async assignToAgent(propertyId: number, agentId: number) {
+    const existingProperty = await this.prisma.property.findUnique({ where: { id: propertyId } });
+
+    if (!existingProperty) {
+      throw new NotFoundException(`Property with ID ${propertyId} not found`);
+    }
+
+    const agentProfile = await this.prisma.agent.findUnique({ where: { id: agentId } });
+
+    if (!agentProfile) {
+      throw new NotFoundException(`Agent with ID ${agentId} not found`);
+    }
+
+    return this.prisma.property.update({ where: { id: propertyId }, data: { agentId } });
   }
 }

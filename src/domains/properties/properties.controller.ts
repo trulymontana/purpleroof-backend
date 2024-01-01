@@ -1,9 +1,11 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req } from '@nestjs/common';
 import { PropertiesService } from './properties.service';
 import { CreatePropertyDto } from './dto/create-property.dto';
 import { UpdatePropertyDto } from './dto/update-property.dto';
 import { SearchPropertyDto } from './dto/search-property.dto';
 import { Property } from '@prisma/client';
+import { BasicAuthGuard } from 'src/auth/guards/basic-auth.guard';
+import { BaseRequest } from 'src/utils/BaseRequest';
 
 @Controller('properties')
 export class PropertiesController {
@@ -15,11 +17,13 @@ export class PropertiesController {
   }
 
   @Get()
-  findAll() {
-    return this.propertiesService.findAll();
+  @UseGuards(BasicAuthGuard)
+  findAll(@Req() req: BaseRequest) {
+    return this.propertiesService.findAll(req.userId, req.role);
   }
 
   @Get(':id')
+  @UseGuards(BasicAuthGuard)
   findOne(@Param('id') id: string) {
     return this.propertiesService.findOne(+id);
   }
@@ -32,6 +36,11 @@ export class PropertiesController {
   @Patch(':id')
   update(@Param('id') id: string, @Body() updatePropertyDto: UpdatePropertyDto) {
     return this.propertiesService.update(+id, updatePropertyDto);
+  }
+
+  @Patch('assign-agent/:propertyId/:agentId')
+  assignToAgent(@Param('propertyId') propertyId: string, @Param('agentId') agentId: string) {
+    return this.propertiesService.assignToAgent(+propertyId, +agentId);
   }
 
   @Delete(':id')

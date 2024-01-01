@@ -116,7 +116,6 @@ export const sendEmailPdf = async (
   pdfFileName: string,
 ) => {
   try {
-    console.log('sending email');
     const nodeMailerTransport = createMailerTransport();
     // nodeMailerTransport.verify((error) => {
     //   if (error) {

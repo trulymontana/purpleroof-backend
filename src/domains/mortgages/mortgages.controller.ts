@@ -37,8 +37,3 @@ export class MortgagesController {
     return this.mortgageService.remove(+id);
   }
 }
-
-// curl -X 'GET' \
-//   'http://localhost:4000/api/v1/mortgages' \
-//   -H 'accept: */*' \
-//   -H 'Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIsInVzZXJBdXRoSWQiOiJSNEV0OWdERnFHZVVLaE1mRmRSNTFKdFhTZmUyIiwidXNlcm5hbWUiOiJzdHJpbmcgc3RyaW5nIiwiZW1haWwiOiJtb2hhbW1hZGZhaXNhbDEwMTFAZ21haWwuY29tIiwicm9sZSI6IkFEVkVSVElTRVIiLCJpYXQiOjE3MDMwNzk0MjEsImV4cCI6MTcwNTY3MTQyMX0.b0uuw0mRR4tYFMoHwzqGkujTwh9YTzsylCVAHIxr3Fw'
