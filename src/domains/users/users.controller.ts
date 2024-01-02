@@ -1,7 +1,10 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { UserRoleEnum } from '@prisma/client';
+import { AdminAuthGuard } from 'src/auth/guards/admin-auth.guard';
+import { BasicAuthGuard } from 'src/auth/guards/basic-auth.guard';
 
 @Controller('users')
 export class UsersController {
@@ -13,11 +16,13 @@ export class UsersController {
   }
 
   @Get()
+  @UseGuards(AdminAuthGuard)
   async findAll() {
     return await this.usersService.findAll();
   }
 
   @Get(':id')
+  @UseGuards(BasicAuthGuard)
   findOne(@Param('id') id: string) {
     return this.usersService.findOne(+id);
   }
@@ -25,6 +30,12 @@ export class UsersController {
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     return this.usersService.update(+id, updateUserDto);
+  }
+
+  @Patch('update-role/:userId/:newRole')
+  @UseGuards(AdminAuthGuard)
+  updateRole(@Param('userId') userId: string, @Param('newRole') newRole: UserRoleEnum) {
+    return this.usersService.updateRole(+userId, newRole);
   }
 
   @Delete(':id')

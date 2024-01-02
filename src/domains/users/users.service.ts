@@ -4,6 +4,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from 'src/common/providers/prisma/prisma.service';
 
 import * as bcrypt from 'bcrypt';
+import { UserRoleEnum } from '@prisma/client';
 
 @Injectable()
 export class UsersService {
@@ -30,6 +31,19 @@ export class UsersService {
 
   update(id: number, updateUserDto: UpdateUserDto) {
     return `This action updates a #${id} user ${updateUserDto.firstName}}`;
+  }
+
+  updateRole(id: number, updatedRole: UserRoleEnum) {
+    const existingUser = this.prisma.user.findUnique({ where: { id } });
+
+    if (!existingUser) {
+      throw new Error('User not found');
+    }
+
+    return this.prisma.user.update({
+      where: { id },
+      data: { role: updatedRole },
+    });
   }
 
   remove(id: number) {
