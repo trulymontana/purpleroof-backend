@@ -2,7 +2,6 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { SuccessResponse } from 'src/utils/SuccessResponse';
 
 @Controller('users')
 export class UsersController {
@@ -15,9 +14,7 @@ export class UsersController {
 
   @Get()
   async findAll() {
-    const users = await this.usersService.findAll();
-
-    return new SuccessResponse(users);
+    return await this.usersService.findAll();
   }
 
   @Get(':id')
