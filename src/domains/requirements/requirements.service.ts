@@ -29,6 +29,10 @@ export class RequirementsService {
   }
 
   async update(id: number, updateRequirementDto: UpdateRequirementDto) {
+    const { requiredDocuments, userId, role, ...updateData } = updateRequirementDto;
+
+    console.log(`Request made by ${userId} with role ${role} to update a requirement`, updateRequirementDto);
+
     const existingRequirement = await this.prisma.requirement.findUnique({
       where: { id },
       include: { requiredDocuments: true },
@@ -38,25 +42,25 @@ export class RequirementsService {
       throw new NotFoundException(`Requirement with ID ${id} not found`);
     }
 
-    const { requiredDocuments, userId, role, ...updateData } = updateRequirementDto;
+    const existingTypes = existingRequirement.requiredDocuments.map((doc) => doc.documentType);
+    const newTypes = requiredDocuments.map((doc) => doc.documentType);
 
-    console.log(`Request made by ${userId} with role ${role} to update a requirement`, updateRequirementDto);
-
-    const existingDocumentIds = requiredDocuments.map((doc) => doc.id);
-    await this.prisma.requiredDocument.deleteMany({
-      where: {
-        id: {
-          in: existingDocumentIds,
-        },
-      },
-    });
+    const newDocumentTypes = newTypes.filter((type) => !existingTypes.includes(type));
+    const deletedDocumentTypes = existingTypes.filter((type) => !newTypes.includes(type));
 
     const updatedRequirement = await this.prisma.requirement.update({
       where: { id },
       data: {
         ...updateData,
         requiredDocuments: {
-          create: requiredDocuments,
+          create: newDocumentTypes.map((type) => ({
+            documentType: type,
+          })),
+          deleteMany: {
+            documentType: {
+              in: deletedDocumentTypes,
+            },
+          },
         },
       },
     });

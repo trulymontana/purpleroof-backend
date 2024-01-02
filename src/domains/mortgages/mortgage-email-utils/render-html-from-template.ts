@@ -111,7 +111,7 @@ const saveToPdf = async (page: any, renderedHtml: any, pdfFileName: any, destina
     });
 
     console.log('PDF generated successfully!');
-    // deleteRenderedHtml(renderedHtml);
+    deleteRenderedHtml(renderedHtml);
   } catch (error) {
     console.error('Error generating PDF:', error);
   } finally {
@@ -119,12 +119,12 @@ const saveToPdf = async (page: any, renderedHtml: any, pdfFileName: any, destina
   }
 };
 
-// const deleteRenderedHtml = (renderedHtml: any) => {
-//   fs.unlink(renderedHtml, (err: any) => {
-//     if (err) {
-//       console.error('Error deleting the file:', err);
-//     } else {
-//       console.log('File deleted successfully!');
-//     }
-//   });
-// };
+const deleteRenderedHtml = (renderedHtml: any) => {
+  fs.unlink(renderedHtml, (err: any) => {
+    if (err) {
+      console.error('Error deleting the file:', err);
+    } else {
+      console.log('File deleted successfully!');
+    }
+  });
+};
