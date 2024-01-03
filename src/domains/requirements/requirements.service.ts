@@ -45,7 +45,9 @@ export class RequirementsService {
     const existingTypes = existingRequirement.requiredDocuments.map((doc) => doc.documentType);
     const newTypes = requiredDocuments.map((doc) => doc.documentType);
 
-    const newDocumentTypes = newTypes.filter((type) => !existingTypes.includes(type));
+    const newDocuments = existingRequirement.requiredDocuments.filter(
+      (requirementItem) => !existingTypes.includes(requirementItem.documentType),
+    );
     const deletedDocumentTypes = existingTypes.filter((type) => !newTypes.includes(type));
 
     const updatedRequirement = await this.prisma.requirement.update({
@@ -53,9 +55,7 @@ export class RequirementsService {
       data: {
         ...updateData,
         requiredDocuments: {
-          create: newDocumentTypes.map((type) => ({
-            documentType: type,
-          })),
+          create: newDocuments,
           deleteMany: {
             documentType: {
               in: deletedDocumentTypes,
