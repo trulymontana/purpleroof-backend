@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
 import { CreateAgentDto } from './dto/create-agent.dto';
 import { UpdateAgentDto } from './dto/update-agent.dto';
 import { PrismaService } from 'src/common/providers/prisma/prisma.service';
@@ -14,7 +14,15 @@ export class AgentsService {
     const user = await this.prisma.user.findUnique({ where: { id: createAgentDto.userId } });
 
     if (!user) {
-      throw new NotFoundException('User not found');
+      throw new BadRequestException('User not found');
+    }
+
+    const existingAgent = await this.prisma.agent.findUnique({
+      where: { userId: createAgentDto.userId },
+    });
+
+    if (existingAgent) {
+      throw new Error('User already applied as an agent');
     }
 
     return await this.prisma.agent.create({
@@ -50,7 +58,7 @@ export class AgentsService {
   }
 
   async findOne(id: number, userId: number, role: string) {
-    if (role === 'ADMIN') {
+    if (role === UserRoleEnum.ADMIN || role === UserRoleEnum.SUPER_ADMIN) {
       return this.prisma.agent.findUnique({
         where: { id },
         include: {
@@ -65,6 +73,17 @@ export class AgentsService {
     }
     return await this.prisma.agent.findUnique({
       where: { id },
+      include: {
+        user: true,
+        locations: true,
+        documents: true,
+      },
+    });
+  }
+
+  async findOneWithUserId(userId: number) {
+    return await this.prisma.agent.findUnique({
+      where: { userId },
       include: {
         user: true,
         locations: true,

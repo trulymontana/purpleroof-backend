@@ -9,6 +9,7 @@ export class BasicAuthGuard implements CanActivate {
 
     const authHeader = request.headers['authorization'];
 
+    console.log('auth header', authHeader);
     if (!authHeader) {
       return false;
     }

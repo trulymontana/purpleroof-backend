@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { SignInRequest } from './dto/sign-in-request.dto';
 import { SignUpRequest } from './dto/sign-up-request.dto';
 import { PrismaService } from 'src/common/providers/prisma/prisma.service';
@@ -19,13 +19,13 @@ export class AuthService {
     });
 
     if (!user) {
-      throw new Error('User does not exist');
+      throw new BadRequestException('User does not exist');
     }
 
     const isPasswordValid = await bcrypt.compare(request.password, user.password);
 
     if (!isPasswordValid) {
-      throw new Error('Invalid password');
+      throw new BadRequestException('Invalid password');
     }
 
     // const authUser = await firebaseAdminAuth.signInWithEmailAndPassword(request.email, request.password);
@@ -78,16 +78,36 @@ export class AuthService {
 
       const random = randomBytes(16).toString('hex');
 
+      const existingProperties = await this.prisma.property.findMany({
+        where: {
+          email: request.email,
+        },
+      });
+
+      const existingMortgages = await this.prisma.mortgage.findMany({
+        where: {
+          email: request.email,
+        },
+      });
+
+      console.log(existingMortgages, existingProperties);
+
       user = await this.prisma.user.create({
         data: {
           email: request.email,
           firstName: request.firstName,
           lastName: request.lastName,
           password: await this.createPasswordHash(request.password),
-          role: UserRoleEnum.ADVERTISER,
+          role: UserRoleEnum.GENERAL_USER,
           // authId: authUser?.uid ?? '',
           authId: random,
-        },
+          mortgages: {
+            connect: existingMortgages.map((mortgage) => ({ id: mortgage.id })),
+          },
+          properties: {
+            connect: existingProperties.map((property) => ({ id: property.id })),
+          },
+        } as any,
       });
 
       console.log(user);
@@ -100,7 +120,7 @@ export class AuthService {
         userId: user.id,
         email: user.email,
         username: user.firstName,
-        role: UserRoleEnum.ADVERTISER,
+        role: UserRoleEnum.GENERAL_USER,
       });
 
       return { user, jwtToken };

@@ -13,15 +13,12 @@ export class AuthMiddleware implements NestMiddleware {
       // @ts-ignore
       const token = req.headers['authorization'];
 
-      console.log('token is' + token);
       if (token) {
         const payload: IJwtPayload | string = verifyToken(token);
         req.body.userId = parseInt(payload.userId.toString());
         req.body.role = payload.role;
         (req as any).userId = parseInt(payload.userId.toString());
         (req as any).role = payload.role;
-
-        console.log(req);
       }
     } catch (err) {
       throw new UnauthorizedException('Unauthorized: the provided token is invalid');

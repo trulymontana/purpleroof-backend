@@ -75,7 +75,8 @@ export class MortgagesService {
   };
 
   async findAll(userId: number, role: UserRoleEnum) {
-    if (role === UserRoleEnum.ADMIN) return this.prisma.mortgage.findMany({ orderBy: { createdAt: 'desc' } });
+    if (role === UserRoleEnum.ADMIN || role === UserRoleEnum.SUPER_ADMIN)
+      return this.prisma.mortgage.findMany({ orderBy: { createdAt: 'desc' } });
 
     console.log(`Request made by ${userId} with role ${role} to get all mortgages`);
     const user = await this.prisma.user.findUnique({ where: { id: userId } });

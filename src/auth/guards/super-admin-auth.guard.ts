@@ -3,7 +3,7 @@ import { UserRoleEnum } from '@prisma/client';
 import { verifyToken } from 'src/utils/jwt-utils';
 
 @Injectable()
-export class AdminAuthGuard implements CanActivate {
+export class SuperAdminAuthGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
 
@@ -15,7 +15,7 @@ export class AdminAuthGuard implements CanActivate {
 
     const payload: any = verifyToken(authHeader);
 
-    if (payload.role === UserRoleEnum.ADMIN || payload.role === UserRoleEnum.SUPER_ADMIN) {
+    if (payload.role === UserRoleEnum.SUPER_ADMIN) {
       return true;
     }
 

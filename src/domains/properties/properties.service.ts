@@ -4,7 +4,7 @@ import { PrismaService } from 'src/common/providers/prisma/prisma.service';
 
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { SearchPropertyDto } from './dto/search-property.dto';
-import { Property } from '@prisma/client';
+import { Property, UserRoleEnum } from '@prisma/client';
 
 @Injectable()
 export class PropertiesService {
@@ -42,14 +42,18 @@ export class PropertiesService {
   }
 
   async findAll(userId: number, role: string) {
-    if (role === 'ADMIN') {
+    console.log(`Request made by ${userId} with role ${role} to get all properties`);
+    if (role === UserRoleEnum.ADMIN || role === UserRoleEnum.SUPER_ADMIN) {
       return this.prisma.property.findMany({});
     }
 
-    if (role === 'AGENT') {
+    if (role === UserRoleEnum.AGENT) {
+      const agentProfile = await this.prisma.agent.findUnique({
+        where: { userId },
+      });
       return this.prisma.property.findMany({
         where: {
-          agentId: userId,
+          agentId: agentProfile.id,
         },
       });
     }
@@ -61,7 +65,7 @@ export class PropertiesService {
     });
   }
 
-  async findOne(id: number) {
+  async findOne(id: number, userId: number, role: string) {
     const property = await this.prisma.property.findUnique({
       where: { id },
       include: {
@@ -69,11 +73,22 @@ export class PropertiesService {
         amenities: true,
         photos: true,
         agent: true,
+        user: role === UserRoleEnum.AGENT ? false : true,
       },
     });
 
     if (!property) {
       throw new NotFoundException(`Property with ID ${id} not found`);
+    }
+
+    const userForAgent = await this.prisma.user.findUnique({
+      where: { id: property.agent.userId },
+    });
+
+    if (property.agent) {
+      (property.agent as any).user = {};
+      (property.agent as any).user.firstName = userForAgent?.firstName;
+      (property.agent as any).user.lastName = userForAgent?.lastName;
     }
 
     return property;

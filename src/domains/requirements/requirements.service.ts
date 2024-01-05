@@ -45,7 +45,7 @@ export class RequirementsService {
     const existingTypes = existingRequirement.requiredDocuments.map((doc) => doc.documentType);
     const newTypes = requiredDocuments.map((doc) => doc.documentType);
 
-    const newDocuments = existingRequirement.requiredDocuments.filter(
+    const newDocuments = requiredDocuments.filter(
       (requirementItem) => !existingTypes.includes(requirementItem.documentType),
     );
     const deletedDocumentTypes = existingTypes.filter((type) => !newTypes.includes(type));

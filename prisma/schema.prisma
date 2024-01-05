@@ -177,7 +177,7 @@ model User {
   email            String       @unique(map: "email") @db.VarChar(255)
   password         String       @db.VarChar(255)
   isEmailConfirmed Boolean?
-  role             UserRoleEnum @default(ADVERTISER)
+  role             UserRoleEnum @default(GENERAL_USER)
 
   createdAt DateTime @default(now()) @db.DateTime(0)
   updatedAt DateTime @updatedAt
@@ -185,7 +185,7 @@ model User {
   agentId Int?
   agent   Agent?
 
-  mortgage   Mortgage[]
+  mortgages   Mortgage[]
   comments   Comment[]
   properties Property[]
   history History[]
@@ -244,10 +244,11 @@ enum FurnishingStatusEnum {
 
 model Property {
   id                   Int     @id @default(autoincrement())
+  phone                String  @db.VarChar(255)
   name                 String  @db.VarChar(255)
+  email                String  @db.VarChar(255) @default("")
   description          String? @db.Text
   image                String? @db.VarChar(255)
-  phone                String  @db.VarChar(255)
   callPreference       String? @db.VarChar(255)
   noticePeriodProperty Int?
   noticePeriodRent     Int?
@@ -424,8 +425,9 @@ enum HoldingTypeEnum {
 }
 
 enum UserRoleEnum {
+  SUPER_ADMIN
   ADMIN
-  ADVERTISER
+  GENERAL_USER
   AGENT
 }
 

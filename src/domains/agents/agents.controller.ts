@@ -24,10 +24,18 @@ export class AgentsController {
   findAll() {
     return this.agentsService.findAll();
   }
+
+  @Get('get-by-user-id')
+  @UseGuards(BasicAuthGuard)
+  findOneWithUserId(@Req() req: BaseRequest) {
+    return this.agentsService.findOneWithUserId(req.userId);
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string, @Req() req: BaseRequest) {
     return this.agentsService.findOne(+id, req.userId, req.role);
   }
+
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateAgentDto: UpdateAgentDto) {
     return this.agentsService.update(+id, updateAgentDto);

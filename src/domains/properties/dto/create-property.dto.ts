@@ -1,4 +1,4 @@
-import { IsString, IsOptional, IsNumber, IsEnum, IsBoolean, IsArray } from 'class-validator';
+import { IsString, IsOptional, IsNumber, IsEnum, IsBoolean, IsArray, IsEmail } from 'class-validator';
 import {
   ProjectStatusEnum,
   EmirateEnum,
@@ -22,6 +22,10 @@ export class CreatePropertyDto extends BaseRequest {
 
   @IsString()
   phone: string;
+
+  @IsString()
+  @IsEmail()
+  email: string;
 
   @IsString()
   image: string;
