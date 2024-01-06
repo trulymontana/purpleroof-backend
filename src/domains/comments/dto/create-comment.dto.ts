@@ -3,7 +3,7 @@ import { BaseRequest } from 'src/utils/BaseRequest';
 
 export class CreateCommentDto extends BaseRequest {
   @IsString()
-  @IsNotEmpty()
+  // @IsNotEmpty()
   title: string;
 
   @IsString()

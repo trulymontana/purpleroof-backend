@@ -21,7 +21,7 @@ export class CommentsController {
 
   @Get('all-by-mortgage/:mortgageId')
   @UseGuards(BasicAuthGuard)
-  findAllByMortgage(@Param('id') mortgageId: string, @Req() req: BaseRequest) {
+  findAllByMortgage(@Param('mortgageId') mortgageId: string, @Req() req: BaseRequest) {
     return this.commentsService.findAll(+mortgageId, req.userId, req.role);
   }
 

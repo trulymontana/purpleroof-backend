@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateMortgageDto } from './dto/create-mortgage.dto';
 import { PrismaService } from 'src/common/providers/prisma/prisma.service';
 import { UpdateMortgageDto } from './dto/update-mortgage.dto';
@@ -25,7 +25,7 @@ export class MortgagesService {
     });
 
     if (!requirement)
-      throw new NotFoundException(
+      throw new BadRequestException(
         `Your application doesn't meet the criteria for a mortgage application. Please contact us for more information.`,
       );
 

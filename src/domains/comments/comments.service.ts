@@ -30,6 +30,7 @@ export class CommentsService {
   }
 
   async findAll(mortgageId: number, userId: number, role: UserRoleEnum) {
+    console.log('mortgageIdis: ', mortgageId, role);
     const existingMortgage = await this.prismaService.mortgage.findUnique({
       where: {
         id: mortgageId,
@@ -40,9 +41,9 @@ export class CommentsService {
       throw new BadRequestException('Mortgage not found');
     }
 
-    if (role !== UserRoleEnum.ADMIN && role !== UserRoleEnum.SUPER_ADMIN && existingMortgage.userId !== userId) {
-      throw new BadRequestException('You are not authorized to view this mortgage');
-    }
+    // if (role !== UserRoleEnum.ADMIN && role !== UserRoleEnum.SUPER_ADMIN && existingMortgage.userId !== userId) {
+    //   throw new BadRequestException('You are not authorized to view this mortgage');
+    // }
 
     return await this.prismaService.comment.findMany({
       where: {
