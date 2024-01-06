@@ -18,9 +18,10 @@ export class LocationsController {
     return this.locationsService.findAll();
   }
 
-  @Get(':emirate')
-  findAllByEmirate(@Param('emirate') emirate: EmirateEnum) {
-    return this.locationsService.findAllByEmirate(emirate);
+  @Get(':emirates')
+  findAllByEmirate(@Param('emirates') emirates: string) {
+    const emirateNames = emirates.split(',') as EmirateEnum[];
+    return this.locationsService.findAllByEmirate(emirateNames);
   }
 
   @Get(':id')

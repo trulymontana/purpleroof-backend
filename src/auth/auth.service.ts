@@ -136,11 +136,17 @@ export class AuthService {
     }
   }
 
-  // async getUser(uid: string) {
-  //   const user = await firebaseAdminAuth.getUser(uid);
+  async getUserDetails(userId: number) {
+    const user = await this.prisma.user.findUnique({
+      where: {
+        id: +userId,
+      },
+    });
 
-  //   return user;
-  // }
+    user.password = '';
+
+    return user;
+  }
 
   // deleteAuthUser = async (uid: string) => {
   //   await firebaseAdminAuth.deleteUser(uid);

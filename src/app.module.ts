@@ -14,6 +14,7 @@ import { AuthMiddleware } from './middlewares/auth.middleware';
 import { AmenitiesModule } from './domains/amenities/amenities.module';
 import { LocationsModule } from './domains/locations/locations.module';
 import { AgentsModule } from './domains/agents/agents.module';
+import { CommentsModule } from './domains/comments/comments.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { AgentsModule } from './domains/agents/agents.module';
     AmenitiesModule,
     LocationsModule,
     AgentsModule,
+    CommentsModule,
   ],
   controllers: [AppController],
   providers: [

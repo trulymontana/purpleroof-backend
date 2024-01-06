@@ -143,10 +143,11 @@ Table User {
 Table Location {
   id Int [pk, increment]
   name String [unique]
-  emirate EmirateEnum
+  emirate EmirateEnum [not null]
   createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [not null]
   agents Agent [not null]
+  properties Property [not null]
 }
 
 Table Amenity {
@@ -186,7 +187,6 @@ Table Property {
   nearbyPlaces String
   airportDistance Int
   street String
-  location String
   amount Float
   size Float
   numberOfBedRooms Int
@@ -221,6 +221,8 @@ Table Property {
   emirate EmirateEnum
   submissionStatus SubmissionStatusEnum [default: 'SUBMITTED']
   furnishingStatus FurnishingStatusEnum [default: 'UNFURNISHED']
+  locationId Int
+  location Location
   userId Int
   user User
   agentId Int
@@ -480,6 +482,8 @@ Ref: Amenity.propertyId > Property.id
 Ref: File.propertyId > Property.id
 
 Ref: File.commentId > Comment.id
+
+Ref: Property.locationId > Location.id
 
 Ref: Property.userId > User.id [delete: Cascade]
 

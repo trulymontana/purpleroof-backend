@@ -185,23 +185,23 @@ model User {
   agentId Int?
   agent   Agent?
 
-  mortgages   Mortgage[]
+  mortgages  Mortgage[]
   comments   Comment[]
   properties Property[]
-  history History[]
+  history    History[]
 }
 
 model Location {
   id   Int     @id @default(autoincrement())
   name String? @unique(map: "name") @db.VarChar(255)
 
-  emirate EmirateEnum?
+  emirate EmirateEnum
 
   createdAt DateTime @default(now()) @db.DateTime(0)
   updatedAt DateTime @updatedAt
 
-  // properties Property[]
-  agents Agent[]
+  agents   Agent[]
+  properties Property[]
 }
 
 model Amenity {
@@ -246,7 +246,7 @@ model Property {
   id                   Int     @id @default(autoincrement())
   phone                String  @db.VarChar(255)
   name                 String  @db.VarChar(255)
-  email                String  @db.VarChar(255) @default("")
+  email                String  @default("") @db.VarChar(255)
   description          String? @db.Text
   image                String? @db.VarChar(255)
   callPreference       String? @db.VarChar(255)
@@ -257,7 +257,6 @@ model Property {
   nearbyPlaces         String? @db.VarChar(255)
   airportDistance      Int?
   street               String? @db.VarChar(255)
-  location             String? @db.VarChar(255)
   amount               Float?
   size                 Float?
   numberOfBedRooms     Int?
@@ -296,8 +295,8 @@ model Property {
   submissionStatus SubmissionStatusEnum? @default(SUBMITTED)
   furnishingStatus FurnishingStatusEnum? @default(UNFURNISHED)
 
-  // locationId Int?
-  // location   Location? @relation(fields: [locationId], references: [id])
+  locationId Int?
+  location   Location? @relation(fields: [locationId], references: [id])
 
   userId Int?
   user   User? @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "Properties_userId_foreign_idx")
@@ -326,12 +325,12 @@ model Agent {
   agency        String? @db.VarChar(255)
   contactNumber String? @db.VarChar(255)
 
-  activeStatus   ActiveStatusEnum @default(ACTIVE)
+  activeStatus   ActiveStatusEnum   @default(ACTIVE)
   approvalStatus ApprovalStatusEnum @default(NOT_APPROVED)
 
   documents  Document[]
   properties Property[]
-  locations Location[]
+  locations  Location[]
 
   userId Int  @unique
   user   User @relation(fields: [userId], references: [id])

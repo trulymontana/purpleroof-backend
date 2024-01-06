@@ -102,9 +102,8 @@ export class CreatePropertyDto extends BaseRequest {
   @IsString()
   landmark?: string;
 
-  @IsOptional()
-  @IsString()
-  location?: string;
+  @IsNumber()
+  locationId?: number;
 
   @IsOptional()
   completionDate?: Date;

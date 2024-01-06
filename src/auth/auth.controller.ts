@@ -1,8 +1,9 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post, Req } from '@nestjs/common';
 
 import { AuthService } from './auth.service';
 import { SignInRequest } from './dto/sign-in-request.dto';
 import { SignUpRequest } from './dto/sign-up-request.dto';
+import { BaseRequest } from 'src/utils/BaseRequest';
 
 @Controller('auth')
 export class AuthController {
@@ -24,6 +25,11 @@ export class AuthController {
   @Post('sign-up')
   signUp(@Body() signInRequest: SignUpRequest) {
     return this.authService.signUp(signInRequest);
+  }
+
+  @Get('user')
+  getUser(@Req() req: BaseRequest) {
+    return this.authService.getUserDetails(+req.userId);
   }
 
   // @Get('reset-password/:email')

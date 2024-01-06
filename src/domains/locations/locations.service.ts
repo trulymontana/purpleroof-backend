@@ -13,16 +13,21 @@ export class LocationsService {
     return this.prismaService.location.create({
       data: {
         ...createLocationDto,
-      },
+      } as any,
     });
   }
 
   findAll() {
     return this.prismaService.location.findMany();
   }
-  findAllByEmirate(emirate: EmirateEnum) {
+
+  findAllByEmirate(emirateNames: EmirateEnum[]) {
     return this.prismaService.location.findMany({
-      where: { emirate },
+      where: {
+        emirate: {
+          in: emirateNames,
+        },
+      },
     });
   }
 

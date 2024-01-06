@@ -37,6 +37,7 @@ export class PropertiesController {
   }
 
   @Patch(':id')
+  @UseGuards(BasicAuthGuard)
   update(@Param('id') id: string, @Body() updatePropertyDto: UpdatePropertyDto) {
     return this.propertiesService.update(+id, updatePropertyDto);
   }
@@ -48,6 +49,7 @@ export class PropertiesController {
   }
 
   @Delete(':id')
+  @UseGuards(AdminAuthGuard)
   remove(@Param('id') id: string) {
     return this.propertiesService.remove(+id);
   }
