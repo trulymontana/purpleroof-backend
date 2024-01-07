@@ -30,7 +30,7 @@ export class CommentsService {
   }
 
   async findAll(mortgageId: number, userId: number, role: UserRoleEnum) {
-    console.log('mortgageIdis: ', mortgageId, role);
+    console.log('mortgageIds: ', mortgageId, role);
     const existingMortgage = await this.prismaService.mortgage.findUnique({
       where: {
         id: mortgageId,

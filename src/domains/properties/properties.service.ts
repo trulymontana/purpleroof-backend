@@ -11,11 +11,19 @@ export class PropertiesService {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(createPropertyDto: CreatePropertyDto) {
-    const { documents, photos, locationId, amenities, userId, role, ...createPropertyData } = createPropertyDto;
+    const { userId, documents, photos, locationId, amenities, role, ...createPropertyData } = createPropertyDto;
 
     console.log(`Request made by ${userId} with role ${role} to create a property`, createPropertyDto);
 
-    const property = await this.prisma.property.create({
+    const existingUser = await this.prisma.user.findUnique({
+      where: {
+        email: createPropertyDto.email,
+      },
+    });
+
+    if (existingUser) console.log('there is already an existing user with id: ', existingUser?.id);
+
+    const createPropertyDataObject: any = {
       data: {
         ...createPropertyData,
         documents: {
@@ -36,10 +44,18 @@ export class PropertiesService {
         location: {
           connect: { id: locationId },
         },
-        // userId: createPropertyDto.userId,
-        agentId: createPropertyDto.agentId,
-      } as any,
-    });
+      },
+    };
+
+    if (existingUser) {
+      createPropertyDataObject.data.user = {
+        connect: {
+          id: existingUser.id,
+        },
+      };
+    }
+
+    const property = await this.prisma.property.create(createPropertyDataObject);
 
     return { property };
   }

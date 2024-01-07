@@ -29,16 +29,34 @@ export class MortgagesService {
         `Your application doesn't meet the criteria for a mortgage application. Please contact us for more information.`,
       );
 
-    const mortgage = await this.prisma.mortgage.create({
-      data: {
-        ...mortgageData,
-        documents: {
-          create: documents,
-        },
-        references: {
-          create: references,
-        },
+    const existingUser = await this.prisma.user.findUnique({
+      where: {
+        email: createMortgageDto.email,
       },
+    });
+
+    if (existingUser) console.log('there is already an existing user with id: ', existingUser?.id);
+
+    const createMortgageData: any = {
+      ...mortgageData,
+      documents: {
+        create: documents,
+      },
+      references: {
+        create: references,
+      },
+    };
+
+    if (existingUser) {
+      createMortgageData.user = {
+        connect: {
+          id: existingUser.id,
+        },
+      };
+    }
+
+    const mortgage = await this.prisma.mortgage.create({
+      data: createMortgageData,
     });
 
     await this.prisma.history.create({
@@ -56,12 +74,7 @@ export class MortgagesService {
   }
 
   sendEmailWithMortgageQuote = async (mortgage: Mortgage, requirement: Requirement) => {
-    const requiredDocuments = (requirement as any).requiredDocuments;
-
-    const requiredDocumentNames = requiredDocuments.map((requiredDocument) => ({ name: requiredDocument.name }));
-    console.log(requiredDocumentNames);
-
-    renderHtmlFromTemplate(mortgage, requirement, requiredDocumentNames).then(async (res: { pdfFileName: string }) => {
+    renderHtmlFromTemplate(mortgage, requirement).then(async (res: { pdfFileName: string }) => {
       const pdfFileName = res?.pdfFileName ?? '';
       await sendEmailPdf(
         mortgage.email,
@@ -132,24 +145,6 @@ export class MortgagesService {
     }
 
     const isStatusChanged = existingMortgage.status !== updateData.status;
-
-    const existingDocumentIds = existingMortgage.documents.map((doc) => doc.id);
-    await this.prisma.document.deleteMany({
-      where: {
-        id: {
-          in: existingDocumentIds,
-        },
-      },
-    });
-
-    const existingReferenceIds = existingMortgage.references.map((ref) => ref.id);
-    await this.prisma.reference.deleteMany({
-      where: {
-        id: {
-          in: existingReferenceIds,
-        },
-      },
-    });
 
     const updatedMortgage = await this.prisma.mortgage.update({
       where: { id },

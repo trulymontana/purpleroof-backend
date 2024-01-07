@@ -204,9 +204,9 @@ export class CreatePropertyDto extends BaseRequest {
   // @IsNumber()
   // locationId?: number;
 
-  @IsOptional()
-  @IsNumber()
-  agentId?: number;
+  // @IsOptional()
+  // @IsNumber()
+  // agentId?: number;
 
   @IsOptional()
   documents?: DocumentCreateDto[]; // Assuming Document is another DTO or entity, replace with the correct type

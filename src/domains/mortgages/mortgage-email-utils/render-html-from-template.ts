@@ -6,14 +6,18 @@ import * as mustache from 'mustache';
 import * as puppeteer from 'puppeteer';
 import * as fs from 'fs';
 
-export const renderHtmlFromTemplate = async (
-  mortgage: Mortgage,
-  requirement: Requirement,
-  requiredDocumentNames: string[],
-) => {
+const MORTGAGE_EMAIL_TEMPLATE_PATH = 'assets/templates/mortgageTemplate.html';
+
+export const renderHtmlFromTemplate = async (mortgage: Mortgage, requirement: Requirement) => {
+  const requiredDocuments = (requirement as any).requiredDocuments;
+  const requiredDocumentNames = requiredDocuments.map((requiredDocument) => ({ name: requiredDocument.name }));
+
   return new Promise(async (resolve, reject) => {
-    const templatePath = path.join(process.cwd(), 'assets/templates/mortgageTemplate.html');
-    const renderedHtml = path.join(process.cwd(), '/' + mortgage.email + '_rendered_template_' + mortgage.id + '.html'); // Output rendered template path
+    const templatePath = path.join(process.cwd(), MORTGAGE_EMAIL_TEMPLATE_PATH);
+    const renderedHtmlPath = path.join(
+      process.cwd(),
+      '/' + mortgage.email + '_rendered_template_' + mortgage.id + '.html',
+    ); // Output rendered template path
     const destinationFolder = path.join(process.cwd(), 'assets/generated');
     const pdfFileName = '/' + mortgage.email.replace(/[@.]/g, '') + '_mortgage_qoutation_' + mortgage.id + '.pdf';
 
@@ -35,7 +39,7 @@ export const renderHtmlFromTemplate = async (
       // Render the template with the data
       const renderedTemplate = mustache.render(template, data);
       // Save the rendered template to a file
-      fs.writeFile(renderedHtml, renderedTemplate, 'utf8', async (err: any) => {
+      fs.writeFile(renderedHtmlPath, renderedTemplate, 'utf8', async (err: any) => {
         if (err) {
           console.error('Error writing rendered template to file:', err);
           return reject({
@@ -50,7 +54,7 @@ export const renderHtmlFromTemplate = async (
           args: ['--no-sandbox', '--disable-setuid-sandbox'],
         });
         const page = await browser.newPage();
-        await generateProposalPerEmail(destinationFolder, renderedHtml, pdfFileName, page, browser);
+        await generateProposalPerEmail(destinationFolder, renderedHtmlPath, pdfFileName, page, browser);
 
         resolve({
           success: true,
