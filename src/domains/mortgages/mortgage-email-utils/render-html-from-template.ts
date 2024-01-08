@@ -17,7 +17,7 @@ export const renderHtmlFromTemplate = async (mortgage: Mortgage, requirement: Re
     const renderedHtmlPath = path.join(
       process.cwd(),
       '/' + mortgage.email + '_rendered_template_' + mortgage.id + '.html',
-    ); // Output rendered template path
+    );
     const destinationFolder = path.join(process.cwd(), 'assets/generated');
     const pdfFileName = '/' + mortgage.email.replace(/[@.]/g, '') + '_mortgage_qoutation_' + mortgage.id + '.pdf';
 

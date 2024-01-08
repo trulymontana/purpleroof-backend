@@ -30,7 +30,7 @@ export class MortgagesController {
   }
 
   @Patch(':id')
-  @UseGuards(AdminAuthGuard)
+  @UseGuards(BasicAuthGuard)
   update(@Param('id') id: number, @Body() updateMortgageDto: UpdateMortgageDto) {
     return this.mortgageService.update(+id, updateMortgageDto);
   }
