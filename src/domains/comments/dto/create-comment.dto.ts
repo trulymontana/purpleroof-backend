@@ -7,7 +7,7 @@ export class CreateCommentDto extends BaseRequest {
   title: string;
 
   @IsString()
-  message: number;
+  message: string;
 
   @IsArray()
   attachments: string[];

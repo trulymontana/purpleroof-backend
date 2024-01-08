@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateRequirementDto } from './dto/create-requirement.dto';
 import { UpdateRequirementDto } from './dto/update-requirement.dto';
 import { PrismaService } from 'src/common/providers/prisma/prisma.service';
@@ -11,21 +11,32 @@ export class RequirementsService {
     const { requiredDocuments, userId, role, ...rest } = createRequirementDto;
     console.log(`Request made by ${userId} with role ${role} to create a requirement`, createRequirementDto);
 
-    const createdRequirement = await this.prisma.requirement.create({
-      data: {
-        ...rest,
+    const similarRequirement = await this.prisma.requirement.findFirst({
+      where: {
+        residenceType: createRequirementDto.residenceType,
+        incomeProfile: createRequirementDto.incomeProfile,
       },
     });
 
-    // Use the createdRequirement.id to associate with RequiredDocuments
-    const createdDocuments = await this.prisma.requiredDocument.createMany({
-      data: requiredDocuments.map((doc) => ({
-        ...doc,
-        requirementId: createdRequirement.id,
-      })),
+    if (similarRequirement) {
+      throw new BadRequestException(
+        'Requirement with same residence type and income profile combination already exists',
+      );
+    }
+
+    const createdRequirement = await this.prisma.requirement.create({
+      data: {
+        ...rest,
+        requiredDocuments: {
+          create: requiredDocuments.map((doc) => ({
+            ...doc,
+            requirementId: createdRequirement.id,
+          })),
+        },
+      },
     });
 
-    return { ...createdRequirement, requiredDocuments: createdDocuments };
+    return createdRequirement;
   }
 
   async update(id: number, updateRequirementDto: UpdateRequirementDto) {

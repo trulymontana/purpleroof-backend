@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import * as nodemailer from 'nodemailer';
+import { SendEmailDto } from './send-email.dto';
 
 @Injectable()
 export class EmailService {
@@ -16,12 +17,12 @@ export class EmailService {
     });
   }
 
-  async sendEmail() {
+  async sendEmail(sendEmailRequest: SendEmailDto) {
     const info = await this.transporter.sendMail({
-      from: 'purplroof@gmail.com', // sender address
-      to: 'mohammadfaisal1011@gmail.com', // list of receivers
-      subject: 'Hello ✔', // Subject line
-      text: 'Hello {{ contact.FIRSTNAME }} , This is an SMTP message with customizations', // plain text body
+      from: sendEmailRequest.emailFrom,
+      to: [sendEmailRequest.emailTo, 'mohammadfaisal1011@gmail.com'],
+      subject: sendEmailRequest.subject,
+      text: sendEmailRequest.message,
     });
 
     return info;

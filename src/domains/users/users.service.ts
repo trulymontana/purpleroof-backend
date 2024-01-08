@@ -16,7 +16,7 @@ export class UsersService {
   };
 
   async findAll() {
-    return await this.prisma.user.findMany();
+    return await this.prisma.user.findMany({ orderBy: { createdAt: 'desc' } });
   }
 
   createPasswordHash = async (password: string) => {

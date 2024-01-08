@@ -89,13 +89,16 @@ export class MortgagesService {
 
   async findAll(userId: number, role: UserRoleEnum) {
     if (role === UserRoleEnum.ADMIN || role === UserRoleEnum.SUPER_ADMIN)
-      return this.prisma.mortgage.findMany({ orderBy: { createdAt: 'desc' } });
+      return this.prisma.mortgage.findMany({ where: { deleted: false }, orderBy: { createdAt: 'desc' } });
 
     console.log(`Request made by ${userId} with role ${role} to get all mortgages`);
     const user = await this.prisma.user.findUnique({ where: { id: userId } });
     if (!user) throw new NotFoundException(`User with ID ${userId} not found`);
 
-    const mortgages = await this.prisma.mortgage.findMany({ where: { email: user.email } });
+    const mortgages = await this.prisma.mortgage.findMany({
+      where: { email: user.email, deleted: false },
+      orderBy: { createdAt: 'desc' },
+    });
 
     return mortgages;
   }
@@ -181,6 +184,6 @@ export class MortgagesService {
       throw new NotFoundException(`Mortgage with ID ${id} not found`);
     }
 
-    return this.prisma.mortgage.delete({ where: { id } });
+    return this.prisma.mortgage.update({ where: { id }, data: { deleted: true } });
   }
 }

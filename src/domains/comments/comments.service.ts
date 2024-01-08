@@ -10,6 +10,8 @@ export class CommentsService {
   async create(createCommentDto: CreateCommentDto) {
     const { userId, role, attachments, mortgageId, ...commentData } = createCommentDto;
     console.log(`User with id ${userId} and role ${role} created a comment`);
+
+    console.log(createCommentDto);
     return await this.prismaService.comment.create({
       data: {
         ...commentData,
@@ -25,7 +27,7 @@ export class CommentsService {
         user: {
           connect: { id: userId },
         },
-      } as any,
+      },
     });
   }
 

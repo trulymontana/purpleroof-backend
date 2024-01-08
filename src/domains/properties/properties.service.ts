@@ -63,7 +63,7 @@ export class PropertiesService {
   async findAll(userId: number, role: string) {
     console.log(`Request made by ${userId} with role ${role} to get all properties`);
     if (role === UserRoleEnum.ADMIN || role === UserRoleEnum.SUPER_ADMIN) {
-      return this.prisma.property.findMany({});
+      return this.prisma.property.findMany({ where: { deleted: false }, orderBy: { createdAt: 'desc' } });
     }
 
     if (role === UserRoleEnum.AGENT) {
@@ -72,6 +72,7 @@ export class PropertiesService {
       });
       const properties = await this.prisma.property.findMany({
         where: {
+          deleted: false,
           agentId: agentProfile.id,
         },
       });
@@ -82,7 +83,9 @@ export class PropertiesService {
     return this.prisma.property.findMany({
       where: {
         userId,
+        deleted: false,
       },
+      orderBy: { createdAt: 'desc' },
     });
   }
 
@@ -150,11 +153,19 @@ export class PropertiesService {
       throw new NotFoundException(`Property with ID ${id} not found`);
     }
 
-    return this.prisma.property.delete({ where: { id } });
+    return this.prisma.property.update({
+      where: { id },
+      data: {
+        deleted: true,
+      },
+    });
   }
 
   async searchProperties(filters: SearchPropertyDto): Promise<Property[]> {
-    const query: any = {};
+    const query: any = {
+      submissionStatus: SubmissionStatusEnum.APPROVED,
+      deleted: false,
+    };
 
     if (filters.minPrice) {
       query.amount = { gte: filters.minPrice };

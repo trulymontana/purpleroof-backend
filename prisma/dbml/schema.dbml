@@ -93,6 +93,7 @@ Table Mortgage {
   comments Comment [not null]
   references Reference [not null]
   history History [not null]
+  deleted Boolean [not null, default: false]
 }
 
 Table History {
@@ -230,6 +231,7 @@ Table Property {
   documents Document [not null]
   amenities Amenity [not null]
   photos File [not null]
+  deleted Boolean [not null, default: false]
 }
 
 Table Agent {

@@ -123,8 +123,10 @@ model Mortgage {
   comments   Comment[]
   references Reference[]
   history    History[]
+  deleted Boolean @default(false)
 
   @@index([userId], map: "Mortgages_userId_foreign_idx")
+  
 }
 
 enum HistoryTypeEnum {
@@ -307,6 +309,8 @@ model Property {
   documents Document[]
   amenities Amenity[]
   photos    File[]
+    deleted Boolean @default(false)
+
 }
 
 enum ApprovalStatusEnum {

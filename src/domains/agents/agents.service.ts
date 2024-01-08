@@ -54,6 +54,7 @@ export class AgentsService {
         locations: true,
         documents: true,
       },
+      orderBy: { createdAt: 'desc' },
     });
   }
 

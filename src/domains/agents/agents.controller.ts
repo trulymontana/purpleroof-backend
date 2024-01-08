@@ -37,6 +37,7 @@ export class AgentsController {
   }
 
   @Patch(':id')
+  @UseGuards(BasicAuthGuard)
   update(@Param('id') id: string, @Body() updateAgentDto: UpdateAgentDto) {
     return this.agentsService.update(+id, updateAgentDto);
   }
