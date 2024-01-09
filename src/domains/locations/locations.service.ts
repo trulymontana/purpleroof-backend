@@ -9,7 +9,6 @@ export class LocationsService {
   constructor(private readonly prismaService: PrismaService) {}
 
   create(createLocationDto: CreateLocationDto) {
-    console.log('createLocationDto', createLocationDto);
     return this.prismaService.location.create({
       data: {
         ...createLocationDto,

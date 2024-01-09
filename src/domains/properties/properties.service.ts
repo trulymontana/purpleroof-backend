@@ -127,6 +127,36 @@ export class PropertiesService {
     return property;
   }
 
+  async findOnePublic(id: number) {
+    const property = await this.prisma.property.findUnique({
+      where: { id },
+      include: {
+        amenities: true,
+        photos: true,
+        location: true,
+        agent: true,
+      },
+    });
+
+    if (!property) {
+      throw new NotFoundException(`Property with ID ${id} not found`);
+    }
+
+    if (property.agent) {
+      const userForAgent = await this.prisma.user.findUnique({
+        where: { id: property.agent.userId },
+      });
+      (property.agent as any).user = {};
+      (property.agent as any).user.firstName = userForAgent?.firstName;
+      (property.agent as any).user.lastName = userForAgent?.lastName;
+      (property.agent as any).user.email = userForAgent?.email;
+    }
+
+    property.deedNumber = '-';
+
+    return property;
+  }
+
   async update(id: number, updatePropertyDto: UpdatePropertyDto) {
     const existingProperty = await this.prisma.property.findUnique({
       where: { id },

@@ -31,6 +31,11 @@ export class PropertiesController {
     return this.propertiesService.findOne(+id, req.userId, req.role);
   }
 
+  @Get('public/:id')
+  findOnePublic(@Param('id') id: string) {
+    return this.propertiesService.findOnePublic(+id);
+  }
+
   @Post('search')
   async searchProperties(@Body() filters: SearchPropertyDto): Promise<Property[]> {
     return await this.propertiesService.searchProperties(filters);
