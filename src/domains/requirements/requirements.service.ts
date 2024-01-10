@@ -30,7 +30,6 @@ export class RequirementsService {
         requiredDocuments: {
           create: requiredDocuments.map((doc) => ({
             ...doc,
-            requirementId: createdRequirement.id,
           })),
         },
       },
