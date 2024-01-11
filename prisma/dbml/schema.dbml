@@ -181,7 +181,7 @@ Table Property {
   email String [not null, default: '']
   description String
   image String
-  callPreference String
+  callPreference CallPreferenceEnum
   noticePeriodProperty Int
   noticePeriodRent Int
   metroStationDistance Int
@@ -283,6 +283,11 @@ Enum FurnishingStatusEnum {
   FULLY_FURNISHED
   SEMI_FURNISHED
   UNFURNISHED
+}
+
+Enum CallPreferenceEnum {
+  PURPLEROOF
+  PERSONAL
 }
 
 Enum ApprovalStatusEnum {

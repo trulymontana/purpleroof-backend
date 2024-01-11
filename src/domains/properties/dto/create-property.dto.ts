@@ -10,6 +10,7 @@ import {
   OccupencyStatusEnum,
   SubmissionStatusEnum,
   FurnishingStatusEnum,
+  CallPreferenceEnum,
 } from '@prisma/client';
 import { BaseRequest } from 'src/utils/BaseRequest';
 export class CreatePropertyDto extends BaseRequest {
@@ -30,8 +31,8 @@ export class CreatePropertyDto extends BaseRequest {
   @IsString()
   image: string;
 
-  @IsString()
   @IsOptional()
+  @IsEnum(CallPreferenceEnum)
   callPreference: string;
 
   @IsNumber()

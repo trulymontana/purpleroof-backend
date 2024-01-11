@@ -244,6 +244,11 @@ enum FurnishingStatusEnum {
   UNFURNISHED
 }
 
+enum CallPreferenceEnum {
+  PURPLEROOF
+  PERSONAL
+}
+
 model Property {
   id                   Int     @id @default(autoincrement())
   phone                String  @db.VarChar(255)
@@ -251,7 +256,7 @@ model Property {
   email                String  @default("") @db.VarChar(255)
   description          String? @db.Text
   image                String? @db.VarChar(255)
-  callPreference       String? @db.VarChar(255)
+  callPreference       CallPreferenceEnum?
   noticePeriodProperty Int?
   noticePeriodRent     Int?
   metroStationDistance Int?
