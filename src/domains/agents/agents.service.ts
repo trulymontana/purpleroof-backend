@@ -3,10 +3,14 @@ import { CreateAgentDto } from './dto/create-agent.dto';
 import { UpdateAgentDto } from './dto/update-agent.dto';
 import { PrismaService } from 'src/common/providers/prisma/prisma.service';
 import { ActiveStatusEnum, ApprovalStatusEnum, DocumentTypeEnum, UserRoleEnum } from '@prisma/client';
+import { EmailService } from 'src/common/providers/email/email.service';
 
 @Injectable()
 export class AgentsService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly emailService: EmailService,
+  ) {}
 
   async create(createAgentDto: CreateAgentDto) {
     console.log('createAgentDto', createAgentDto.userId);
@@ -153,6 +157,13 @@ export class AgentsService {
           role: UserRoleEnum.AGENT,
           agentId: id,
         },
+      });
+
+      await this.emailService.sendEmail({
+        emailFrom: 'info@purpleroof.com',
+        emailTo: existingUser.email,
+        subject: 'Agent Application Approved',
+        message: `Congratulations! Your agent application has been approved. You have to logout and log in again to your account and start adding properties.`,
       });
     }
 
