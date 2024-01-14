@@ -5,10 +5,15 @@ import { PrismaService } from 'src/common/providers/prisma/prisma.service';
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { SearchPropertyDto } from './dto/search-property.dto';
 import { Property, SubmissionStatusEnum, UserRoleEnum } from '@prisma/client';
+import { EmailService } from 'src/common/providers/email/email.service';
+import { UiPageLinks } from 'src/constants/ui-links';
 
 @Injectable()
 export class PropertiesService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly emailService: EmailService,
+  ) {}
 
   async create(createPropertyDto: CreatePropertyDto) {
     const { userId, documents, photos, locationId, amenities, role, ...createPropertyData } = createPropertyDto;
@@ -56,6 +61,15 @@ export class PropertiesService {
     }
 
     const property = await this.prisma.property.create(createPropertyDataObject);
+
+    await this.emailService.sendEmail({
+      emailFrom: 'info@purpleroof.com',
+      emailTo: createPropertyDto.email,
+      subject: 'Property submitted for listing!',
+      message: `Your request to list your property has been submitted successfully. 
+      We will get back to you soon. 
+      Feel free to log in to the dashboard from ${UiPageLinks.SignInPage} to check the status`,
+    });
 
     return { property };
   }
