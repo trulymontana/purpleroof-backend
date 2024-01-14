@@ -123,10 +123,9 @@ model Mortgage {
   comments   Comment[]
   references Reference[]
   history    History[]
-  deleted Boolean @default(false)
+  deleted    Boolean     @default(false)
 
   @@index([userId], map: "Mortgages_userId_foreign_idx")
-  
 }
 
 enum HistoryTypeEnum {
@@ -172,14 +171,15 @@ model Comment {
 }
 
 model User {
-  id               Int          @id @default(autoincrement())
-  authId           String       @unique(map: "authId") @db.VarChar(255)
-  firstName        String       @db.VarChar(255)
-  lastName         String       @db.VarChar(255)
-  email            String       @unique(map: "email") @db.VarChar(255)
-  password         String       @db.VarChar(255)
-  isEmailConfirmed Boolean?
-  role             UserRoleEnum @default(GENERAL_USER)
+  id                 Int          @id @default(autoincrement())
+  authId             String       @unique(map: "authId") @db.VarChar(255)
+  firstName          String       @db.VarChar(255)
+  lastName           String       @db.VarChar(255)
+  email              String       @unique(map: "email") @db.VarChar(255)
+  password           String       @db.VarChar(255)
+  passwordResetToken String       @default("") @db.VarChar(255)
+  isEmailConfirmed   Boolean?
+  role               UserRoleEnum @default(GENERAL_USER)
 
   createdAt DateTime @default(now()) @db.DateTime(0)
   updatedAt DateTime @updatedAt
@@ -202,7 +202,7 @@ model Location {
   createdAt DateTime @default(now()) @db.DateTime(0)
   updatedAt DateTime @updatedAt
 
-  agents   Agent[]
+  agents     Agent[]
   properties Property[]
 }
 
@@ -309,8 +309,7 @@ model Property {
   documents Document[]
   amenities Amenity[]
   photos    File[]
-    deleted Boolean @default(false)
-
+  deleted   Boolean    @default(false)
 }
 
 enum ApprovalStatusEnum {

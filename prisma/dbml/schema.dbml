@@ -129,6 +129,7 @@ Table User {
   lastName String [not null]
   email String [unique, not null]
   password String [not null]
+  passwordResetToken String [not null, default: '']
   isEmailConfirmed Boolean
   role UserRoleEnum [not null, default: 'GENERAL_USER']
   createdAt DateTime [default: `now()`, not null]

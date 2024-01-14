@@ -6,10 +6,16 @@ import * as bcrypt from 'bcrypt';
 import { UserRoleEnum } from '@prisma/client';
 import { generateToken } from 'src/utils/jwt-utils';
 import { randomBytes } from 'crypto';
+import { ForgotPasswordRequest } from './dto/forgot-password-request.dto';
+import { EmailService } from 'src/common/providers/email/email.service';
+import { ResetPasswordRequest } from './dto/reset-password-request.dto';
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly emailService: EmailService,
+  ) {}
 
   async signIn(request: SignInRequest) {
     const user = await this.prisma.user.findUnique({
@@ -134,6 +140,68 @@ export class AuthService {
         });
       throw new Error(e.message);
     }
+  }
+
+  async forgotPassword(forgotPassword: ForgotPasswordRequest) {
+    const existingUser = await this.prisma.user.findUnique({
+      where: {
+        email: forgotPassword.email,
+      },
+    });
+
+    if (!existingUser) {
+      throw new BadRequestException('User does not exist');
+    }
+
+    const random = randomBytes(16).toString('hex');
+
+    await this.prisma.user.update({
+      where: {
+        email: forgotPassword.email,
+      },
+      data: {
+        passwordResetToken: random,
+      },
+    });
+
+    const resetPasswordLink = 'https://app.purpleroof.com/reset-password/' + random;
+
+    await this.emailService.sendEmail({
+      emailFrom: 'info@purpleroof.com',
+      emailTo: forgotPassword.email,
+      subject: 'Reset Password',
+      message: `Someone (hopefully you!) requested to change your password for purpleroof dashboard. You can do that from the below link ${resetPasswordLink}`,
+    });
+
+    return { message: 'Password reset link sent successfully' };
+  }
+
+  async resetPassword(resetPasswordRequest: ResetPasswordRequest) {
+    if (resetPasswordRequest.newPassword !== resetPasswordRequest.confirmNewPassword) {
+      throw new BadRequestException('Passwords do not match');
+    }
+
+    const existingUser = await this.prisma.user.findFirst({
+      where: {
+        passwordResetToken: resetPasswordRequest.resetPasswordToken,
+      },
+    });
+
+    if (!existingUser) {
+      throw new BadRequestException('User does not exist');
+    }
+
+    await this.prisma.user.update({
+      where: {
+        id: existingUser.id,
+      },
+      data: {
+        password: await this.createPasswordHash(resetPasswordRequest.newPassword),
+        passwordResetToken: '',
+      },
+    });
+
+    return { message: 'Password reset successfully' };
   }
 
   async getUserDetails(userId: number) {

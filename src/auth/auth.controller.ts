@@ -4,6 +4,8 @@ import { AuthService } from './auth.service';
 import { SignInRequest } from './dto/sign-in-request.dto';
 import { SignUpRequest } from './dto/sign-up-request.dto';
 import { BaseRequest } from 'src/utils/BaseRequest';
+import { ForgotPasswordRequest } from './dto/forgot-password-request.dto';
+import { ResetPasswordRequest } from './dto/reset-password-request.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -25,6 +27,16 @@ export class AuthController {
   @Post('sign-up')
   signUp(@Body() signInRequest: SignUpRequest) {
     return this.authService.signUp(signInRequest);
+  }
+
+  @Post('forgot-password')
+  forgotPassword(@Body() forgotPassword: ForgotPasswordRequest) {
+    return this.authService.forgotPassword(forgotPassword);
+  }
+
+  @Post('reset-password')
+  resetPassword(@Body() resetPassword: ResetPasswordRequest) {
+    return this.authService.resetPassword(resetPassword);
   }
 
   @Get('user')
