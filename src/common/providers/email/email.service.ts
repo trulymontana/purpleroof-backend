@@ -19,7 +19,7 @@ export class EmailService {
   async sendEmail(sendEmailRequest: { emailTo: string; subject: string; message: string; emailFrom: string }) {
     const info = await this.transporter.sendMail({
       from: sendEmailRequest.emailFrom,
-      to: [sendEmailRequest.emailTo, 'mohammadfaisal1011@gmail.com'],
+      to: [sendEmailRequest.emailTo],
       subject: sendEmailRequest.subject,
       text: sendEmailRequest.message,
     });

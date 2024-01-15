@@ -9,6 +9,7 @@ import { randomBytes } from 'crypto';
 import { ForgotPasswordRequest } from './dto/forgot-password-request.dto';
 import { EmailService } from 'src/common/providers/email/email.service';
 import { ResetPasswordRequest } from './dto/reset-password-request.dto';
+import { UiPageLinks } from 'src/constants/ui-links';
 
 @Injectable()
 export class AuthService {
@@ -164,7 +165,7 @@ export class AuthService {
       },
     });
 
-    const resetPasswordLink = 'https://app.purpleroof.com/reset-password/' + random;
+    const resetPasswordLink = UiPageLinks.ResetPasswordPage + random;
 
     await this.emailService.sendEmail({
       emailFrom: 'info@purpleroof.com',
