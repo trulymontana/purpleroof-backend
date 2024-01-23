@@ -7,40 +7,40 @@ Table Requirement {
   name String
   incomeProfile IncomeProfileEnum [not null]
   residenceType ResidenceTypeEnum [not null]
-  preApprovalFee Int [not null, default: 0]
-  processingFee Int [not null, default: 0]
-  rate Int [not null, default: 0]
-  lifeInsurance Int [not null, default: 0]
-  propertyInsurance Int [not null, default: 0]
-  valuationFee Int [not null, default: 0]
-  requiredDocuments RequiredDocument [not null]
   createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [default: `now()`, not null]
+  lifeInsurance Int [not null, default: 0]
+  preApprovalFee Int [not null, default: 0]
+  processingFee Int [not null, default: 0]
+  propertyInsurance Int [not null, default: 0]
+  rate Int [not null, default: 0]
+  valuationFee Int [not null, default: 0]
+  requiredDocuments RequiredDocument [not null]
 }
 
 Table RequiredDocument {
   id Int [pk, increment]
   name String
-  documentType DocumentTypeEnum [not null]
+  documentType RequiredDocument_documentType [not null]
   isMandatory Boolean [not null, default: false]
   createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [default: `now()`, not null]
-  requirement Requirement [not null]
   requirementId Int [not null]
+  requirement Requirement [not null]
 }
 
 Table Document {
   id Int [pk, increment]
-  type DocumentTypeEnum [not null]
-  url String [unique, not null]
   createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [not null]
-  mortgage Mortgage
   mortgageId Int
   propertyId Int
-  property Property
-  Agent Agent
+  type DocumentTypeEnum [not null]
+  url String [unique, not null]
   agentId Int
+  Agent Agent
+  mortgage Mortgage
+  property Property
 }
 
 Table Reference {
@@ -65,91 +65,91 @@ Table Mortgage {
   dateOfBirth DateTime [not null]
   intendedProperty String [not null]
   monthlyIncome Float [not null]
-  valueOfProperty Float [not null, default: 0]
-  country String [default: '']
   createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [not null]
+  country String [default: '']
   status MortgageStatusEnum [not null]
   residenceType ResidenceTypeEnum [not null]
   incomeProfile IncomeProfileEnum [not null]
   loanType LoanTypeEnum [not null]
+  userId Int
+  valueOfProperty Float [not null, default: 0]
   additionalDetail String
+  completionStatus CompletionStatusEnum
   customerInformation String
-  favoriteCity String
-  yearsInUae Int [default: 0]
+  emirate EmirateEnum
+  financeType FinanceTypeEnum
+  propertyType PropertyTypeEnum
   familyMembersInUae Int [default: 0]
-  annualRentalIncome Int [default: 0]
-  uaeResidenceAddress String
+  favoriteCity String
   homeCountryAddress String
   maritalStatus MaritalStatusEnum
+  uaeResidenceAddress String
+  yearsInUae Int [default: 0]
   educationType EducationTypeEnum
-  financeType FinanceTypeEnum
-  emirate EmirateEnum
-  propertyType PropertyTypeEnum
-  completionStatus CompletionStatusEnum
-  userId Int
-  user User
-  documents Document [not null]
-  comments Comment [not null]
-  references Reference [not null]
-  history History [not null]
+  annualRentalIncome Int [default: 0]
   deleted Boolean [not null, default: false]
+  comments Comment [not null]
+  documents Document [not null]
+  history History [not null]
+  user User
+  references Reference [not null]
 }
 
 Table History {
   id Int [pk, increment]
   title String [not null]
   description String [not null]
-  type HistoryTypeEnum [not null]
   mortgageId Int
-  mortgage Mortgage
   userId Int
-  user User
   createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [default: `now()`, not null]
+  type HistoryTypeEnum [not null]
+  mortgage Mortgage
+  user User
 }
 
 Table Comment {
   id Int [pk, increment]
-  title String [not null]
-  message String [not null]
-  attachments File [not null]
   userId Int [not null]
-  user User [not null]
   mortgageId Int [not null]
-  mortgage Mortgage [not null]
+  message String [not null]
   createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [default: `now()`, not null]
+  title String [not null]
+  user User [not null]
+  mortgage Mortgage [not null]
+  attachments File [not null]
 }
 
 Table User {
   id Int [pk, increment]
-  authId String [unique, not null]
   firstName String [not null]
   lastName String [not null]
   email String [unique, not null]
   password String [not null]
-  passwordResetToken String [not null, default: '']
-  isEmailConfirmed Boolean
-  role UserRoleEnum [not null, default: 'GENERAL_USER']
   createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [not null]
+  role UserRoleEnum [not null, default: 'GENERAL_USER']
+  isEmailConfirmed Boolean
   agentId Int
+  authId String [unique, not null]
+  passwordResetToken String [not null, default: '']
   agent Agent
-  mortgages Mortgage [not null]
   comments Comment [not null]
-  properties Property [not null]
   history History [not null]
+  mortgages Mortgage [not null]
+  properties Property [not null]
 }
 
 Table Location {
   id Int [pk, increment]
   name String [unique]
-  emirate EmirateEnum [not null]
   createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [not null]
-  agents Agent [not null]
+  emirate EmirateEnum [not null]
   properties Property [not null]
+  agents Agent [not null]
 }
 
 Table Amenity {
@@ -158,8 +158,8 @@ Table Amenity {
   createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [default: `now()`, not null]
   type AmenityTypeEnum
-  property Property
   propertyId Int
+  property Property
 }
 
 Table File {
@@ -169,85 +169,88 @@ Table File {
   createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [not null]
   propertyId Int
-  property Property
-  Comment Comment
   commentId Int
+  Comment Comment
+  property Property
 }
 
 Table Property {
   id Int [pk, increment]
-  phone String [not null]
   name String [not null]
-  email String [not null, default: '']
   description String
-  image String
-  callPreference String
-  noticePeriodProperty Int
-  noticePeriodRent Int
-  metroStationDistance Int
-  otherFeatures String
-  nearbyPlaces String
-  airportDistance Int
-  street String
+  phone String [not null]
   amount Float
   size Float
   numberOfBedRooms Int
   numberOfBathRooms Int
-  parkingSpaces Int
   maintenanceFee Float
   address String
   landmark String
-  completionDate DateTime
+  completionStatus PropertyCompletionStatusEnum [not null, default: 'OFF_PLAN_PRIMARY']
+  layoutType String
+  serviceCharges String
+  createdAt DateTime [default: `now()`]
+  updatedAt DateTime
   minimumContract Float
   deedNumber String
   unitNumber Int
   buildingName String
   floor Int
   isApproved Boolean
+  userId Int
   draft String
   paymentInterval String
   numberOfCheques Int
+  completionDate DateTime
   numberOfLavatory Int
   rentalAmount Float
   trakheesiPermitNo String [default: '']
   lat Float
   lng Float
-  createdAt DateTime [default: `now()`]
-  updatedAt DateTime
+  agentId Int
+  emirate EmirateEnum
   projectStatus ProjectStatusEnum
-  occupencyStatus OccupencyStatusEnum
-  propertyFor PropertyForEnum [default: 'SALE']
   propertyType PropertyTypeEnum
   propertyCategory PropertyCategoryEnum
   holdingType HoldingTypeEnum [default: 'FREE_HOLD']
-  emirate EmirateEnum
+  propertyFor PropertyForEnum [default: 'SALE']
+  occupencyStatus OccupencyStatusEnum
+  airportDistance Int
+  callPreference String
+  image String
+  nearbyPlaces String
+  otherFeatures String
+  parkingSpaces Int
+  street String
   submissionStatus SubmissionStatusEnum [default: 'SUBMITTED']
+  metroStationDistance Int
   furnishingStatus FurnishingStatusEnum [default: 'UNFURNISHED']
+  noticePeriodProperty Int
+  noticePeriodRent Int
+  email String [not null, default: '']
   locationId Int
-  location Location
-  userId Int
-  user User
-  agentId Int
-  agent Agent
-  documents Document [not null]
-  amenities Amenity [not null]
-  photos File [not null]
   deleted Boolean [not null, default: false]
+  amenities Amenity [not null]
+  documents Document [not null]
+  photos File [not null]
+  user User
+  agent Agent
+  location Location
 }
 
 Table Agent {
   id Int [pk, increment]
+  userId Int [unique, not null]
   agency String
   contactNumber String
+  createdAt DateTime [default: `now()`]
+  updatedAt DateTime
   activeStatus ActiveStatusEnum [not null, default: 'ACTIVE']
   approvalStatus ApprovalStatusEnum [not null, default: 'NOT_APPROVED']
+  user User [not null]
   documents Document [not null]
   properties Property [not null]
   locations Location [not null]
-  userId Int [unique, not null]
-  user User [not null]
-  createdAt DateTime [default: `now()`]
-  updatedAt DateTime
 }
 
 Table Inqueries {
@@ -259,11 +262,6 @@ Table Inqueries {
   message String [not null]
   createdAt DateTime [not null]
   updatedAt DateTime [not null]
-}
-
-Enum ReferenceTypeEnum {
-  PERSONAL
-  PROFESSIONAL
 }
 
 Enum HistoryTypeEnum {
@@ -351,6 +349,7 @@ Enum DocumentTypeEnum {
   PROOF_OF_INCOME
   COMPANY_BANK_STATEMENT_6_MONTHS
   OWNERSHIP_PROOF_MOBILE_NUMBER
+  MOBILE_BILL_COPY
   REAL_ESTATE_LICENSE
 }
 
@@ -363,6 +362,13 @@ Enum AmenityTypeEnum {
 Enum HoldingTypeEnum {
   FREE_HOLD
   LEASE_HOLD
+}
+
+Enum PropertyCompletionStatusEnum {
+  READY_SECONDARY
+  OFF_PLAN_SECONDARY
+  READY_PRIMARY
+  OFF_PLAN_PRIMARY
 }
 
 Enum UserRoleEnum {
@@ -426,9 +432,17 @@ Enum PropertyTypeEnum {
 
 Enum PropertyCategoryEnum {
   APARTMENT_AND_UNIT
+  APARTMENT
   VILLA
+  DUPLEX
+  PENTHOUSE
   ACREAGE
+  RESIDENTIAL_LAND
+  VILLA_COMPOUND
   BLOCK_OF_UNITS
+  RESIDENTIAL_FULL_BUILDING
+  BUNGALOW
+  BULK_UNITS
   HOUSE
   TOWNHOUSE
   LAND
@@ -460,13 +474,36 @@ Enum EmirateEnum {
   UMM_AL_QUWAIN
 }
 
+Enum RequiredDocument_documentType {
+  PASSPORT_COPY
+  VISA_COPY
+  EMIRATES_ID
+  BANK_STATEMENT_6_MONTHS
+  BANK_STATEMENT_1_YEAR
+  SALARY_CERTIFICATE
+  TRADE_LICENSE
+  MEMORANDUM_WITH_AMENDMENTS
+  VAT_CERTIFICATE_RETURN_RECEIPTS
+  OFFICE_TENANCY_CONTRACT_UTILITY_BILL
+  COMPANY_PROFILE_WEBSITE
+  TITLE_DEED_COPY
+  TENANCY_CONTRACT_COPY
+  RENTAL_CHEQUE_COPY
+  BANK_STATEMENT_3_MONTHS_EQUIVALENT_AED_25000
+  PROOF_OF_RESIDENCE
+  PROOF_OF_INCOME
+  COMPANY_BANK_STATEMENT_6_MONTHS
+  OWNERSHIP_PROOF_MOBILE_NUMBER
+  REAL_ESTATE_LICENSE
+}
+
 Ref: RequiredDocument.requirementId > Requirement.id [delete: Cascade]
+
+Ref: Document.agentId > Agent.id
 
 Ref: Document.mortgageId > Mortgage.id
 
 Ref: Document.propertyId > Property.id
-
-Ref: Document.agentId > Agent.id
 
 Ref: Reference.mortgageId > Mortgage.id
 
@@ -482,14 +519,14 @@ Ref: Comment.mortgageId > Mortgage.id [delete: Cascade]
 
 Ref: Amenity.propertyId > Property.id
 
-Ref: File.propertyId > Property.id
-
 Ref: File.commentId > Comment.id
 
-Ref: Property.locationId > Location.id
+Ref: File.propertyId > Property.id
 
 Ref: Property.userId > User.id [delete: Cascade]
 
 Ref: Property.agentId > Agent.id
+
+Ref: Property.locationId > Location.id
 
 Ref: Agent.userId - User.id
