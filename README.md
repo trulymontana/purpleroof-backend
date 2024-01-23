@@ -9,3 +9,7 @@
 - Check if an agent is approved when assigning to a property
 - Google maps on the property application
 - Implement recapcha
+
+
+# Command to reflect changes in database
+- npx prisma migrate dev --name add_completion_status_to_property_table

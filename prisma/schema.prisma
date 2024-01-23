@@ -267,7 +267,7 @@ model Property {
   maintenanceFee       Float?
   address              String? @db.VarChar(255)
   landmark             String? @db.Text
-  completionStatus     PropertyCompletionStatusEnum
+  completionStatus     PropertyCompletionStatusEnum @default(OFF_PLAN_PRIMARY)
   layoutType           String? @db.VarChar(255)
   serviceCharges       String? @db.VarChar(255)
   completionDate    DateTime? @db.DateTime(0)
