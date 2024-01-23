@@ -197,6 +197,9 @@ Table Property {
   maintenanceFee Float
   address String
   landmark String
+  completionStatus PropertyCompletionStatusEnum [not null]
+  layoutType String
+  serviceCharges String
   completionDate DateTime
   minimumContract Float
   deedNumber String
@@ -425,14 +428,16 @@ Enum PropertyTypeEnum {
 }
 
 Enum PropertyCategoryEnum {
-  APARTMENT_AND_UNIT
-  VILLA
-  ACREAGE
-  BLOCK_OF_UNITS
-  HOUSE
+  APARTMENT
   TOWNHOUSE
-  LAND
-  BULK_UNIT
+  VILLA
+  DUPLEX
+  PENTHOUSE
+  RESIDENTIAL_LAND
+  VILLA_COMPOUND
+  RESIDENTIAL_FULL_BUILDING
+  BULK_UNITS
+  BUNGALOW
   COMMERCIAL_BUILDING
   COMMERCIAL_FLOOR
   COMMERCIAL_VILLA
@@ -458,6 +463,13 @@ Enum EmirateEnum {
   FUJAIRAH
   AJMAN
   UMM_AL_QUWAIN
+}
+
+Enum PropertyCompletionStatusEnum {
+  READY_SECONDARY
+  OFF_PLAN_SECONDARY
+  READY_PRIMARY
+  OFF_PLAN_PRIMARY
 }
 
 Ref: RequiredDocument.requirementId > Requirement.id [delete: Cascade]
