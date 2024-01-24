@@ -188,7 +188,7 @@ Table Property {
   landmark String
   completionStatus PropertyCompletionStatusEnum [not null, default: 'OFF_PLAN_PRIMARY']
   layoutType String
-  serviceCharges String
+  serviceCharges Int
   createdAt DateTime [default: `now()`]
   updatedAt DateTime
   minimumContract Float
