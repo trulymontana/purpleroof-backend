@@ -46,11 +46,14 @@ export class PropertiesService {
         amenities: {
           connect: amenities.map((amenityId) => ({ id: parseInt(amenityId.toString()) })),
         },
-        location: {
-          connect: { id: locationId },
-        },
       },
     };
+
+    if (locationId) {
+      createPropertyDataObject.data.location = {
+        connect: { id: locationId },
+      };
+    }
 
     if (existingUser) {
       createPropertyDataObject.data.user = {

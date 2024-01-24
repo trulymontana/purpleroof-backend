@@ -10,6 +10,7 @@ import {
   OccupencyStatusEnum,
   SubmissionStatusEnum,
   FurnishingStatusEnum,
+  PropertyCompletionStatusEnum,
 } from '@prisma/client';
 import { BaseRequest } from 'src/utils/BaseRequest';
 export class CreatePropertyDto extends BaseRequest {
@@ -68,6 +69,14 @@ export class CreatePropertyDto extends BaseRequest {
 
   @IsOptional()
   @IsNumber()
+  serviceCharges?: number;
+
+  @IsOptional()
+  @IsString()
+  layoutType?: number;
+
+  @IsOptional()
+  @IsNumber()
   noticePeriodRent?: number;
 
   @IsOptional()
@@ -102,8 +111,17 @@ export class CreatePropertyDto extends BaseRequest {
   @IsString()
   landmark?: string;
 
+  @IsOptional()
   @IsNumber()
   locationId?: number;
+
+  @IsOptional()
+  @IsString()
+  cityName?: string;
+
+  @IsOptional()
+  @IsString()
+  communityName?: string;
 
   @IsOptional()
   completionDate?: Date;
@@ -167,6 +185,10 @@ export class CreatePropertyDto extends BaseRequest {
   @IsOptional()
   @IsEnum(ProjectStatusEnum)
   projectStatus: ProjectStatusEnum;
+
+  @IsOptional()
+  @IsEnum(PropertyCompletionStatusEnum)
+  completionStatus: PropertyCompletionStatusEnum;
 
   @IsOptional()
   @IsEnum(FurnishingStatusEnum)

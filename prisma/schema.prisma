@@ -218,7 +218,7 @@ model Property {
   landmark             String?               @db.Text
   completionStatus     PropertyCompletionStatusEnum @default(OFF_PLAN_PRIMARY)
   layoutType           String? @db.VarChar(255)
-  serviceCharges       String? @db.VarChar(255)
+  serviceCharges       Int?
   createdAt            DateTime?             @default(now()) @db.DateTime(0)
   updatedAt            DateTime?             @updatedAt
   minimumContract      Float?
@@ -259,6 +259,8 @@ model Property {
   noticePeriodRent     Int?
   email                String                @default("") @db.VarChar(255)
   locationId           Int?
+  cityName             String?
+  communityName        String?
   deleted              Boolean               @default(false)
   amenities            Amenity[]
   documents            Document[]
