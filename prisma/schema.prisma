@@ -30,7 +30,7 @@ model Requirement {
 model RequiredDocument {
   id            Int                           @id @default(autoincrement())
   name          String?                       @db.VarChar(255)
-  documentType  RequiredDocument_documentType
+  documentType  DocumentTypeEnum
   isMandatory   Boolean                       @default(false)
   createdAt     DateTime                      @default(now()) @db.DateTime(0)
   updatedAt     DateTime                      @default(now()) @updatedAt

@@ -21,7 +21,7 @@ Table Requirement {
 Table RequiredDocument {
   id Int [pk, increment]
   name String
-  documentType RequiredDocument_documentType [not null]
+  documentType DocumentTypeEnum [not null]
   isMandatory Boolean [not null, default: false]
   createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [default: `now()`, not null]
