@@ -115,6 +115,14 @@ export class CreatePropertyDto extends BaseRequest {
   locationId?: number;
 
   @IsOptional()
+  @IsString()
+  cityName?: string;
+
+  @IsOptional()
+  @IsString()
+  communityName?: string;
+
+  @IsOptional()
   completionDate?: Date;
 
   @IsOptional()

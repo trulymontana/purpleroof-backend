@@ -259,6 +259,8 @@ model Property {
   noticePeriodRent     Int?
   email                String                @default("") @db.VarChar(255)
   locationId           Int?
+  cityName             String?
+  communityName        String?
   deleted              Boolean               @default(false)
   amenities            Amenity[]
   documents            Document[]
