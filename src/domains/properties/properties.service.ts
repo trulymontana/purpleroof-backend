@@ -66,7 +66,7 @@ export class PropertiesService {
     const property = await this.prisma.property.create(createPropertyDataObject);
 
     await this.emailService.sendEmail({
-      emailFrom: 'info@purpleroof.com',
+      emailFrom: 'info@sirefinance.com',
       emailTo: createPropertyDto.email,
       subject: 'Property submitted for listing!',
       message: `Your request to list your property has been submitted successfully. 

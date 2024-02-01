@@ -168,7 +168,7 @@ export class AuthService {
     const resetPasswordLink = UiPageLinks.ResetPasswordPage + random;
 
     await this.emailService.sendEmail({
-      emailFrom: 'info@purpleroof.com',
+      emailFrom: 'info@sirefinance.com',
       emailTo: forgotPassword.email,
       subject: 'Reset Password',
       message: `Someone (hopefully you!) requested to change your password for purpleroof dashboard. You can do that from the below link ${resetPasswordLink}`,

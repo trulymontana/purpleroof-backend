@@ -160,7 +160,7 @@ export class AgentsService {
       });
 
       await this.emailService.sendEmail({
-        emailFrom: 'info@purpleroof.com',
+        emailFrom: 'info@sirefinance.com',
         emailTo: existingUser.email,
         subject: 'Agent Application Approved!',
         message: `Congratulations! Your agent application for purpleroof has been approved. You have to logout and log in again to your account and start adding properties.`,

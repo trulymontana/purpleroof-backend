@@ -37,7 +37,7 @@ function readHTMLFile(path: any, callback: any) {
 
 const createEmailConfig = (recipients: string[], subject: string, htmlToSend: any) => {
   const config = {
-    from: 'info@purpleroof.com',
+    from: 'info@sirefinance.com',
     to: recipients,
     subject: subject,
     html: htmlToSend, // html body`,
@@ -140,7 +140,7 @@ export const sendEmailPdf = async (
         const htmlToSend = template(htmlData);
 
         await nodeMailerTransport.sendMail({
-          from: 'info@purpleroof.com',
+          from: 'info@sirefinance.com',
           to: [email],
           subject: `Your Exclusive Mortgage Proposal Awaits!`,
           html: htmlToSend,
@@ -184,7 +184,7 @@ export const sendDummyPdf = async () => {
     const pdfPath = path.join(process.cwd(), 'public/pdf/generated/schieniezelgmailcom_mortgage_qoutation_3.pdf');
 
     await nodeMailerTransport.sendMail({
-      from: 'info@purpleroof.com',
+      from: 'info@sirefinance.com',
       to: 'schieniezel@gmail.com',
       subject: 'Sample Subject',
       html: `<div></div>`, // html body`,
