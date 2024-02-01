@@ -28,14 +28,14 @@ model Requirement {
 }
 
 model RequiredDocument {
-  id            Int                           @id @default(autoincrement())
-  name          String?                       @db.VarChar(255)
+  id            Int              @id @default(autoincrement())
+  name          String?          @db.VarChar(255)
   documentType  DocumentTypeEnum
-  isMandatory   Boolean                       @default(false)
-  createdAt     DateTime                      @default(now()) @db.DateTime(0)
-  updatedAt     DateTime                      @default(now()) @updatedAt
+  isMandatory   Boolean          @default(false)
+  createdAt     DateTime         @default(now()) @db.DateTime(0)
+  updatedAt     DateTime         @default(now()) @updatedAt
   requirementId Int
-  requirement   Requirement                   @relation("RequirementToRequiredDocuments", fields: [requirementId], references: [id], onDelete: Cascade)
+  requirement   Requirement      @relation("RequirementToRequiredDocuments", fields: [requirementId], references: [id], onDelete: Cascade)
 
   @@index([requirementId], map: "RequiredDocument_requirementId_fkey")
 }
@@ -205,69 +205,69 @@ model File {
 }
 
 model Property {
-  id                   Int                   @id @default(autoincrement())
-  name                 String                @db.VarChar(255)
-  description          String?               @db.Text
-  phone                String                @db.VarChar(255)
+  id                   Int                          @id @default(autoincrement())
+  name                 String                       @db.VarChar(255)
+  description          String?                      @db.Text
+  phone                String                       @db.VarChar(255)
   amount               Float?
   size                 Float?
   numberOfBedRooms     Int?
   numberOfBathRooms    Int?
   maintenanceFee       Float?
-  address              String?               @db.VarChar(255)
-  landmark             String?               @db.Text
-  completionStatus     PropertyCompletionStatusEnum @default(OFF_PLAN_PRIMARY)
-  layoutType           String? @db.VarChar(255)
-  serviceCharges       Int?
-  createdAt            DateTime?             @default(now()) @db.DateTime(0)
-  updatedAt            DateTime?             @updatedAt
+  address              String?                      @db.VarChar(255)
+  landmark             String?                      @db.Text
+  createdAt            DateTime?                    @default(now()) @db.DateTime(0)
+  updatedAt            DateTime?                    @updatedAt
   minimumContract      Float?
-  deedNumber           String?               @db.VarChar(255)
+  deedNumber           String?                      @db.VarChar(255)
   unitNumber           Int?
-  buildingName         String?               @db.VarChar(255)
+  buildingName         String?                      @db.VarChar(255)
   floor                Int?
   isApproved           Boolean?
   userId               Int?
-  draft                String?               @db.Text
-  paymentInterval      String?               @db.VarChar(255)
+  draft                String?                      @db.Text
+  paymentInterval      String?                      @db.VarChar(255)
   numberOfCheques      Int?
-  completionDate       DateTime?             @db.DateTime(0)
+  completionDate       DateTime?                    @db.DateTime(0)
   numberOfLavatory     Int?
   rentalAmount         Float?
-  trakheesiPermitNo    String?               @default("") @db.VarChar(255)
-  lat                  Float?                @db.Float
-  lng                  Float?                @db.Float
+  trakheesiPermitNo    String?                      @default("") @db.VarChar(255)
+  lat                  Float?                       @db.Float
+  lng                  Float?                       @db.Float
   agentId              Int?
   emirate              EmirateEnum?
   projectStatus        ProjectStatusEnum?
   propertyType         PropertyTypeEnum?
   propertyCategory     PropertyCategoryEnum?
-  holdingType          HoldingTypeEnum?      @default(FREE_HOLD)
-  propertyFor          PropertyForEnum?      @default(SALE)
+  holdingType          HoldingTypeEnum?             @default(FREE_HOLD)
+  propertyFor          PropertyForEnum?             @default(SALE)
   occupencyStatus      OccupencyStatusEnum?
   airportDistance      Int?
-  callPreference       String?               @db.VarChar(255)
-  image                String?               @db.VarChar(255)
-  nearbyPlaces         String?               @db.VarChar(255)
-  otherFeatures        String?               @db.Text
+  callPreference       String?                      @db.VarChar(255)
+  image                String?                      @db.VarChar(255)
+  nearbyPlaces         String?                      @db.VarChar(255)
+  otherFeatures        String?                      @db.Text
   parkingSpaces        Int?
-  street               String?               @db.VarChar(255)
-  submissionStatus     SubmissionStatusEnum? @default(SUBMITTED)
+  street               String?                      @db.VarChar(255)
+  submissionStatus     SubmissionStatusEnum?        @default(SUBMITTED)
   metroStationDistance Int?
-  furnishingStatus     FurnishingStatusEnum? @default(UNFURNISHED)
+  furnishingStatus     FurnishingStatusEnum?        @default(UNFURNISHED)
   noticePeriodProperty Int?
   noticePeriodRent     Int?
-  email                String                @default("") @db.VarChar(255)
+  email                String                       @default("") @db.VarChar(255)
   locationId           Int?
+  deleted              Boolean                      @default(false)
+  completionStatus     PropertyCompletionStatusEnum @default(OFF_PLAN_PRIMARY)
+  layoutType           String?                      @db.VarChar(255)
+  serviceCharges       Int?
   cityName             String?
   communityName        String?
-  deleted              Boolean               @default(false)
   amenities            Amenity[]
   documents            Document[]
   photos               File[]
-  user                 User?                 @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "Properties_userId_foreign_idx")
-  agent                Agent?                @relation(fields: [agentId], references: [id])
-  location             Location?             @relation(fields: [locationId], references: [id])
+  user                 User?                        @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "Properties_userId_foreign_idx")
+  agent                Agent?                       @relation(fields: [agentId], references: [id])
+  location             Location?                    @relation(fields: [locationId], references: [id])
 
   @@index([userId], map: "Properties_userId_foreign_idx")
   @@index([agentId], map: "Property_agentId_fkey")
@@ -510,27 +510,4 @@ enum EmirateEnum {
   FUJAIRAH
   AJMAN
   UMM_AL_QUWAIN
-}
-
-enum RequiredDocument_documentType {
-  PASSPORT_COPY
-  VISA_COPY
-  EMIRATES_ID
-  BANK_STATEMENT_6_MONTHS
-  BANK_STATEMENT_1_YEAR
-  SALARY_CERTIFICATE
-  TRADE_LICENSE
-  MEMORANDUM_WITH_AMENDMENTS
-  VAT_CERTIFICATE_RETURN_RECEIPTS
-  OFFICE_TENANCY_CONTRACT_UTILITY_BILL
-  COMPANY_PROFILE_WEBSITE
-  TITLE_DEED_COPY
-  TENANCY_CONTRACT_COPY
-  RENTAL_CHEQUE_COPY
-  BANK_STATEMENT_3_MONTHS_EQUIVALENT_AED_25000
-  PROOF_OF_RESIDENCE
-  PROOF_OF_INCOME
-  COMPANY_BANK_STATEMENT_6_MONTHS
-  OWNERSHIP_PROOF_MOBILE_NUMBER
-  REAL_ESTATE_LICENSE
 }
