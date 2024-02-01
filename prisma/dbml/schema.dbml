@@ -186,9 +186,6 @@ Table Property {
   maintenanceFee Float
   address String
   landmark String
-  completionStatus PropertyCompletionStatusEnum [not null, default: 'OFF_PLAN_PRIMARY']
-  layoutType String
-  serviceCharges Int
   createdAt DateTime [default: `now()`]
   updatedAt DateTime
   minimumContract Float
@@ -229,9 +226,12 @@ Table Property {
   noticePeriodRent Int
   email String [not null, default: '']
   locationId Int
+  deleted Boolean [not null, default: false]
+  completionStatus PropertyCompletionStatusEnum [not null, default: 'OFF_PLAN_PRIMARY']
+  layoutType String
+  serviceCharges Int
   cityName String
   communityName String
-  deleted Boolean [not null, default: false]
   amenities Amenity [not null]
   documents Document [not null]
   photos File [not null]
@@ -474,29 +474,6 @@ Enum EmirateEnum {
   FUJAIRAH
   AJMAN
   UMM_AL_QUWAIN
-}
-
-Enum RequiredDocument_documentType {
-  PASSPORT_COPY
-  VISA_COPY
-  EMIRATES_ID
-  BANK_STATEMENT_6_MONTHS
-  BANK_STATEMENT_1_YEAR
-  SALARY_CERTIFICATE
-  TRADE_LICENSE
-  MEMORANDUM_WITH_AMENDMENTS
-  VAT_CERTIFICATE_RETURN_RECEIPTS
-  OFFICE_TENANCY_CONTRACT_UTILITY_BILL
-  COMPANY_PROFILE_WEBSITE
-  TITLE_DEED_COPY
-  TENANCY_CONTRACT_COPY
-  RENTAL_CHEQUE_COPY
-  BANK_STATEMENT_3_MONTHS_EQUIVALENT_AED_25000
-  PROOF_OF_RESIDENCE
-  PROOF_OF_INCOME
-  COMPANY_BANK_STATEMENT_6_MONTHS
-  OWNERSHIP_PROOF_MOBILE_NUMBER
-  REAL_ESTATE_LICENSE
 }
 
 Ref: RequiredDocument.requirementId > Requirement.id [delete: Cascade]
