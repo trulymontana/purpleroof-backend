@@ -48,8 +48,8 @@ const createEmailConfig = (recipients: string[], subject: string, htmlToSend: an
         cid: 'logo_white',
       },
       {
-        filename: 'purple-logo.png',
-        path: path.join(process.cwd(), '/src/assets/images/purple-logo.png'),
+        filename: 'purple-logo.jpg',
+        path: path.join(process.cwd(), '/src/assets/images/purple-logo.jpg'),
         cid: 'logo_purple',
       },
     ],
@@ -151,8 +151,8 @@ export const sendEmailPdf = async (
               cid: 'logo_white',
             },
             {
-              filename: 'purple-logo.png',
-              path: path.join(process.cwd(), '/assets/images/purple-logo.png'),
+              filename: 'purple-logo.jpg',
+              path: path.join(process.cwd(), '/assets/images/purple-logo.jpg'),
               cid: 'logo_purple',
             },
             {
