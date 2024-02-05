@@ -84,6 +84,11 @@
       .second-table th td:last-child {
         border-bottom-width: 0 !important;
       }
+      .top {
+        display: flex;
+        flex-direction: column;
+        gap: 2;
+      }
 
       .page {
         page-break-before: always; /* Force page break before each element with the "page" class */
@@ -92,8 +97,8 @@
   </head>
   <body>
     <div class="page">
-      <h1>
-        <img src="{{imageUrl}}" alt="Logo" class="logo" />
+      <h1 class="top">
+        <img src="/assets//images/purple-logo.jpg" alt="Logo" class="logo" />
         MORTGAGE PROPOSAL
       </h1>
       <p><strong>Prepared For:</strong> {{firstName}} {{lastName}}</p>
@@ -101,8 +106,9 @@
       <h3>Introduction</h3>
       <p>
         <em>
-          Sire Finance Commercial Brokers mortgage services provide experienced and high-performance brokers to ensure
-          your application is processed efficiently and properly to avoid delays and mistakes.
+          <a href="https://sirefinance.com" style="color: #657160; text-underline-offset: 2px;">Sire Finance</a> Commercial Brokers mortgage services
+          provide experienced and high-performance brokers to ensure your application is processed efficiently and
+          properly to avoid delays and mistakes.
         </em>
       </p>
       <p>
