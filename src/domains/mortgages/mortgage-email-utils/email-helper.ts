@@ -47,11 +47,11 @@ const createEmailConfig = (recipients: string[], subject: string, htmlToSend: an
         path: path.join(process.cwd(), '/src/assets/images/logo-white.png'),
         cid: 'logo_white',
       },
-      {
-        filename: 'purple-logo.jpg',
-        path: path.join(process.cwd(), '/src/assets/images/purple-logo.jpg'),
-        cid: 'logo_purple',
-      },
+      // {
+      //   filename: 'purple-logo.jpg',
+      //   path: path.join(process.cwd(), '/src/assets/images/purple-logo.jpg'),
+      //   cid: 'logo_white',
+      // },
     ],
   };
   return config;
@@ -150,11 +150,11 @@ export const sendEmailPdf = async (
               path: path.join(process.cwd(), '/assets/images/logo-white.png'),
               cid: 'logo_white',
             },
-            {
-              filename: 'purple-logo.jpg',
-              path: path.join(process.cwd(), '/assets/images/purple-logo.jpg'),
-              cid: 'logo_purple',
-            },
+            // {
+            //   filename: 'purple-logo.jpg',
+            //   path: path.join(process.cwd(), '/assets/images/purple-logo.jpg'),
+            //   cid: 'logo_white',
+            // },
             {
               filename: `Mortgage Application ${fullName}.pdf`,
               path: pdfPath,

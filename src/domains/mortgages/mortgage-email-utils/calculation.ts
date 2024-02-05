@@ -27,7 +27,7 @@ export const getMortgageCalculations = (mortgage: Mortgage, requirement: Require
   const day = String(today.getDate()).padStart(2, '0');
   const year = today.getFullYear();
   const formattedDate = `${month}/${day}/${year}`;
-  const imageUrl = 'https://app.purpleroof.com/logo/fin-experts-commercial-broker-logo.png';
+  const imageUrl = '/assets/images/logo-white.png';
 
   console.log('mortgage', mortgage);
 
