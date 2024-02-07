@@ -27,7 +27,7 @@ export const getMortgageCalculations = (mortgage: Mortgage, requirement: Require
   const day = String(today.getDate()).padStart(2, '0');
   const year = today.getFullYear();
   const formattedDate = `${month}/${day}/${year}`;
-  const imageUrl = 'cid:logo_white';
+  const imageUrl = 'https://sirefinance.s3.eu-north-1.amazonaws.com/marketing-assets/Sire-finance-email-logo+.png';
 
   console.log('mortgage', mortgage);
 
