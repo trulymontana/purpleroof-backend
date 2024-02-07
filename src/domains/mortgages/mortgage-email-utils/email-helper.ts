@@ -47,11 +47,6 @@ const createEmailConfig = (recipients: string[], subject: string, htmlToSend: an
         path: path.join(process.cwd(), '/src/assets/images/email-logo-without-bg.png'),
         cid: 'logo_white',
       },
-      // {
-      //   filename: 'purple-logo.jpg',
-      //   path: path.join(process.cwd(), '/src/assets/images/purple-logo.jpg'),
-      //   cid: 'logo_white',
-      // },
     ],
   };
   return config;
@@ -150,11 +145,6 @@ export const sendEmailPdf = async (
               path: path.join(process.cwd(), '/assets/images/email-logo-without-bg.png'),
               cid: 'logo_white',
             },
-            // {
-            //   filename: 'email-logo.jpg',
-            //   path: path.join(process.cwd(), '/assets/images/purple-logo.jpg'),
-            //   cid: 'logo_white',
-            // },
             {
               filename: `Mortgage Application ${fullName}.pdf`,
               path: pdfPath,
