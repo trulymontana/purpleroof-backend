@@ -43,8 +43,8 @@ const createEmailConfig = (recipients: string[], subject: string, htmlToSend: an
     html: htmlToSend, // html body`,
     attachments: [
       {
-        filename: 'logo-white.png',
-        path: path.join(process.cwd(), '/src/assets/images/logo-white.png'),
+        filename: 'email-logo-without-bg.png',
+        path: path.join(process.cwd(), '/src/assets/images/email-logo-without-bg.png'),
         cid: 'logo_white',
       },
       // {
@@ -146,12 +146,12 @@ export const sendEmailPdf = async (
           html: htmlToSend,
           attachments: [
             {
-              filename: 'logo-white.png',
-              path: path.join(process.cwd(), '/assets/images/logo-white.png'),
+              filename: 'email-logo-without-bg.png',
+              path: path.join(process.cwd(), '/assets/images/email-logo-without-bg.png'),
               cid: 'logo_white',
             },
             // {
-            //   filename: 'purple-logo.jpg',
+            //   filename: 'email-logo.jpg',
             //   path: path.join(process.cwd(), '/assets/images/purple-logo.jpg'),
             //   cid: 'logo_white',
             // },
